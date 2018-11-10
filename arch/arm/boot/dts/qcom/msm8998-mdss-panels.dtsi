@@ -32,6 +32,8 @@
 #include "dsi-panel-nt36850-truly-dualmipi-wqhd-cmd.dtsi"
 #include "dsi-panel-sharp-dualdsi-wqhd-video.dtsi"
 #include "dsi-panel-sharp-dualdsi-wqhd-cmd.dtsi"
+#include "dsi-panel-rm67299-g1601fp108cf-amoled-fhd-video.dtsi"
+#include "dsi-panel-rm67299-g1601fp036601-amoled-fhd-video.dtsi"
 
 &soc {
 	dsi_panel_pwr_supply: dsi_panel_pwr_supply {
@@ -217,7 +219,6 @@
 	qcom,mdss-dsi-t-clk-post = <0x06>;
 	qcom,mdss-dsi-t-clk-pre = <0x22>;
 };
-
 &dsi_dual_s6e3ha3_amoled_cmd {
 	qcom,mdss-dsi-panel-timings = [00 1c 06 06 0b 10 06 07 05 03 04 00];
 	qcom,mdss-dsi-t-clk-post = <0x07>;
