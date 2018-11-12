@@ -1223,6 +1223,13 @@ config TOUCHSCREEN_ST
 
 	  If unsure, say N.
 
+config TOUCHSCREEN_GT1X
+	bool "Goodix touchpanel GT1x series"
+	depends on I2C
+	help
+	  Say Y here if you have a Goodix GT9xx touchscreen.
+
 source "drivers/input/touchscreen/st/Kconfig"
 
+source "drivers/input/touchscreen/focaltech_touch/Kconfig"
 endif
