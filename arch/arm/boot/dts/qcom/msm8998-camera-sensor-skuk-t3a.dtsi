@@ -302,8 +302,8 @@
 		cell-index = <0>;
 		compatible = "qcom,camera";
 		reg = <0x0>;
-		qcom,special-support-sensors = "imx362_gt24c64a",
-					"s5k3m3sm", "s5k2l7sx";
+		//qcom,special-support-sensors = "imx362_gt24c64a",
+		//			"s5k3m3sm", "s5k2l7sx";
 		qcom,csiphy-sd-index = <0>;
 		qcom,csid-sd-index = <0>;
 		qcom,mount-angle = <270>;
