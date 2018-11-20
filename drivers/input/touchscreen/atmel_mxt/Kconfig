@@ -1,0 +1,17 @@
+#
+# Focaltech Touchscreen driver configuration
+#
+
+config TOUCHSCREEN_ATM
+        bool "ATM Touchscreen"
+		depends on I2C
+		default n
+		help
+		  Say Y here if you have atm touch panel.
+		  If unsure, say N.
+
+config TOUCHSCREEN_FTS_DIRECTORY
+    string "Atm ts directory name"
+    default "atm_touch"
+    depends on TOUCHSCREEN_ATM
+    
