@@ -829,27 +829,27 @@
 		wcd_usbc_analog_en1 {
 			wcd_usbc_analog_en1_idle: wcd_usbc_ana_en1_idle {
 				mux {
-					pins = "gpio59";
+					pins = "gpio96"; //gpio59
 					function = "gpio";
 				};
 				config {
-					pins = "gpio59";
+					pins = "gpio96"; //gpio59
 					drive-strength = <2>;
-					bias-pull-down;
-					output-low;
+					bias-disable;
+					output-high;
 				};
 			};
 
 			wcd_usbc_analog_en1_active: wcd_usbc_ana_en1_active {
 				mux {
-					pins = "gpio59";
+					pins = "gpio96"; //gpio59
 					function = "gpio";
 				};
 				config {
-					pins = "gpio59";
+					pins = "gpio96"; //gpio59
 					drive-strength = <2>;
-					bias-disable;
-					output-high;
+					bias-pull-down;
+					output-low;
 				};
 			};
 		};
