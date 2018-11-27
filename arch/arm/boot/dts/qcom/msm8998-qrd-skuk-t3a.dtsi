@@ -151,6 +151,18 @@
 	};
 };
 
+&soc {
+    as6313 {
+	compatible = "accusilicon,as6313";
+	//reg = <0x0d>;
+	//vdd-sim-supply = <&pm8994_l9>;
+	interrupt-parent = <&tlmm>;
+	interrupts = <123 0x2008>; //79
+	sck-gpio = <&tlmm 32 0x00>;
+	sda-gpio = <&tlmm 33 0x00>;
+	irq-gpio = <&tlmm 123 0x2008>;
+    };
+};
 
 &pm8998_gpios {
 	/* GPIO 5 for Home Key */
