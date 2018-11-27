@@ -1,0 +1,15 @@
+#
+# Makefile for AS6313 driver.
+#
+
+config AS6313
+	tristate "TYPE-C Support"
+	depends on I2C || SPI_MASTER
+	help
+	This enables support for TYPE-C driver of USB.
+
+
+
+
+ 
+

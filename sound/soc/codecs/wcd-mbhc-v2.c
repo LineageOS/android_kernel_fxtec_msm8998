@@ -602,7 +602,13 @@ static void wcd_mbhc_hs_elec_irq(struct wcd_mbhc *mbhc, int irq_type,
 			clear_bit(irq_type, &mbhc->intr_status);
 	}
 }
-
+#ifdef CONFIG_AS6313
+extern int as6313_set_mode(int mode);
+#endif
+/*int as6313_set_mode(int mode)
+{
+  return 0;
+}*/
 static void wcd_mbhc_report_plug(struct wcd_mbhc *mbhc, int insertion,
 				enum snd_jack_types jack_type)
 {
@@ -614,6 +620,9 @@ static void wcd_mbhc_report_plug(struct wcd_mbhc *mbhc, int insertion,
 	pr_debug("%s: enter insertion %d hph_status %x\n",
 		 __func__, insertion, mbhc->hph_status);
 	if (!insertion) {
+#ifdef CONFIG_AS6313
+		as6313_set_mode(0); //USB MODE
+#endif
 		/* Report removal */
 		mbhc->hph_status &= ~jack_type;
 		/*
@@ -1258,6 +1267,11 @@ static void wcd_correct_swch_plug(struct work_struct *work)
 	 * conisder the result of the fourth iteration.
 	 */
 	if (cross_conn > 0) {
+#ifdef CONFIG_AS6313
+	    as6313_set_mode(2); //TRIA MODE
+	    msleep(100);
+
+#endif
 		pr_debug("%s: cross con found, start polling\n",
 			 __func__);
 		plug_type = MBHC_PLUG_TYPE_GND_MIC_SWAP;
@@ -1541,7 +1555,10 @@ static void wcd_mbhc_detect_plug_type(struct wcd_mbhc *mbhc)
 {
 	struct snd_soc_codec *codec = mbhc->codec;
 	bool micbias1 = false;
-
+#ifdef CONFIG_AS6313
+    as6313_set_mode(1); //OMTP MODE
+    msleep(100);
+#endif
 	pr_debug("%s: enter\n", __func__);
 	WCD_MBHC_RSC_ASSERT_LOCKED(mbhc);
 
@@ -2632,6 +2649,9 @@ int wcd_mbhc_start(struct wcd_mbhc *mbhc, struct wcd_mbhc_config *mbhc_cfg)
 	}
 
 	/* initialize GPIOs */
+#ifdef KERNEL_ENABLE_USBC_ANALOG
+	mbhc_cfg->enable_usbc_analog = 1; //zds add
+#endif    
 	if (mbhc_cfg->enable_usbc_analog) {
 		dev_dbg(mbhc->codec->dev, "%s: usbc analog enabled\n",
 				__func__);
