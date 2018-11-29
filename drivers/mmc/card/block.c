@@ -4230,6 +4230,11 @@ static struct mmc_blk_data *mmc_blk_alloc_req(struct mmc_card *card,
 	 */
 	if (!subname) {
 		md->name_idx = find_first_zero_bit(name_use, max_devices);
+#ifdef KERNEL_PATCH_FOR_XDJA
+		if (strcmp(mmc_hostname(card->host), "mmc3") == 0) {//add for security card
+			md->name_idx = 2;
+		}
+#endif
 		__set_bit(md->name_idx, name_use);
 	} else
 		md->name_idx = ((struct mmc_blk_data *)
