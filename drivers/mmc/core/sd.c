@@ -1066,7 +1066,12 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
 			goto free_card;
 		host->card = card;
 	}
-
+#ifdef KERNEL_PATCH_FOR_XDJA
+	else
+	{//add for security card
+		host->card = card;
+	}
+#endif
 	if (!oldcard) {
 		err = mmc_sd_get_csd(host, card);
 		if (err)

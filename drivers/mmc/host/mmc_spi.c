@@ -37,7 +37,9 @@
 #include <linux/mmc/host.h>
 #include <linux/mmc/mmc.h>		/* for R1_SPI_* bit values */
 #include <linux/mmc/slot-gpio.h>
-
+#ifdef KERNEL_PATCH_FOR_XDJA
+#include <linux/gpio.h>
+#endif
 #include <linux/spi/spi.h>
 #include <linux/spi/mmc_spi.h>
 
@@ -1300,6 +1302,32 @@ mmc_spi_detect_irq(int irq, void *mmc)
 	return IRQ_HANDLED;
 }
 
+
+#ifdef KERNEL_PATCH_FOR_XDJA
+#define XDJA_EN_GPIO 42
+static int mmc_control_reset_pin(void)
+{
+	int err = 0;
+	err = gpio_request(XDJA_EN_GPIO, "ssx1207");
+	if (err) {
+	printk("mmc_control_reset_pin request rst failed\n");
+	return -ENODEV;
+	}
+	err = gpio_direction_output(XDJA_EN_GPIO, 1);
+	if (err) {
+	printk("set_direction for pdata->gpio_rst failed\n");
+	return -ENODEV;
+	}
+	//mdelay(500);
+	err = gpio_direction_output(XDJA_EN_GPIO, 0);
+	mdelay(10);
+	err = gpio_direction_output(XDJA_EN_GPIO, 1);
+	mdelay(500);
+	//printk ("mmc_control_reset_pin=%d\n",gpio_get_value(42));
+	return 0;
+}
+#endif
+
 static int mmc_spi_probe(struct spi_device *spi)
 {
 	void			*ones;
@@ -1307,7 +1335,11 @@ static int mmc_spi_probe(struct spi_device *spi)
 	struct mmc_spi_host	*host;
 	int			status;
 	bool			has_ro = false;
-
+    
+    printk("mmc_spi_probe start\n");
+#ifdef KERNEL_PATCH_FOR_XDJA
+	mmc_control_reset_pin();
+#endif
 	/* We rely on full duplex transfers, mostly to reduce
 	 * per-transfer overheads (by making fewer transfers).
 	 */
@@ -1381,7 +1413,11 @@ static int mmc_spi_probe(struct spi_device *spi)
 		mmc->ocr_avail = host->pdata->ocr_mask;
 	if (!mmc->ocr_avail) {
 		dev_warn(&spi->dev, "ASSUMING 3.2-3.4 V slot power\n");
+#ifdef KERNEL_PATCH_FOR_XDJA
+		mmc->ocr_avail = MMC_VDD_32_33|MMC_VDD_33_34|MMC_VDD_165_195;
+#else
 		mmc->ocr_avail = MMC_VDD_32_33|MMC_VDD_33_34;
+#endif
 	}
 	if (host->pdata && host->pdata->setpower) {
 		host->powerup_msecs = host->pdata->powerup_msecs;
@@ -1395,7 +1431,7 @@ static int mmc_spi_probe(struct spi_device *spi)
 	host->data = kmalloc(sizeof(*host->data), GFP_KERNEL);
 	if (!host->data)
 		goto fail_nobuf1;
-
+#ifndef KERNEL_PATCH_FOR_XDJA
 	if (spi->master->dev.parent->dma_mask) {
 		struct device	*dev = spi->master->dev.parent;
 
@@ -1411,7 +1447,7 @@ static int mmc_spi_probe(struct spi_device *spi)
 				host->data_dma, sizeof(*host->data),
 				DMA_BIDIRECTIONAL);
 	}
-
+#endif
 	/* setup message for status/busy readback */
 	spi_message_init(&host->readback);
 	host->readback.is_dma_mapped = (host->dma_dev != NULL);
@@ -1435,6 +1471,9 @@ static int mmc_spi_probe(struct spi_device *spi)
 		mmc->caps |= host->pdata->caps;
 		mmc->caps2 |= host->pdata->caps2;
 	}
+#ifdef KERNEL_PATCH_FOR_XDJA
+	mmc->caps &= ~MMC_CAP_NEEDS_POLL;//add for security card
+#endif
 
 	status = mmc_add_host(mmc);
 	if (status != 0)

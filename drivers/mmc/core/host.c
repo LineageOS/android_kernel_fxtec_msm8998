@@ -595,16 +595,29 @@ struct mmc_host *mmc_alloc_host(int extra, struct device *dev)
 {
 	int err;
 	struct mmc_host *host;
+#ifdef KERNEL_PATCH_FOR_XDJA
+	int start = 0,end = 0;
+#endif
 
 	host = kzalloc(sizeof(struct mmc_host) + extra, GFP_KERNEL);
 	if (!host)
 		return NULL;
 
 	/* scanning will be enabled when we're ready */
+	printk("mmc_alloc_host=%s\n",dev_name(dev));
 	host->rescan_disable = 1;
 	idr_preload(GFP_KERNEL);
 	spin_lock(&mmc_host_lock);
+#ifdef KERNEL_PATCH_FOR_XDJA
+	if (!strcmp("spi11.0",dev_name(dev))) //add for security card
+	{
+		start =3;
+		end = 4;
+	}
+	err = idr_alloc(&mmc_host_idr, host, start, end, GFP_NOWAIT);
+#else
 	err = idr_alloc(&mmc_host_idr, host, 0, 0, GFP_NOWAIT);
+#endif
 	if (err >= 0)
 		host->index = err;
 	spin_unlock(&mmc_host_lock);

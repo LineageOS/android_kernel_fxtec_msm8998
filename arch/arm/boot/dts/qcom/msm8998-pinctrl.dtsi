@@ -854,14 +854,14 @@
 			};
 		};
 
-		wcd_usbc_analog_en2n {
+		wcd_usbc_analog_en2n {//remove it for security card xdja
 			wcd_usbc_analog_en2n_idle: wcd_usbc_ana_en2n_idle {
 				mux {
-					pins = "gpio60";
+					pins = "gpio11"; //gpio60
 					function = "gpio";
 				};
 				config {
-					pins = "gpio60";
+					pins = "gpio11";//gpio60
 					drive-strength = <2>;
 					bias-disable;
 					output-high;
@@ -870,11 +870,11 @@
 
 			wcd_usbc_analog_en2n_active: wcd_usbc_ana_en2n_active {
 				mux {
-					pins = "gpio60";
+					pins = "gpio11"; //gpio60
 					function = "gpio";
 				};
 				config {
-					pins = "gpio60";
+					pins = "gpio11"; //gpio60
 					drive-strength = <2>;
 					bias-pull-down;
 					output-low;
