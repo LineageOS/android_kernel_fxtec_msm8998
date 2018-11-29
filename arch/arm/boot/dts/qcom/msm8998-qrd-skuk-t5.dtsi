@@ -213,6 +213,18 @@
          };
 };
 
+&spi_11 {//enable gpio is config in file kernel/msm-4.4/drivers/mmc/host/mmc_spi.c
+	ssx1207@0 {
+	compatible = "mmc-spi-slot";
+	reg = <0>;
+	spi-max-frequency = <50000000>;
+	spi-cpol;
+	spi-cpha;
+	//spi-cs-high;
+	};
+};
+
+
 &soc {
     as6313 {
 			compatible = "accusilicon,as6313";
