@@ -482,6 +482,7 @@
 		spi-max-frequency = <50000000>;
 		qcom,use-bam;
 		qcom,ver-reg-exists;
+		qcom,shared;
 		qcom,bam-consumer-pipe-index = <14>;
 		qcom,bam-producer-pipe-index = <15>;
 		qcom,master-id = <86>;
@@ -492,7 +493,8 @@
 		clock-names = "iface_clk", "core_clk";
 		clocks = <&clock_gcc clk_gcc_blsp1_ahb_clk>,
 			 <&clock_gcc clk_gcc_blsp1_qup5_spi_apps_clk>;
-		status = "disabled";
+		//status = "disabled";
+		status = "ok";
 	};
 
 	spi_6: spi@c17a000 { /* BLSP1 QUP6 */
