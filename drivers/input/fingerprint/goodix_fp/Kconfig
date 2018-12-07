@@ -1,0 +1,6 @@
+config GOODIXFP
+	bool "Enable Driver Support for fingerprint"
+	help
+	  Add support for sensors SSC driver.
+	  This driver is used for exercising sensors use case,
+	  time syncing with ADSP clock.

@@ -1,0 +1,3 @@
+source "drivers/input/fingerprint/betterlife_fp/Kconfig"
+source "drivers/input/fingerprint/mas_fp/Kconfig"
+source "drivers/input/fingerprint/goodix_fp/Kconfig"
