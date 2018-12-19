@@ -39,6 +39,20 @@
 		qca,bt-vdd-pa-current-level = <1>; /* LPM/PFM */
 		qca,bt-vdd-ldo-current-level = <1>; /* LPM/PFM */
 	};
+
+	key-leds{
+		compatible = "gpio-leds";
+		caps-led {
+			gpios = <&tlmm 21 0x00>;
+			default-state = "off";
+			status = "disable";
+
+		};
+		keyboard-backlight {
+			gpios = <&tlmm 16 0x00>;
+			default-state = "off";
+		};
+	};
 };
 
 &blsp1_uart3_hs {
