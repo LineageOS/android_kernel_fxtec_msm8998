@@ -728,5 +728,12 @@ config KEYBOARD_BCM
 
 	  To compile this driver as a module, choose M here: the
 	  module will be called bcm-keypad.
+	  
+config KEYBOARD_AW9523B
+  tristate "Awinic aw9523b Qwerty keyboard"
+  depends on I2C
+  help
+    Say Y here if you want to use Awinic aw9523b Qwerty
+     keyboard as input device.
 
 endif
