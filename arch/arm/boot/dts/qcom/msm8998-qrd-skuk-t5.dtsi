@@ -120,8 +120,18 @@
 		clocks = <&clock_gcc clk_ln_bb_clk3_pin>;
 		clock-names = "ref_clk";
 	};
-};
 
+	awinic@58 {
+        compatible = "awinic,aw9523b";
+        reg = <0x58>;
+        interrupt-parent = <&tlmm>;
+        interrupts = <50 0x2008>;
+        interrupt-names = "kpd_irq";
+        awinic,reset-gpio = <&tlmm 51 0>;
+        awinic,caps-gpio = <&tlmm 21 0>;
+        awinic,irq-gpio = <&tlmm 50 0x2008>;
+	};
+};
 &i2c_7 {
 	status = "okay";
 	focaltech@38{
