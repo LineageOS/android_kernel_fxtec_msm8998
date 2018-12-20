@@ -3100,7 +3100,7 @@ pwr_deinit:
 }
 
 #endif
-#if 0
+#if 1
 static int mxt_configure_regulator(struct mxt_data *data, bool enabled)
 {
 	int ret = 0;
@@ -6146,12 +6146,13 @@ static int mxt_probe(struct i2c_client *client,
 	data->irq = client->irq;
 
         CTP_DEBUG("step 2: Power on . ");
-/*
-	error = mxt_configure_regulator(data, true);
-	if (error) {
-		dev_err(&client->dev, "unable to configure regulator\n");
-		goto err_free_data;
-	}
+
+    error = mxt_configure_regulator(data, true);
+    if (error) {
+        dev_err(&client->dev, "unable to configure regulator\n");
+        goto err_free_data;
+    }
+    /*
 
 	error = mxt_initialize_pinctrl(data);
 	if (error || !data->ts_pinctrl){
@@ -6175,7 +6176,7 @@ static int mxt_probe(struct i2c_client *client,
 		if (error) {
 			dev_err(&client->dev, "unable to request gpio [%d]\n",
 				pdata->irq_gpio);
-			goto err_reset_gpio_req;
+			goto err_free_regulator;
 		}
 		error = gpio_direction_input(pdata->irq_gpio);
 		if (error) {
@@ -6333,11 +6334,12 @@ err_pinctrl_sleep:
 		if (mxt_pinctrl_select(data, false) < 0)
 			dev_err(&client->dev, "Cannot get idle pinctrl state\n");
 	}
-err_free_regulator:
-	mxt_configure_regulator(data, false);
-err_free_data:
-	kfree(data);
 */
+err_free_regulator:
+    mxt_configure_regulator(data, false);
+err_free_data:
+    kfree(data);
+
 	return error;
 }
 
@@ -6362,7 +6364,7 @@ static int mxt_remove(struct i2c_client *client)
 	kfree(data->object_table);
 	data->object_table = NULL;
 
-	//mxt_configure_regulator(data, false);
+    mxt_configure_regulator(data, false);
 
 	if (gpio_is_valid(pdata->irq_gpio))
 		gpio_free (pdata->irq_gpio);
