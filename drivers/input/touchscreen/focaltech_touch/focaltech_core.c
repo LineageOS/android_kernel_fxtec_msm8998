@@ -1477,8 +1477,7 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
     ret = fts_get_ic_information(ts_data);
     if (ret) {
         FTS_ERROR("not focal IC, unregister driver");
-        //goto err_irq_req;
-        return 0;  //zds mod
+        goto err_irq_req;//danny modify it, for release the resource we request. Or other device will probe failed.
     }
 
 #if FTS_APK_NODE_EN
@@ -1581,10 +1580,11 @@ err_power_init:
     kfree_safe(ts_data->point_buf);
     kfree_safe(ts_data->events);
     input_unregister_device(ts_data->input_dev);
-    if (ts_data->input_dev) {
-        input_free_device(ts_data->input_dev);
-        ts_data->input_dev = NULL;
-    }
+    // danny remove it ,after input dev have already unregister. We dont need to input_free_device. Or kernel will crash.
+    //if (ts_data->input_dev) {
+        //input_free_device(ts_data->input_dev);
+        //ts_data->input_dev = NULL;
+    //}
 err_input_init:
     if (ts_data->ts_workqueue)
         destroy_workqueue(ts_data->ts_workqueue);
