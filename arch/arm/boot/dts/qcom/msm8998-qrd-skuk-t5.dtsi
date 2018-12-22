@@ -249,28 +249,32 @@
 };
 
 
+&spi_5{
+    #address-cells = <1>;
+    #size-cells = <0>;
+
+    betterlife-spi@{
+        compatible = "betterlife,spi";
+        reg = <0x0>;
+        spi-max-frequency = <0x10000000>;
+        status = "okay";
+    };
+};
+
+
 &soc {
-    blfp {
-        compatible = "betterlife,fingerprint";
-        //reg = <0>;
+
+    betterlife_platform: betterlife-fingerprint@ {
+        compatible = "betterlife,platform";
+        fpreset-gpio = <&tlmm 7 0>;
+        fpint-gpio = <&tlmm 126 0>;
+        fppower-gpio = <&tlmm 25 0>;
+        //fppower-gpio1v8 = <&tlmm 25 0>;
         interrupt-parent = <&tlmm>;
         interrupts = <126 0x0>;
-        betterlife,gpio_reset = <&tlmm 7 0>;
-        betterlife,gpio_irq = <&tlmm 126 0>;
-        betterlife,gpio_pwr = <&tlmm 25 0>;
-        //spi-qup-id = <5>;
-        //spi-max-frequency = <8000000>;
-        //pinctrl-0 = <&goodix_reset_active &goodix_irq_active>;
-        //pinctrl-1 = <&goodix_reset_sleep &goodix_irq_sleep>;
-
-        // clock-names = "iface_clk", "core_clk";
-        // clocks = <&clock_gcc clk_gcc_blsp1_ahb_clk>,
-        //  <&clock_gcc clk_gcc_blsp1_qup5_spi_apps_clk>;
-        //pinctrl-names = "spi_default", "spi_sleep";
-        //pinctrl-0 = <&spi_5_active>;
-        //pinctrl-1 = <&spi_5_sleep>;
+        status = "okay";
     };
-
+ 
     as6313 {
         compatible = "accusilicon,as6313";
         //reg = <0x0d>;
@@ -282,7 +286,6 @@
         irq-gpio = <&tlmm 123 0x2008>;
     };
 };
-
 
 &pm8998_gpios {
 	/* GPIO 5 for Home Key */
