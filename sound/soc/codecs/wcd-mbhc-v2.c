@@ -2649,7 +2649,7 @@ int wcd_mbhc_start(struct wcd_mbhc *mbhc, struct wcd_mbhc_config *mbhc_cfg)
 	}
 
 	/* initialize GPIOs */
-#ifdef KERNEL_ENABLE_USBC_ANALOG
+#ifdef CONFIG_AS6313
 	mbhc_cfg->enable_usbc_analog = 1; //zds add
 #endif    
 	if (mbhc_cfg->enable_usbc_analog) {
