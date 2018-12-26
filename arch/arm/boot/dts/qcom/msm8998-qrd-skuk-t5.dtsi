@@ -307,6 +307,22 @@
 		qcom,src-sel = <0>;
 		qcom,out-strength = <1>;
 	};
+	gpio@c600 {
+		status = "okay";
+		qcom,mode = <0>;
+		qcom,pull = <0>;
+		qcom,vin-sel = <0>;
+		qcom,src-sel = <0>;
+		qcom,out-strength = <1>;
+	};
+	gpio@c700 {
+		status = "okay";
+		qcom,mode = <0>;
+		qcom,pull = <0>;
+		qcom,vin-sel = <0>;
+		qcom,src-sel = <0>;
+		qcom,out-strength = <1>;
+	};
 
 	gpio@d200 { /* GPIO 19 - wil6210 refclk3_en */
 		qcom,mode = <0>;		/* Input */
@@ -348,6 +364,23 @@
 			gpios = <&pm8998_gpios 6 0x1>;
 			linux,input-type = <1>;
 			linux,code = <115>;
+			gpio-key,wakeup;
+			debounce-interval = <15>;
+		};
+		camera_f {
+			label = "camera_focus";
+			gpios = <&pm8998_gpios 8 0x1>;
+			linux,input-type = <1>;
+			linux,code = <0x210>;
+			gpio-key,wakeup;
+			debounce-interval = <15>;
+		};
+
+		camera {
+			label = "camera";
+			gpios = <&pm8998_gpios 7 0x1>;
+			linux,input-type = <1>;
+			linux,code = <212>;
 			gpio-key,wakeup;
 			debounce-interval = <15>;
 		};
