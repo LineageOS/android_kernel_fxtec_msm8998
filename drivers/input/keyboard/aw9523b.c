@@ -172,11 +172,11 @@ static const unsigned short  key_array[Y_NUM][X_NUM] = {
         {KEY_7, KEY_Y,	  KEY_DELETE,    KEY_UP,       KEY_DOWN,  	 KEY_H,        KEY_B,         KEY_DOT},
         {KEY_3, KEY_W,	  KEY_9,         KEY_I,        KEY_M,        KEY_S,        KEY_Z,         KEY_J},
         {KEY_6, KEY_T,	  KEY_ENTER,     KEY_RIGHT,    KEY_LEFT,     KEY_G,        KEY_V,         KEY_COMMA},
-        {KEY_2, KEY_Q,	  KEY_SUBTITLE,  KEY_P,        KEY_TAB,      KEY_A,        KEY_RIGHTBRACE,KEY_L},
-        {KEY_4, KEY_E,	  KEY_TITLE,     KEY_SEMICOLON,KEY_K,        KEY_D,        KEY_X,         KEY_APOSTROPHE},
-        {KEY_1, KEY_GRAVE,KEY_0,         KEY_O,        KEY_B,        KEY_BACKSLASH,KEY_LEFTBRACE, KEY_K},
+        {KEY_2, KEY_Q,	  KEY_MINUS,  KEY_P,        KEY_TAB,      KEY_A,        KEY_RIGHTBRACE,KEY_L},
+        {KEY_4, KEY_E,	  KEY_EQUAL,     KEY_SEMICOLON,KEY_K,        KEY_D,        KEY_X,         KEY_APOSTROPHE},
+        {KEY_1, KEY_GRAVE,KEY_0,         KEY_O,        KEY_F1,        KEY_BACKSLASH,KEY_LEFTBRACE, KEY_K},
         {KEY_5, KEY_R, 	  KEY_8,         KEY_U,        KEY_N,        KEY_F,        KEY_C,         KEY_SPACE},
-        {KEY_ESC,KEY_HOME,KEY_BACKSPACE, KEY_SYM,      KEY_LEFTCTRL, KEY_CAPSLOCK, KEY_RIGHTSHIFT,KEY_LEFTALT},
+        {KEY_ESC,KEY_HOMEPAGE,KEY_BACKSPACE, KEY_F2,      KEY_LEFTCTRL, KEY_CAPSLOCK, KEY_RIGHTSHIFT,KEY_LEFTALT},
 };
 
 #define P1_DEFAULT_VALUE  1  /*p1用来输出，这个值是p1的初始值*/
