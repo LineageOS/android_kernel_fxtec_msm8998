@@ -43,7 +43,7 @@
 	key-leds{
 		compatible = "gpio-leds";
 		caps-led {
-			gpios = <&tlmm 21 0x00>;
+			gpios = <&tlmm 26 0x00>;
 			default-state = "off";
 			status = "disable";
 
@@ -142,7 +142,7 @@
         interrupts = <50 0x2008>;
         interrupt-names = "kpd_irq";
         awinic,reset-gpio = <&tlmm 51 0>;
-        awinic,caps-gpio = <&tlmm 21 0>;
+        awinic,caps-gpio = <&tlmm 26 0>;
         awinic,irq-gpio = <&tlmm 50 0x2008>;
 	};
 };
@@ -344,20 +344,78 @@
 	};
 };
 
+&tlmm{
+	tlmm_gpio_key {
+           gpio_key_active: gpio_key_active {
+                 mux {                                                                                                              
+                     pins = "gpio21", "gpio114","gpio128","gpio129";
+                     function = "gpio";
+                 };
+ 
+                 config {
+                     pins = "gpio21", "gpio114","gpio128","gpio129";
+                     drive-strength = <2>;
+                     bias-pull-up;
+                 };
+             };
+ 
+             gpio_key_suspend: gpio_key_suspend {
+                 mux {
+                     pins = "gpio21", "gpio114","gpio128","gpio129";
+                     function = "gpio";
+                 };
+ 
+                 config {
+                     pins = "gpio21", "gpio114","gpio128","gpio129";
+                     drive-strength = <2>;
+                     bias-pull-down;
+                 };
+             };
+    };
+
+};
+
 &soc {
 	gpio_keys {
 		compatible = "gpio-keys";
 		input-name = "gpio-keys";
+		pinctrl-names = "tlmm_gpio_key_active","tlmm_gpio_key_suspend";
+        pinctrl-0 = <&gpio_key_active>;
+        pinctrl-1 = <&gpio_key_suspend>;  
 		status = "okay";
-
-		home {
+		
+		oem_home {
 			label = "home";
-			gpios = <&pm8998_gpios 5 0x1>;
+			gpios = <&tlmm 21 0x1>;
 			linux,input-type = <1>;
-			linux,code = <102>;
-			gpio-key,wakeup;
+			linux,code = <172>;
 			debounce-interval = <15>;
 		};
+		
+		shift {
+			label = "shift";
+			gpios = <&tlmm 114 0x1>;
+			linux,input-type = <1>;
+			linux,code = <54>;
+			debounce-interval = <15>;
+		};
+		
+		alt {
+			label = "alt";
+			gpios = <&tlmm 129 0x1>;
+			linux,input-type = <1>;
+			linux,code = <56>;
+			debounce-interval = <15>;
+		};
+		
+		ctrl {
+			label = "ctrl";
+			gpios = <&tlmm 128 0x1>;
+			linux,input-type = <1>;
+			linux,code = <29>;
+			debounce-interval = <15>;
+		};
+
 
 		vol_up {
 			label = "volume_up";
@@ -384,7 +442,8 @@
 			gpio-key,wakeup;
 			debounce-interval = <15>;
 		};
-	};
+
+	};	
 
 	sound-tavil {
 		qcom,model = "msm8998-skuk-tavil-snd-card";
