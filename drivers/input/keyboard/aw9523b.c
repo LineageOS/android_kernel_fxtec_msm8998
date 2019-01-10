@@ -150,7 +150,6 @@ static u8 p1_kbd_used_mask = 0x0;
 
 //以下P0_X,P1_Y这两个数组的值会通过aw9523b_setting.h配置文件里的参数动态算出来
 static const u8 p0_port_be_press_value[2][X_NUM] = {
-													//{0x7e,0x3f,0x5f,0x6f,0x77,0x7d,0x7b,0x7f},
 													{0xfe,0xbf,0xdf,0xef,0xf7,0xfd,0xfb,0x7f},
 													{0xfa,0xbb,0xdb,0xeb,0xf3,0xf9,0xf7,0x7b},
 													}; /*根据硬件设计， 每一列按下去P0口的值，通过这个值，可以判断是哪列被按下*/
@@ -169,14 +168,14 @@ static struct i2c_client *g_client = NULL;
 #define AW9523B_KEY_NULL 0x0
 static const unsigned short func_key_array[8] = {KEY_LEFTSHIFT,KEY_LEFTALT,KEY_LEFTCTRL,KEY_RIGHTSHIFT,KEY_RIGHTALT,KEY_RIGHTCTRL};
 static const unsigned short  key_array[Y_NUM][X_NUM] = {
-        {KEY_7, KEY_Y,	  KEY_DELETE,    KEY_UP,       KEY_DOWN,  	 KEY_H,        KEY_B,         KEY_DOT},
-        {KEY_3, KEY_W,	  KEY_9,         KEY_I,        KEY_M,        KEY_S,        KEY_Z,         KEY_J},
-        {KEY_6, KEY_T,	  KEY_ENTER,     KEY_RIGHT,    KEY_LEFT,     KEY_G,        KEY_V,         KEY_COMMA},
-        {KEY_2, KEY_Q,	  KEY_MINUS,  KEY_P,        KEY_TAB,      KEY_A,        KEY_RIGHTBRACE,KEY_L},
-        {KEY_4, KEY_E,	  KEY_EQUAL,     KEY_SEMICOLON,KEY_K,        KEY_D,        KEY_X,         KEY_APOSTROPHE},
-        {KEY_1, KEY_GRAVE,KEY_0,         KEY_O,        KEY_F1,        KEY_BACKSLASH,KEY_LEFTBRACE, KEY_K},
-        {KEY_5, KEY_R, 	  KEY_8,         KEY_U,        KEY_N,        KEY_F,        KEY_C,         KEY_SPACE},
-        {KEY_ESC,KEY_HOMEPAGE,KEY_BACKSPACE, KEY_F2,      KEY_LEFTCTRL, KEY_CAPSLOCK, KEY_RIGHTSHIFT,KEY_LEFTALT},
+        {KEY_F1,        KEY_Y,	  KEY_ENTER,  KEY_UP,       KEY_7,        KEY_H,        KEY_B,         KEY_DOT},
+        {KEY_3,         KEY_W,	  KEY_9,      KEY_I,        KEY_M,        KEY_S,        KEY_Z,         KEY_J},
+        {KEY_LEFT,      KEY_T,	  KEY_DELETE, KEY_RIGHT,    KEY_6,        KEY_G,        KEY_V,         KEY_COMMA},
+        {KEY_F2,        KEY_Q,	  KEY_MINUS,  KEY_P,        KEY_HOMEPAGE, KEY_A,        KEY_RIGHTBRACE,KEY_L},
+        {KEY_BACKSPACE, KEY_E,	  KEY_EQUAL,  KEY_SEMICOLON,KEY_K,        KEY_D,        KEY_X,         KEY_APOSTROPHE},
+        {KEY_CAPSLOCK,  KEY_GRAVE,KEY_0,      KEY_O,        KEY_DOWN,     KEY_BACKSLASH,KEY_LEFTBRACE, KEY_K},
+        {KEY_SPACE,     KEY_R, 	  KEY_8,      KEY_U,        KEY_N,        KEY_F,        KEY_C,         KEY_5},
+        {KEY_ESC,       KEY_TAB,  KEY_4,      KEY_2 ,       0XFF,         KEY_1, 0XFF,0XFF},
 };
 
 #define P1_DEFAULT_VALUE  1  /*p1用来输出，这个值是p1的初始值*/
