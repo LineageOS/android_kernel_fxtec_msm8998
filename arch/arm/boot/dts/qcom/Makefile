@@ -174,8 +174,11 @@ msm8998-qrd-overlay.dtbo-base :=  msm8998-qrd.dtb
 msm8998-qrd-vr1-overlay.dtbo-base :=  msm8998-qrd-vr1.dtb
 msm8998-qrd-skuk-overlay.dtbo-base :=  msm8998-qrd-skuk.dtb
 else
+ifneq ($(OEM_PRODUCT_NAME),)
 dtb-$(CONFIG_ARCH_MSM8998) +=msm8998-v2-qrd-skuk-$(OEM_PRODUCT_NAME).dtb
-
+else
+dtb-$(CONFIG_ARCH_MSM8998) +=msm8998-v2-qrd-skuk.dtb
+endif
 #dtb-$(CONFIG_ARCH_MSM8998) += msm8998-sim.dtb \
 #	msm8998-rumi.dtb \
 #	msm8998-cdp.dtb \
