@@ -1882,9 +1882,9 @@ static int gpio_keys_probe(struct platform_device *pdev)
 	input->close = gpio_keys_close;
 
 	//input->id.bustype = BUS_HOST;
-	//input->id.vendor = 0x0001;
-	//input->id.product = 0x0001;
-	//input->id.version = 0x0100;
+	input->id.vendor = 0x181d;
+	input->id.product = 0x5018;
+	input->id.version = 0x0001;
 
 	/* Enable auto repeat feature of Linux input subsystem */
 	if (pdata->rep)
