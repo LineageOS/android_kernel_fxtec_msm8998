@@ -5462,11 +5462,11 @@ static int mxt_suspend(struct device *dev)
 				dev_err(dev, "regulator disable for vddio failed: %d\n", ret);
 		}
 
-		if (data->regulator_vdd) {
-			ret = regulator_disable(data->regulator_vdd);
-			if (ret < 0)
-				dev_err(dev, "regulator disable for vdd failed: %d\n", ret);
-		}
+		//if (data->regulator_vdd) {
+		//	ret = regulator_disable(data->regulator_vdd);
+		//	if (ret < 0)
+		//		dev_err(dev, "regulator disable for vdd failed: %d\n", ret);
+		//}
 
 		data->is_stopped = 1;
 		mutex_unlock(&input_dev->mutex);
