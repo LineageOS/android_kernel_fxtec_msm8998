@@ -1673,7 +1673,7 @@ static int gpio_keys_pinctrl_configure(struct gpio_keys_drvdata *ddata,
 	if (active) {
 		set_state =
 			pinctrl_lookup_state(ddata->key_pinctrl,
-						"tlmm_gpio_key_active");
+						"idea_gpio_key_active");
 		if (IS_ERR(set_state)) {
 			dev_err(&ddata->input->dev,
 				"cannot get ts pinctrl active state\n");
@@ -1682,7 +1682,7 @@ static int gpio_keys_pinctrl_configure(struct gpio_keys_drvdata *ddata,
 	} else {
 		set_state =
 			pinctrl_lookup_state(ddata->key_pinctrl,
-						"tlmm_gpio_key_suspend");
+						"idea_gpio_key_suspend");
 		if (IS_ERR(set_state)) {
 			dev_err(&ddata->input->dev,
 				"cannot get gpiokey pinctrl sleep state\n");
