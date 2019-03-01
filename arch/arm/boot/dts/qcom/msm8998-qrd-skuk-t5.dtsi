@@ -424,6 +424,26 @@
 		input-name = "gpio-keys";
 		status = "okay";
 		
+		oem_halla {
+			label = "hall_a";
+			gpios = <&tlmm 8 0x1>;
+			linux,input-type = <1>;
+			linux,code = <468>;
+			gpio-key,wakeup;
+			debounce-interval = <15>;
+		};
+
+		oem_hallb {
+			label = "hall_b";
+			gpios = <&tlmm 124 0x1>;
+			linux,input-type = <1>;
+			linux,code = <469>;
+			gpio-key,wakeup;
+			debounce-interval = <15>;
+		};
+
+
+
 		vol_up {
 			label = "volume_up";
 			gpios = <&pm8998_gpios 6 0x1>;
