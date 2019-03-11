@@ -22,6 +22,11 @@
 #include <linux/slab.h>
 #include <linux/workqueue.h>
 
+#if defined(CONFIG_FB)
+	#include <linux/notifier.h>
+	#include <linux/fb.h>
+#endif
+
 struct gpio_led_data {
 	struct led_classdev cdev;
 	struct gpio_desc *gpiod;
@@ -32,6 +37,7 @@ struct gpio_led_data {
 	int (*platform_gpio_blink_set)(struct gpio_desc *desc, int state,
 			unsigned long *delay_on, unsigned long *delay_off);
 };
+
 
 static void gpio_led_work(struct work_struct *work)
 {
@@ -57,7 +63,8 @@ static void gpio_led_set(struct led_classdev *led_cdev,
 		level = 0;
 	else
 		level = 1;
-
+	
+	printk(KERN_ERR "gpio_led_set level=%d\n",level);
 	/* Setting GPIOs with I2C/etc requires a task context, and we don't
 	 * seem to have a reliable way to know if we're already in one; so
 	 * let's just assume the worst.
@@ -156,6 +163,7 @@ static void delete_gpio_led(struct gpio_led_data *led)
 
 struct gpio_leds_priv {
 	int num_leds;
+	struct notifier_block fb_notify;
 	struct gpio_led_data leds[];
 };
 
@@ -244,6 +252,31 @@ static const struct of_device_id of_gpio_leds_match[] = {
 
 MODULE_DEVICE_TABLE(of, of_gpio_leds_match);
 
+#if defined(CONFIG_FB)
+/*----------------------------------------------------------------------------*/
+static int fb_notifier_callback(struct notifier_block *self,
+                                unsigned long event, void *data)
+{
+    struct fb_event *evdata = data;
+	struct gpio_leds_priv *priv = container_of(self, struct gpio_leds_priv, fb_notify);
+	int i;
+    int *blank =  evdata->data;
+    if (evdata && evdata->data) {
+        if (event == FB_EVENT_BLANK ) {
+            if (*blank == FB_BLANK_UNBLANK) {
+               
+            } else if (*blank == FB_BLANK_POWERDOWN) {
+               for (i = 0; i < priv->num_leds; i++) {
+					struct gpio_led_data *led = &priv->leds[i];
+					gpio_led_set(&led->cdev, LED_OFF);
+				}
+            }
+        }
+    }
+    return 0;
+}
+#endif
+
 static int gpio_led_probe(struct platform_device *pdev)
 {
 	struct gpio_led_platform_data *pdata = dev_get_platdata(&pdev->dev);
@@ -276,6 +309,15 @@ static int gpio_led_probe(struct platform_device *pdev)
 	}
 
 	platform_set_drvdata(pdev, priv);
+	
+#if defined(CONFIG_FB)
+    priv->fb_notify.notifier_call = fb_notifier_callback;
+    ret = fb_register_client(&priv->fb_notify);
+    if(ret) {
+       dev_err(&pdev->dev, "failed fb_register_client %d \n",ret);
+	   return ret;
+     }
+#endif
 
 	return 0;
 }
@@ -287,7 +329,7 @@ static int gpio_led_remove(struct platform_device *pdev)
 
 	for (i = 0; i < priv->num_leds; i++)
 		delete_gpio_led(&priv->leds[i]);
-
+	fb_unregister_client(&priv->fb_notify);
 	return 0;
 }
 
@@ -298,10 +340,36 @@ static void gpio_led_shutdown(struct platform_device *pdev)
 
 	for (i = 0; i < priv->num_leds; i++) {
 		struct gpio_led_data *led = &priv->leds[i];
-
 		gpio_led_set(&led->cdev, LED_OFF);
 	}
 }
+
+#if 0
+static int leds_gpio_suspend(struct device *dev)
+{
+	struct gpio_leds_priv *priv = dev_get_drvdata(dev);
+	int i;
+	if( priv != NULL ){
+		for (i = 0; i < priv->num_leds; i++) {
+			struct gpio_led_data *led = &priv->leds[i];
+			gpio_led_set(&led->cdev, LED_OFF);
+		}
+	}else{
+		dev_err(dev, "failed dev_get_drvdata is null \n");
+	}
+	
+	return 0;
+}
+
+static int leds_gpio_resume(struct device *dev)
+{
+	return 0;
+}
+
+
+
+static SIMPLE_DEV_PM_OPS(leds_gpio_pm_ops, leds_gpio_suspend, leds_gpio_resume);
+#endif
 
 static struct platform_driver gpio_led_driver = {
 	.probe		= gpio_led_probe,
@@ -310,6 +378,7 @@ static struct platform_driver gpio_led_driver = {
 	.driver		= {
 		.name	= "leds-gpio",
 		.of_match_table = of_gpio_leds_match,
+		//.pm	= &leds_gpio_pm_ops,
 	},
 };
 
