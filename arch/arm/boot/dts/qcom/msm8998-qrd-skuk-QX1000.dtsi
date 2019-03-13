@@ -373,6 +373,35 @@
              };
     };
 
+	hall_gpio_key{
+	        hall_active: hall_active {
+                 mux {
+                     pins = "gpio8","gpio124";
+                     function = "gpio";
+                 };
+
+                 config {
+                     pins ="gpio8","gpio124";
+                     drive-strength = <2>;
+                     bias-pull-up;
+                 };
+             };
+
+             hall_suspend: hall_suspend {
+                 mux {
+                     pins = "gpio8","gpio124";
+                     function = "gpio";
+                 };
+
+                 config {
+                     pins = "gpio8","gpio124";
+                     drive-strength = <2>;
+                     bias-pull-up;
+                 };
+             };
+
+	};
+
 };
 
 &soc {
@@ -380,28 +409,11 @@
 	idea_keys{
 		compatible = "idea-keys";
 		input-name = "idea-keys";
-		pinctrl-names = "tlmm_gpio_key_active","tlmm_gpio_key_suspend";
+		pinctrl-names = "idea_gpio_key_active","idea_gpio_key_suspend";
         pinctrl-0 = <&gpio_key_active>;
-        pinctrl-1 = <&gpio_key_suspend>;  
+        pinctrl-1 = <&gpio_key_suspend>;
 		status = "okay";
 		
-		oem_halla {
-			label = "hall_a";
-			gpios = <&tlmm 8 0x1>;
-			linux,input-type = <1>;
-			linux,code = <468>;
-			gpio-key,wakeup;
-			debounce-interval = <15>;
-		};
-		
-		oem_hallb {
-			label = "hall_b";
-			gpios = <&tlmm 124 0x1>;
-			linux,input-type = <1>;
-			linux,code = <469>;
-			gpio-key,wakeup;
-			debounce-interval = <15>;
-		};
 		home {
 			label = "home";
 			gpios = <&tlmm 21 0x1>;
@@ -409,7 +421,7 @@
 			linux,code = <172>;
 			debounce-interval = <15>;
 		};
-		
+
 		shift {
 			label = "shift";
 			gpios = <&tlmm 114 0x1>;
@@ -439,8 +451,27 @@
 	gpio_keys {
 		compatible = "gpio-keys";
 		input-name = "gpio-keys";
+		pinctrl-names = "tlmm_gpio_key_active","tlmm_gpio_key_suspend";
+		pinctrl-0 = <&hall_active>;
+		pinctrl-1 = <&hall_suspend>;
 		status = "okay";
 		
+		oem_halla {
+			label = "hall_a";
+			gpios = <&tlmm 8 0x1>;
+			linux,input-type = <1>;
+			linux,code = <468>;
+			debounce-interval = <15>;
+		};
+
+		oem_hallb {
+			label = "hall_b";
+			gpios = <&tlmm 124 0x1>;
+			linux,input-type = <1>;
+			linux,code = <469>;
+			debounce-interval = <15>;
+		};
+
 		vol_up {
 			label = "volume_up";
 			gpios = <&pm8998_gpios 6 0x1>;
