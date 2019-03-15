@@ -64,6 +64,9 @@ static struct syscore_ops gpio_keys_syscore_pm_ops;
 
 static void gpio_keys_syscore_resume(void);
 
+#define HALL_COVER_PIN (8)
+#define HALL_KEYBOARD_PIN (124)
+
 /*
  * SYSFS interface for enabling/disabling keys and switches:
  *
@@ -374,6 +377,26 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 		dev_err(input->dev.parent, "failed to get gpio state\n");
 		return;
 	}
+
+	if(button->gpio == HALL_COVER_PIN||
+		button->gpio == HALL_KEYBOARD_PIN){
+			
+		if(state){
+			input_event(input, type, button->code, 1);
+			input_sync(input);
+			udelay(20);
+			input_event(input, type, button->code, 0);
+			input_sync(input);
+		}else{
+			input_event(input, type, button->code+1, 1);
+			input_sync(input);
+			udelay(20);
+			input_event(input, type, button->code+1, 0);
+			input_sync(input);			
+		}	
+		return;
+	}
+	
 
 	if (type == EV_ABS) {
 		if (state)
@@ -811,6 +834,10 @@ static int gpio_keys_probe(struct platform_device *pdev)
 	input->id.vendor = 0x0001;
 	input->id.product = 0x0001;
 	input->id.version = 0x0100;
+	
+	input_set_capability(input, EV_KEY, KEY_FN_F4);
+    input_set_capability(input, EV_KEY, KEY_FN_F5);
+    input_set_capability(input, EV_KEY, KEY_FN_F6);
 
 	/* Enable auto repeat feature of Linux input subsystem */
 	if (pdata->rep)

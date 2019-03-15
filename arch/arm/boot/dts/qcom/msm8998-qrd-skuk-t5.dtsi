@@ -248,20 +248,6 @@
     };
 };
 
-
-&spi_5{
-    #address-cells = <1>;
-    #size-cells = <0>;
-
-    betterlife-spi@{
-        compatible = "betterlife,spi";
-        reg = <0x0>;
-        spi-max-frequency = <0x10000000>;
-        status = "okay";
-    };
-};
-
-
 &soc {
 
     betterlife_platform: betterlife-fingerprint@ {
@@ -373,35 +359,6 @@
              };
     };
 	
-	hall_gpio_key{
-		hall_active: hall_active {
-                 mux {                                                                                                              
-                     pins = "gpio8","gpio124";
-                     function = "gpio";
-                 };
- 
-                 config {
-                     pins ="gpio8","gpio124";
-                     drive-strength = <2>;
-                     bias-pull-up;
-                 };
-             };
- 
-             hall_suspend: hall_suspend {
-                 mux {
-                     pins = "gpio8","gpio124";
-                     function = "gpio";
-                 };
- 
-                 config {
-                     pins = "gpio8","gpio124";
-                     drive-strength = <2>;
-                     bias-pull-up;
-                 };
-             };
-	
-	
-	};
 
 };
 
@@ -412,8 +369,7 @@
 		input-name = "idea-keys";
 		pinctrl-names = "idea_gpio_key_active","idea_gpio_key_suspend";
         pinctrl-0 = <&gpio_key_active>;
-        pinctrl-1 = <&gpio_key_suspend>;  
-		status = "okay";
+        pinctrl-1 = <&gpio_key_suspend>;
 		
 		home {
 			label = "home";
@@ -431,14 +387,6 @@
 			debounce-interval = <15>;
 		};
 		
-		alt {
-			label = "alt";
-			gpios = <&tlmm 129 0x1>;
-			linux,input-type = <1>;
-			linux,code = <56>;
-			debounce-interval = <15>;
-		};
-		
 		ctrl {
 			label = "ctrl";
 			gpios = <&tlmm 128 0x1>;
@@ -446,17 +394,16 @@
 			linux,code = <29>;
 			debounce-interval = <15>;
 		};
-
-	
-	};
-	gpio_keys {
-		compatible = "gpio-keys";
-		input-name = "gpio-keys";
-		pinctrl-names = "tlmm_gpio_key_active","tlmm_gpio_key_suspend";
-        pinctrl-0 = <&hall_active>;
-        pinctrl-1 = <&hall_suspend>;  
-		status = "okay";
 		
+		alt {
+			label = "alt";
+			gpios = <&tlmm 129 0x1>;
+			linux,input-type = <1>;
+			linux,code = <56>;
+			debounce-interval = <15>;
+		};		
+
+	/*	
 		oem_halla {
 			label = "hall_a";
 			gpios = <&tlmm 8 0x1>;
@@ -465,14 +412,25 @@
 			debounce-interval = <15>;
 		};
 
+	*/	
+	
+		
+	};
+	
+	gpio_keys {
+		compatible = "gpio-keys";
+		input-name = "gpio-keys";		
+		status = "okay";
+
 		oem_hallb {
 			label = "hall_b";
 			gpios = <&tlmm 124 0x1>;
 			linux,input-type = <1>;
-			linux,code = <469>;
+			linux,code = <470>;
+			gpio-key,wakeup;
 			debounce-interval = <15>;
 		};
-		
+	
 		vol_up {
 			label = "volume_up";
 			gpios = <&pm8998_gpios 6 0x1>;
