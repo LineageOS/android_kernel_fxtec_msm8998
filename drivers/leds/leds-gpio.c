@@ -62,9 +62,8 @@ static void gpio_led_set(struct led_classdev *led_cdev,
 	if (value == LED_OFF)
 		level = 0;
 	else
-		level = 1;
+		level = 1;	
 	
-	printk(KERN_ERR "gpio_led_set level=%d\n",level);
 	/* Setting GPIOs with I2C/etc requires a task context, and we don't
 	 * seem to have a reliable way to know if we're already in one; so
 	 * let's just assume the worst.
@@ -344,41 +343,13 @@ static void gpio_led_shutdown(struct platform_device *pdev)
 	}
 }
 
-#if 0
-static int leds_gpio_suspend(struct device *dev)
-{
-	struct gpio_leds_priv *priv = dev_get_drvdata(dev);
-	int i;
-	if( priv != NULL ){
-		for (i = 0; i < priv->num_leds; i++) {
-			struct gpio_led_data *led = &priv->leds[i];
-			gpio_led_set(&led->cdev, LED_OFF);
-		}
-	}else{
-		dev_err(dev, "failed dev_get_drvdata is null \n");
-	}
-	
-	return 0;
-}
-
-static int leds_gpio_resume(struct device *dev)
-{
-	return 0;
-}
-
-
-
-static SIMPLE_DEV_PM_OPS(leds_gpio_pm_ops, leds_gpio_suspend, leds_gpio_resume);
-#endif
-
 static struct platform_driver gpio_led_driver = {
 	.probe		= gpio_led_probe,
 	.remove		= gpio_led_remove,
 	.shutdown	= gpio_led_shutdown,
 	.driver		= {
 		.name	= "leds-gpio",
-		.of_match_table = of_gpio_leds_match,
-		//.pm	= &leds_gpio_pm_ops,
+		.of_match_table = of_gpio_leds_match,		
 	},
 };
 
