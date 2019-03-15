@@ -18,6 +18,13 @@
 #include <linux/of_platform.h>
 #endif
 
+#if (LINUX_VERSION_CODE > KERNEL_VERSION(4, 4, 0))
+#include <linux/pm_wakeup.h>
+#define KERNEL_4_9
+#else
+#include <linux/wakelock.h>
+#endif
+
 #define BF_DEV_NAME "blfp"
 #define BF_DEV_MAJOR 0	/* assigned */
 #define BF_CLASS_NAME "blfp"
@@ -40,6 +47,7 @@
 #define BLESTECH_LOG
 //#define FAST_VERISON
 #define BUF_SIZE 200*200
+
 #ifdef BLESTECH_LOG
 #define BF_LOG(fmt,arg...)          do{printk("<blestech_fp>[%s:%d]"fmt"\n",__func__, __LINE__, ##arg);}while(0)
 #else
@@ -60,6 +68,13 @@ typedef enum {
     BF_NETLINK_CMD_SCREEN_OFF = BF_NETLINK_CMD_BASE + 3,
     BF_NETLINK_CMD_SCREEN_ON = BF_NETLINK_CMD_BASE + 4
 } fingerprint_socket_cmd_t;
+
+typedef struct {
+    int32_t ic_chipid;
+    char ic_name[128];
+    char ca_ver[128];
+    char ta_ver[128];
+} __attribute__ ((aligned(4))) bl_ic_info_t;
 
 struct bf_device {
     struct platform_device *pdev;
@@ -184,5 +199,8 @@ int32_t bf_spi_init(struct bf_device *bf_dev);
 #ifdef CONFIG_MTK_CLK
 void bf_spi_clk_enable(struct bf_device *bf_dev, u8 onoff);
 #endif
-
+int bf_init_dts_and_irq(struct bf_device *bf_dev);
+void bf_spi_unregister(void);
+extern void mt_spi_enable_master_clk(struct spi_device *spidev);
+extern void mt_spi_disable_master_clk(struct spi_device *spidev);
 #endif //__BF_SPI_TEE_H_
