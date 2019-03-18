@@ -51,6 +51,7 @@
 		keyboard-backlight {
 			gpios = <&tlmm 16 0x00>;
 			default-state = "off";
+			retain-state-suspended;
 		};
 	};
 };
@@ -401,9 +402,15 @@
 			linux,input-type = <1>;
 			linux,code = <56>;
 			debounce-interval = <15>;
-		};		
-
-	/*	
+		};
+		
+	};
+	
+	gpio_keys {
+		compatible = "gpio-keys";
+		input-name = "gpio-keys";
+		status = "okay";
+		
 		oem_halla {
 			label = "hall_a";
 			gpios = <&tlmm 8 0x1>;
@@ -411,16 +418,6 @@
 			linux,code = <468>;
 			debounce-interval = <15>;
 		};
-
-	*/	
-	
-		
-	};
-	
-	gpio_keys {
-		compatible = "gpio-keys";
-		input-name = "gpio-keys";		
-		status = "okay";
 
 		oem_hallb {
 			label = "hall_b";
