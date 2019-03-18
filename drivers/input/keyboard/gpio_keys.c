@@ -644,7 +644,7 @@ static int gpio_keys_open(struct input_dev *input)
 	}
 
 	/* Report current state of buttons that are connected to GPIOs */
-	gpio_keys_report_state(ddata);
+	//gpio_keys_report_state(ddata);
 
 	return 0;
 }
@@ -1008,7 +1008,7 @@ static int gpio_keys_resume(struct device *dev)
 	if (error)
 		return error;
 
-	gpio_keys_report_state(ddata);
+	//gpio_keys_report_state(ddata);
 	return 0;
 }
 
