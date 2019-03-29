@@ -582,21 +582,21 @@
 };
 
 &mdss_dsi {
+	//hw-config = "dual_dsi";
 	hw-config = "single_dsi";
 };
 
 &mdss_dsi0 {
-	qcom,dsi-pref-prim-pan = <&dsi_rm69297_g1599fp101ff_amoled_fhd_cmd>;
+	qcom,dsi-pref-prim-pan = <&dsi_jdi_1080_2160_fhd_cmd>;
 	pinctrl-names = "mdss_default", "mdss_sleep";
 	pinctrl-0 = <&mdss_dsi_active &mdss_te_active>;
 	pinctrl-1 = <&mdss_dsi_suspend &mdss_te_suspend>;
 	qcom,platform-reset-gpio = <&tlmm 94 0>;
 	qcom,platform-te-gpio = <&tlmm 10 0>;
 };
-
 /*
 &mdss_dsi1 {
-	qcom,dsi-pref-prim-pan = <&dsi_dual_jdi_a407_cmd>;
+	qcom,dsi-pref-prim-pan = <&dsi_rm67162_e1194aa62a_amoled_fhd_cmd>;
 	pinctrl-names = "mdss_default", "mdss_sleep";
 	pinctrl-0 = <&mdss_dsi_active &mdss_te_active>;
 	pinctrl-1 = <&mdss_dsi_suspend &mdss_te_suspend>;
@@ -604,19 +604,18 @@
 	qcom,platform-te-gpio = <&tlmm 10 0>;
 };
 */
-
 &labibb {
 	status = "ok";
 	qcom,qpnp-labibb-mode = "lcd";
 };
-
+/*
 &dsi_dual_jdi_a407_cmd {
 	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
 	qcom,mdss-dsi-bl-min-level = <1>;
 	qcom,mdss-dsi-bl-max-level = <4095>;
 	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
 };
-
+*/
 &vendor {
 	qrd_batterydata: qcom,battery-data {
 		qcom,batt-id-range-pct = <15>;
