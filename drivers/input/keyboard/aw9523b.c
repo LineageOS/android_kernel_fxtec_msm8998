@@ -846,7 +846,7 @@ static int register_aw9523b_input_dev(struct device *pdev)
     if (!aw9523b_input_dev)
         return -ENOMEM;
 
-    aw9523b_input_dev->name = "aw9523b";
+    aw9523b_input_dev->name = "Fxtec Pro1";
     aw9523b_input_dev->id.bustype = BUS_HOST;
     aw9523b_input_dev->id.vendor = 0x0;
     aw9523b_input_dev->id.product = 0x0;
@@ -1712,7 +1712,7 @@ static int gpio_keys_open(struct input_dev *input)
 	}
 
 	/* Report current state of buttons that are connected to GPIOs */
-	gpio_keys_report_state(ddata);
+	//gpio_keys_report_state(ddata);
 
 	return 0;
 }
@@ -2072,7 +2072,7 @@ static int gpio_keys_resume(struct device *dev)
 	if (error)
 		return error;
 
-	gpio_keys_report_state(ddata);
+	//gpio_keys_report_state(ddata);
 	return 0;
 }
 
