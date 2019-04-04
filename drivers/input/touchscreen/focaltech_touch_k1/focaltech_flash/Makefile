@@ -1,0 +1,1 @@
+obj-$(CONFIG_TOUCHSCREEN_FTS_K1) += focaltech_upgrade_ft8719.o

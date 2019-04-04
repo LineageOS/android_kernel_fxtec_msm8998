@@ -1232,5 +1232,6 @@ config TOUCHSCREEN_GT1X
 source "drivers/input/touchscreen/st/Kconfig"
 
 source "drivers/input/touchscreen/focaltech_touch/Kconfig"
+source "drivers/input/touchscreen/focaltech_touch_k1/Kconfig"
 source "drivers/input/touchscreen/atmel_mxt/Kconfig"
 endif
