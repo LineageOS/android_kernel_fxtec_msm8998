@@ -241,14 +241,17 @@
 						&cam_sensor_rear2_suspend>;
 		gpios = <&tlmm 14 0>,
 				<&tlmm 23 0>,
-				<&pm8998_gpios 20 0>;
+				<&pm8998_gpios 20 0>,
+				<&tlmm 27 0>;
 		qcom,gpio-reset = <1>;
 		qcom,gpio-vdig = <2>;
-		qcom,gpio-req-tbl-num = <0 1 2>;
-		qcom,gpio-req-tbl-flags = <1 0 0>;
+		qcom,gpio-standby = <3>;
+		qcom,gpio-req-tbl-num = <0 1 2 3>;
+		qcom,gpio-req-tbl-flags = <1 0 0 0>;
 		qcom,gpio-req-tbl-label = "CAMIF_MCLK1",
 					  "CAM_RESET1",
-					  "CAM_VDIG";
+					  "CAM_VDIG",
+					  "CAM_STANDBY1";
 		qcom,sensor-position = <0>;
 		qcom,sensor-mode = <0>;
 		qcom,cci-master = <1>;
