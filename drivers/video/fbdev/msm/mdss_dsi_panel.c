@@ -212,9 +212,15 @@ void mdss_dsi_panel_cmds_send(struct mdss_dsi_ctrl_pdata *ctrl,
 }
 
 static char led_pwm1[2] = {0x51, 0x0};	/* DTYPE_DCS_WRITE1 */
+static char led_pwm2[3] = {0x51, 0x0,0x0};	/* DTYPE_GEN_LWRITE */
 static struct dsi_cmd_desc backlight_cmd = {
 	{DTYPE_DCS_WRITE1, 1, 0, 0, 1, sizeof(led_pwm1)},
 	led_pwm1
+};
+
+static struct dsi_cmd_desc backlight_lw_cmd = {
+	{DTYPE_DCS_LWRITE, 1, 0, 0, 1, sizeof(led_pwm2)},
+	led_pwm2
 };
 
 static void mdss_dsi_panel_bklt_dcs(struct mdss_dsi_ctrl_pdata *ctrl, int level)
@@ -229,11 +235,16 @@ static void mdss_dsi_panel_bklt_dcs(struct mdss_dsi_ctrl_pdata *ctrl, int level)
 	}
 
 	pr_debug("%s: level=%d\n", __func__, level);
-
-	led_pwm1[1] = (unsigned char)level;
-
+	
 	memset(&cmdreq, 0, sizeof(cmdreq));
-	cmdreq.cmds = &backlight_cmd;
+	
+	if(ctrl->bklt_cmd_mode == GEN_LONG_WRITE){
+		led_pwm2[1] = (unsigned char)level;
+		cmdreq.cmds = &backlight_lw_cmd;
+	}else{
+		led_pwm1[1] = (unsigned char)level;
+		cmdreq.cmds = &backlight_cmd;
+	}	
 	cmdreq.cmds_cnt = 1;
 	cmdreq.flags = CMD_REQ_COMMIT | CMD_CLK_CTRL | CMD_REQ_DCS;
 	cmdreq.rlen = 0;
@@ -2451,7 +2462,14 @@ int mdss_panel_parse_bl_settings(struct device_node *np,
 				ctrl_pdata->bklt_dcs_op_mode = DSI_HS_MODE;
 			else
 				ctrl_pdata->bklt_dcs_op_mode = DSI_LP_MODE;
-
+			
+			data = of_get_property(np,
+				"qcom,mdss-dsi-bl-dcs-command-mode", NULL);
+			if (data && !strcmp(data, "dsi_longwrite_mode"))
+				ctrl_pdata->bklt_cmd_mode = GEN_LONG_WRITE;
+			else
+				ctrl_pdata->bklt_cmd_mode = DCS_WRITE1;
+			
 			pr_debug("%s: Configured DCS_CMD bklt ctrl\n",
 								__func__);
 		}
