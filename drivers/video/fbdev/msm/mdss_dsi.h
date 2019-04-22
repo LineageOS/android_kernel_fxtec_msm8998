@@ -117,6 +117,12 @@ enum dsi_ctrl_op_mode {
 	DSI_HS_MODE,
 };
 
+enum dsi_bl_cmd_mode {
+	NONE,
+	DCS_WRITE1,
+	GEN_LONG_WRITE,
+};
+
 enum dsi_lane_map_type {
 	DSI_LANE_MAP_0123,
 	DSI_LANE_MAP_3012,
@@ -458,7 +464,8 @@ struct mdss_dsi_ctrl_pdata {
 	int avdd_en_gpio;
 	bool avdd_en_gpio_invert;
 	int lcd_mode_sel_gpio;
-	int bklt_ctrl;	/* backlight ctrl */
+	int bklt_ctrl;	/* backlight ctrl */	
+	int bklt_cmd_mode;	/* backlight write ctrl */	
 	enum dsi_ctrl_op_mode bklt_dcs_op_mode; /* backlight dcs ctrl mode */
 	bool pwm_pmi;
 	int pwm_period;

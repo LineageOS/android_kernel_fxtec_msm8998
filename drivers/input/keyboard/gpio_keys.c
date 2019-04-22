@@ -371,16 +371,17 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 	struct input_dev *input = bdata->input;
 	unsigned int type = button->type ?: EV_KEY;
 	int state;
+	
 
 	state = (__gpio_get_value(button->gpio) ? 1 : 0) ^ button->active_low;
 	if (state < 0) {
 		dev_err(input->dev.parent, "failed to get gpio state\n");
 		return;
 	}
-
+#if 0
 	if(button->gpio == HALL_COVER_PIN||
 		button->gpio == HALL_KEYBOARD_PIN){
-			
+/*			
 		if(state){
 			input_event(input, type, button->code, 1);
 			input_sync(input);
@@ -393,10 +394,21 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 			udelay(20);
 			input_event(input, type, button->code+1, 0);
 			input_sync(input);			
-		}	
+		}
+*/		
+		//input_report_switch(input, SW_LID, !!state);
+		input_event(input, EV_SW, button->code, !!state);
+		input_sync(input);
+		/*
+		input_event(input, EV_SW, SW_TABLET_MODE, !!state);
+		input_sync(input);
+		input_event(input, EV_SW, SW_ROTATE_LOCK, !!state);
+		input_sync(input);
+			
+		*/
 		return;
 	}
-	
+#endif	
 
 	if (type == EV_ABS) {
 		if (state)
@@ -596,7 +608,12 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
 			bdata->irq, error);
 		return error;
 	}
-
+	
+	if(button->type == EV_SW){
+		input_event(input, EV_SW, button->code, 1);
+		input_sync(input);
+	}
+	
 	return 0;
 }
 
@@ -838,6 +855,8 @@ static int gpio_keys_probe(struct platform_device *pdev)
 	input_set_capability(input, EV_KEY, KEY_FN_F4);
     input_set_capability(input, EV_KEY, KEY_FN_F5);
     input_set_capability(input, EV_KEY, KEY_FN_F6);
+    input_set_capability(input, EV_SW, SW_TABLET_MODE);
+    input_set_capability(input, EV_SW, SW_ROTATE_LOCK);
 
 	/* Enable auto repeat feature of Linux input subsystem */
 	if (pdata->rep)
