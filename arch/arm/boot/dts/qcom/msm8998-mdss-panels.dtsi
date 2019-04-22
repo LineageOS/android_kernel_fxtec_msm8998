@@ -36,6 +36,7 @@
 #include "dsi-panel-rm67299-g1601fp036601-amoled-fhd-video.dtsi"
 #include "dsi-panel-rm69297-g1599fp101ff-amoled-fhd-video.dtsi"
 #include "dsi-panel-jdi-ft8719-fhd-video.dtsi"
+#include "dsi-panel-boe-sw43404-amoled-fhd-video.dtsi"
 
 &soc {
 	dsi_panel_pwr_supply: dsi_panel_pwr_supply {
