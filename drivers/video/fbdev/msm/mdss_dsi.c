@@ -3297,6 +3297,9 @@ static struct device_node *mdss_dsi_config_panel(struct platform_device *pdev,
 {
 	struct mdss_dsi_ctrl_pdata *ctrl_pdata = platform_get_drvdata(pdev);
 	char panel_cfg[MDSS_MAX_PANEL_LEN];
+#if defined(OEM_CUSTOMER_K1)
+	char panel_cfg2[MDSS_MAX_PANEL_LEN] = "1:qcom,mdss_dsi_rm67162_e1194aa62a_amoled_fhd_video:0:none:cfg:single_dsi";
+#endif
 	struct device_node *dsi_pan_node = NULL;
 	int rc = 0;
 
@@ -3306,12 +3309,24 @@ static struct device_node *mdss_dsi_config_panel(struct platform_device *pdev,
 	}
 
 	/* DSI panels can be different between controllers */
+#if defined(OEM_CUSTOMER_K1)
+	if(ndx == 1){
+		strlcpy(panel_cfg, panel_cfg2,sizeof(panel_cfg2));
+		//printk("hyq enter %s\n",panel_cfg);
+	}else{
 	rc = mdss_dsi_get_panel_cfg(panel_cfg, ctrl_pdata);
 	if (!rc)
 		/* dsi panel cfg not present */
 		pr_warn("%s:%d:dsi specific cfg not present\n",
 			__func__, __LINE__);
-
+	}
+#else
+	rc = mdss_dsi_get_panel_cfg(panel_cfg, ctrl_pdata);
+	if (!rc)
+		/* dsi panel cfg not present */
+		pr_warn("%s:%d:dsi specific cfg not present\n",
+			__func__, __LINE__);
+#endif
 	/* find panel device node */
 	dsi_pan_node = mdss_dsi_find_panel_of_node(pdev, panel_cfg);
 	if (!dsi_pan_node) {

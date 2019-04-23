@@ -116,7 +116,7 @@
 };
 
 &i2c_6 { /* BLSP1 QUP6 (NFC) */
-	status = "okay";
+	status = "disabled";
 	nq@28 {
 		compatible = "qcom,nq-nci";
 		reg = <0x28>;
@@ -135,7 +135,7 @@
 		clocks = <&clock_gcc clk_ln_bb_clk3_pin>;
 		clock-names = "ref_clk";
 	};
-
+	/*
 	awinic@58 {
         compatible = "awinic,aw9523b";
         reg = <0x58>;
@@ -146,6 +146,7 @@
         awinic,caps-gpio = <&tlmm 26 0>;
         awinic,irq-gpio = <&tlmm 50 0x2008>;
 	};
+	*/
 };
 &i2c_7 {
 	status = "okay";
@@ -236,6 +237,36 @@
                             atmel,support-wakeup-gesture;
                    };
          };
+};
+&i2c_9 {
+	status = "okay";
+	//status = "disabled";
+	it7260@46 {
+			compatible = "ite,it7260_idea";
+			reg = <0x46>;
+			interrupt-parent = <&tlmm>;
+			pinctrl-names = "pmx_ts_active","pmx_ts_suspend";
+			pinctrl-0 = <&ts_int_active &ts_reset_active>;
+			pinctrl-1 = <&ts_int_suspend1 &ts_reset_suspend1>;
+			//pinctrl-2 = <&ts_release>
+			interrupts = <63 0x2008>;
+			avdd-supply = <&pm8998_l28>;
+			vdd-supply = <&pm8998_l6>;
+			ite,reset-gpio = <&tlmm 50 0x00>;
+			ite,irq-gpio = <&tlmm 63 0x2008>;
+			ite,wakeup;
+			ite,palm-detect-en;
+			ite,palm-detect-keycode = <142>;
+			ite,fw-name = "ite7260_fw.bin";
+			ite,cfg-name = "ite7260_cfg.bin";
+			ite,panel-coords = <0 0 390 390>;
+			ite,display-coords = <0 0 390 390>;
+			ite,num-fingers = <1>;
+			ite,reset-delay = <20>;
+			//ite,low-reset;
+			ite,avdd-lpm-cur = <3000>;
+		};
+
 };
 
 &spi_11 {//enable gpio is config in file kernel/msm-4.4/drivers/mmc/host/mmc_spi.c
@@ -550,6 +581,32 @@
 			bias-pull-down; /* pull down */
 		};
 	};
+	mdss_dsi_active2: mdss_dsi_active2 {
+		mux {
+			pins = "gpio31";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio31";
+			drive-strength = <8>; /* 8 mA */
+			bias-disable = <0>; /* no pull */
+			output-high;
+		};
+	};
+
+	mdss_dsi_suspend2: mdss_dsi_suspend2 {
+		mux {
+			pins = "gpio31";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio31";
+			drive-strength = <2>; /* 2 mA */
+			bias-pull-down; /* pull down */
+		};
+	};
 };
 
 &mdss_hdmi_tx {
@@ -582,8 +639,8 @@
 };
 
 &mdss_dsi {
-	//hw-config = "dual_dsi";
-	hw-config = "single_dsi";
+	hw-config = "dual_dsi";
+	//hw-config = "single_dsi";
 };
 
 &mdss_dsi0 {
@@ -593,17 +650,21 @@
 	pinctrl-1 = <&mdss_dsi_suspend &mdss_te_suspend>;
 	qcom,platform-reset-gpio = <&tlmm 94 0>;
 	qcom,platform-te-gpio = <&tlmm 10 0>;
+	qcom,display-id = "primary";
+	//qcom,bridge-index = <0>;
 };
-/*
+
 &mdss_dsi1 {
 	qcom,dsi-pref-prim-pan = <&dsi_rm67162_e1194aa62a_amoled_fhd_cmd>;
 	pinctrl-names = "mdss_default", "mdss_sleep";
-	pinctrl-0 = <&mdss_dsi_active &mdss_te_active>;
-	pinctrl-1 = <&mdss_dsi_suspend &mdss_te_suspend>;
-	qcom,platform-reset-gpio = <&tlmm 94 0>;
-	qcom,platform-te-gpio = <&tlmm 10 0>;
+	pinctrl-0 = <&mdss_dsi_active2 &mdss_te_active2>;
+	pinctrl-1 = <&mdss_dsi_suspend2 &mdss_te_suspend2>;
+	qcom,platform-reset-gpio = <&tlmm 31 0>;
+	qcom,platform-te-gpio = <&tlmm 11 0>;
+	qcom,display-id = "secondary";
+	//qcom,bridge-index = <1>;
 };
-*/
+
 &labibb {
 	status = "ok";
 	qcom,qpnp-labibb-mode = "lcd";

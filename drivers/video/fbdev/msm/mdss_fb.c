@@ -300,6 +300,7 @@ static void mdss_fb_set_bl_brightness(struct led_classdev *led_cdev,
 	if (!IS_CALIB_MODE_BL(mfd) && (!mfd->ext_bl_ctrl || !value ||
 							!mfd->bl_level)) {
 		mutex_lock(&mfd->bl_lock);
+		//printk("hyq %s: bl_lvl=%d !!!!!\n",led_cdev->name,bl_lvl);
 		mdss_fb_set_backlight(mfd, bl_lvl);
 		mutex_unlock(&mfd->bl_lock);
 	}
@@ -325,7 +326,15 @@ static struct led_classdev backlight_led = {
 	.brightness_get = mdss_fb_get_bl_brightness,
 	.max_brightness = MDSS_MAX_BL_BRIGHTNESS,
 };
-
+/*
+static struct led_classdev backlight_led2 = {
+	.name           = "lcd-backlight2",
+	.brightness     = MDSS_MAX_BL_BRIGHTNESS / 2,
+	.brightness_set = mdss_fb_set_bl_brightness,
+	.brightness_get = mdss_fb_get_bl_brightness,
+	.max_brightness = MDSS_MAX_BL_BRIGHTNESS,
+};
+*/
 static ssize_t mdss_fb_get_type(struct device *dev,
 				struct device_attribute *attr, char *buf)
 {
@@ -1350,12 +1359,24 @@ static int mdss_fb_probe(struct platform_device *pdev)
 	pm_runtime_enable(mfd->fbi->dev);
 
 	/* android supports only one lcd-backlight/lcd for now */
+#if defined(OEM_CUSTOMER_K1)
+	if ((!lcd_backlight_registered)&&(mfd->index == 1)) {
+		//if (!lcd_backlight_registered) {
+#else
 	if (!lcd_backlight_registered) {
+#endif
 		if (led_classdev_register(&pdev->dev, &backlight_led))
 			pr_err("led_classdev_register failed\n");
 		else
 			lcd_backlight_registered = 1;
 	}
+	/*else if(mfd->index == 1){
+		backlight_led2.brightness = mfd->panel_info->brightness_max;
+		backlight_led2.max_brightness = mfd->panel_info->brightness_max;
+		printk("hyq brightness2=%d \n ",backlight_led2.brightness);
+		if (led_classdev_register(&pdev->dev, &backlight_led2))
+			pr_err("led_classdev_register failed\n");
+	}*/
 
 	mdss_fb_init_panel_modes(mfd, pdata);
 
@@ -1456,6 +1477,7 @@ static int mdss_fb_remove(struct platform_device *pdev)
 	if (lcd_backlight_registered) {
 		lcd_backlight_registered = 0;
 		led_classdev_unregister(&backlight_led);
+		//led_classdev_unregister(&backlight_led2);
 	}
 
 	return 0;

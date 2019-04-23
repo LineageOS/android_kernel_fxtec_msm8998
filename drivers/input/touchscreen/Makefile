@@ -101,5 +101,6 @@ obj-$(CONFIG_TOUCHSCREEN_ST)		+= st/
 obj-$(CONFIG_TOUCHSCREEN_FTS)	+= focaltech_touch/
 obj-$(CONFIG_TOUCHSCREEN_FTS_K1)	+= focaltech_touch_k1/
 obj-y	+= atmel_mxt/
+obj-y	+= it7259_ts/
 obj-$(CONFIG_TOUCHSCREEN_GT1X)	+= gt1x/
 obj-$(CONFIG_TOUCHSCREEN_GOODIX_GT1X)	+= gt1x_v1_6_revised/
