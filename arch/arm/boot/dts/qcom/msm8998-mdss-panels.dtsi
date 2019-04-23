@@ -37,6 +37,7 @@
 #include "dsi-panel-rm69297-g1599fp101ff-amoled-fhd-video.dtsi"
 #include "dsi-panel-jdi-ft8719-fhd-video.dtsi"
 #include "dsi-panel-boe-sw43404-amoled-fhd-video.dtsi"
+#include "dsi-panel-rm67162-e1194aa62a-amoled-fhd-video.dtsi"
 
 &soc {
 	dsi_panel_pwr_supply: dsi_panel_pwr_supply {
@@ -69,6 +70,28 @@
 			qcom,supply-enable-load = <100000>;
 			qcom,supply-disable-load = <100>;
 			qcom,supply-post-on-sleep = <10>;
+		};
+	};
+	dsi_panel_pwr_hyq_supply: dsi_panel_pwr_hyq_supply {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		qcom,panel-supply-entry@0 {
+			reg = <0>;
+			qcom,supply-name = "hyq-vddio";
+			qcom,supply-min-voltage = <1808000>;
+			qcom,supply-max-voltage = <1808000>;
+			qcom,supply-enable-load = <32000>;
+			qcom,supply-disable-load = <80>;
+		};
+
+		qcom,panel-supply-entry@1 {
+			reg = <1>;
+			qcom,supply-name = "hyq-vci";
+			qcom,supply-min-voltage = <3008000>;
+			qcom,supply-max-voltage = <3008000>;
+			qcom,supply-enable-load = <100000>;
+			qcom,supply-disable-load = <100>;
 		};
 	};
 };

@@ -1235,4 +1235,5 @@ source "drivers/input/touchscreen/st/Kconfig"
 source "drivers/input/touchscreen/focaltech_touch/Kconfig"
 source "drivers/input/touchscreen/focaltech_touch_k1/Kconfig"
 source "drivers/input/touchscreen/atmel_mxt/Kconfig"
+source "drivers/input/touchscreen/it7259_ts/Kconfig"
 endif
