@@ -953,7 +953,7 @@ static int mxt_probe_bootloader(struct mxt_data *data)
 
 static void mxt_disable_irq(struct mxt_data *data)
 {
-	if (likely(data->irq_enabled)) {
+	if (likely(data->irq_enabled)&& !!data->irq) {
 		disable_irq(data->irq);
 		data->irq_enabled = false;
 	}
@@ -961,7 +961,7 @@ static void mxt_disable_irq(struct mxt_data *data)
 
 static void mxt_enable_irq(struct mxt_data *data)
 {
-	if (likely(!data->irq_enabled)) {
+	if (likely(!data->irq_enabled) && !!data->irq) {
 		enable_irq(data->irq);
 		data->irq_enabled = true;
 	}
@@ -6142,10 +6142,9 @@ static int mxt_probe(struct i2c_client *client,
 	data->state = INIT;
 
 	data->client = client;
-	data->pdata = pdata;
-	data->irq = client->irq;
+	data->pdata = pdata;	
 
-        CTP_DEBUG("step 2: Power on . ");
+    CTP_DEBUG("step 2: Power on . ");
 
     error = mxt_configure_regulator(data, true);
     if (error) {
@@ -6170,33 +6169,18 @@ static int mxt_probe(struct i2c_client *client,
 */
 
         CTP_DEBUG("step 3 : reset IC.");
-	if (gpio_is_valid(pdata->irq_gpio)) {
-		/* configure touchscreen irq gpio */
-		error = gpio_request(pdata->irq_gpio, "mxt_irq_gpio");
-		if (error) {
-			dev_err(&client->dev, "unable to request gpio [%d]\n",
-				pdata->irq_gpio);
-			goto err_free_regulator;
-		}
-		error = gpio_direction_input(pdata->irq_gpio);
-		if (error) {
-			dev_err(&client->dev, "unable to set_direction for gpio [%d]\n",
-				pdata->irq_gpio);
-			goto err_irq_gpio_req;
-		}
-	}
-
+		
 	if (gpio_is_valid(pdata->reset_gpio)) {
 		/* configure touchscreen reset out gpio */
 		error = gpio_request(pdata->reset_gpio, "mxt_reset_gpio");
 		if (error) {
 			dev_err(&client->dev, "unable to request reset gpio %d\n",
 				pdata->reset_gpio);
-			goto err_irq_gpio_req;
-		}
-		
+				pdata->reset_gpio = 0;
+			goto err_free_data;
+		}	
 		 
-               error = gpio_direction_output(pdata->reset_gpio, 0);
+        error = gpio_direction_output(pdata->reset_gpio, 0);
 		if (error) {
 			dev_err(&client->dev, "unable to set direction for gpio %d\n",
 				pdata->reset_gpio);
@@ -6211,7 +6195,33 @@ static int mxt_probe(struct i2c_client *client,
 				pdata->reset_gpio);
 			goto err_reset_gpio_req;
 		}
+		
 	}
+		
+	if (gpio_is_valid(pdata->irq_gpio)) {
+		/* configure touchscreen irq gpio */
+		error = gpio_request(pdata->irq_gpio, "mxt_irq_gpio");
+		if (error) {
+			dev_err(&client->dev, "unable to request irq gpio [%d]\n",
+				pdata->irq_gpio);
+				pdata->irq_gpio = 0;
+			goto err_reset_gpio_req;
+		}
+		error = gpio_direction_input(pdata->irq_gpio);
+		if (error) {
+			dev_err(&client->dev, "unable to set_direction for gpio [%d]\n",
+				pdata->irq_gpio);
+			goto err_irq_gpio_req;
+		}
+		
+		if(client->irq != gpio_to_irq(pdata->irq_gpio)){
+			dev_err(&client->dev, "please check gpio config: irq (%d)!= gpio to irq (%d)\n",client->irq,gpio_to_irq(pdata->irq_gpio));
+			goto err_irq_gpio_req;
+		}
+		
+	}
+
+	
 
         mdelay(100);
 	i2c_set_clientdata(data->client, data);
@@ -6229,7 +6239,7 @@ static int mxt_probe(struct i2c_client *client,
 	{
 		dev_err(&client->dev, "reset gpio = %d\n", (int)gpio_get_value(pdata->reset_gpio));
 		dev_err(&client->dev, "chg gpio = %d\n", (int)gpio_get_value(pdata->irq_gpio));
-		goto err_reset_gpio_req;
+		goto err_irq_gpio_req;
 	}
 
 
@@ -6240,7 +6250,7 @@ static int mxt_probe(struct i2c_client *client,
 
 
 	configure_sleep(data);
-
+	
 	error = request_threaded_irq(client->irq, NULL, mxt_interrupt,
 			pdata->irqflags, client->dev.driver->name, data);
 	if (error) {
@@ -6248,7 +6258,7 @@ static int mxt_probe(struct i2c_client *client,
 		goto err_free_input_device;
 	}
 	data->irq_enabled = true;
-
+	data->irq = client->irq;
 	device_init_wakeup(&client->dev, 1);
 
 	error = sysfs_create_group(&client->dev.kobj, &mxt_attr_group);
@@ -6322,12 +6332,15 @@ err_free_input_device:
 err_free_object:
 	kfree(data->msg_buf);
 	kfree(data->object_table);
-err_reset_gpio_req:
-	if (gpio_is_valid(pdata->reset_gpio))
-		gpio_free(pdata->reset_gpio);
+	
 err_irq_gpio_req:
 	if (gpio_is_valid(pdata->irq_gpio))
 		gpio_free(pdata->irq_gpio);
+	
+err_reset_gpio_req:
+	if (gpio_is_valid(pdata->reset_gpio))
+		gpio_free(pdata->reset_gpio);
+
 /*
 err_pinctrl_sleep:
 	if (data->ts_pinctrl) {
@@ -6335,8 +6348,6 @@ err_pinctrl_sleep:
 			dev_err(&client->dev, "Cannot get idle pinctrl state\n");
 	}
 */
-err_free_regulator:
-    mxt_configure_regulator(data, false);
 err_free_data:
     kfree(data);
 
@@ -6351,26 +6362,29 @@ static int mxt_remove(struct i2c_client *client)
 #ifdef TOUCH_WAKEUP_EVENT_RECORD
 	wakeup_event_record_exit();
 #endif
+	dev_info(&client->dev,"enter mxt_remove\n");
 	cancel_delayed_work(&data->calibration_delayed_work);
 	cancel_delayed_work(&data->resume_delayed_work);
 	sysfs_remove_bin_file(&client->dev.kobj, &data->mutual_ref_attr);
 	sysfs_remove_bin_file(&client->dev.kobj, &data->self_ref_attr);
 	sysfs_remove_bin_file(&client->dev.kobj, &data->mem_access_attr);
 	sysfs_remove_group(&client->dev.kobj, &mxt_attr_group);
-	free_irq(data->irq, data);
+	
+	if(!!data->irq && gpio_is_valid(pdata->irq_gpio)){
+		free_irq(data->irq, data);
+		gpio_free (pdata->irq_gpio);
+		mxt_configure_regulator(data, false);	
+	}
+	
 	input_unregister_device(data->input_dev);
 	kfree(data->msg_buf);
 	data->msg_buf = NULL;
 	kfree(data->object_table);
-	data->object_table = NULL;
-
-    mxt_configure_regulator(data, false);
-
-	if (gpio_is_valid(pdata->irq_gpio))
-		gpio_free (pdata->irq_gpio);
-
-	if (gpio_is_valid(pdata->reset_gpio))
+	data->object_table = NULL;   
+	
+	if (gpio_is_valid(pdata->reset_gpio) && !!pdata->reset_gpio){
 		gpio_free(pdata->reset_gpio);
+	}
 /*
 	if (data->ts_pinctrl) {
 		if (mxt_pinctrl_select(data, false) < 0)
@@ -6471,7 +6485,8 @@ static void __exit mxt_exit(void)
 	i2c_del_driver(&mxt_driver);
 }
 
-late_initcall(mxt_init);
+//late_initcall(mxt_init);
+module_init(mxt_init);
 module_exit(mxt_exit);
 
 /* Module information */
