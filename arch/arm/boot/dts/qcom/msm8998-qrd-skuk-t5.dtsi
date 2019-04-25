@@ -151,7 +151,6 @@
 	status = "okay";
 	
 	focaltech@38{
-		status = "disable";
 		compatible = "focaltech,fts";
 		reg = <0x38>;
 		interrupt-parent = <&tlmm>;
@@ -177,7 +176,6 @@
 		focaltech,key-x-coords = <200 600 800>;
 	};
 	atmel_mxt_ts_336u@4a {
-				   status = "disable";
                    compatible = "atmel,mxt-ts";
                    reg = <0x4a>;
                    interrupt-parent = <&tlmm>;
@@ -247,7 +245,7 @@
 			interrupts = <125 0x2008>;
 			vdd_ana-supply = <&pm8998_l28>;
 			//vcc_i2c-supply = <&pm8998_l6>;
-			goodix,rst-gpio = <&tlmm 66 0x00>;
+			goodix,rst-gpio = <&tlmm 89 0x00>;
 			goodix,irq-gpio = <&tlmm 125 0x2008>;
 			pinctrl-names = "pmx_ts_wakeup","pmx_ts_normal","pmx_ts_poweroff","pmx_ts_sleep";
 			pinctrl-0 = <&ts_int_pullup &ts_reset_pullup>;

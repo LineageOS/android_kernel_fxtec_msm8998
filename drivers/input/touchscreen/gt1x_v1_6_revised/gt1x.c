@@ -35,7 +35,7 @@ int gt1x_int_gpio;
 
 static int gt1x_register_powermanger(void);
 static int gt1x_unregister_powermanger(void);
-
+static int request_conunt = 0;
 /**
  * gt1x_i2c_write - i2c write.
  * @addr: register address.
@@ -404,8 +404,6 @@ int gt1x_power_switch(int on)
     if (!client || !vdd_ana)
         return -1;
 	
-	return ret;
-	
 	if (on) {
 		GTP_DEBUG("GTP power on.");
 		ret = regulator_enable(vdd_ana);
@@ -420,17 +418,10 @@ int gt1x_power_switch(int on)
 }
 #endif
 
+
+
 static void gt1x_release_resource(void)
 {
-    if (gpio_is_valid(GTP_INT_PORT)) {
-		gpio_direction_input(GTP_INT_PORT);
-		gpio_free(GTP_INT_PORT);
-	}
-
-    if (gpio_is_valid(GTP_RST_PORT)) {
-		gpio_direction_output(GTP_RST_PORT, 0);
-		gpio_free(GTP_RST_PORT);
-	}
 
 #ifdef CONFIG_OF      
 	if (vdd_ana) {
@@ -440,17 +431,31 @@ static void gt1x_release_resource(void)
 	}
 #endif
 
-	if (gt_pinctrl->ts_pinctrl)
+	if (gt_pinctrl->ts_pinctrl){
 		devm_pinctrl_put(gt_pinctrl->ts_pinctrl);
-	gt_pinctrl->ts_pinctrl = NULL;
-	gt_pinctrl->pinctrl_wakeup = NULL;
-	gt_pinctrl->pinctrl_normal = NULL;
-	gt_pinctrl->pinctrl_poweroff = NULL;
-	gt_pinctrl->pinctrl_sleep = NULL;
+		gt_pinctrl->ts_pinctrl = NULL;
+		gt_pinctrl->pinctrl_wakeup = NULL;
+		gt_pinctrl->pinctrl_normal = NULL;
+		gt_pinctrl->pinctrl_poweroff = NULL;
+		gt_pinctrl->pinctrl_sleep = NULL;
+	}
 
 	if (input_dev) {
 		input_unregister_device(input_dev);
 		input_dev = NULL;
+	}
+	
+	if(request_conunt){
+		
+		if (gpio_is_valid(GTP_INT_PORT)) {
+			gpio_direction_input(GTP_INT_PORT);
+			gpio_free(GTP_INT_PORT);
+		}
+
+		if (gpio_is_valid(GTP_RST_PORT)) {
+			gpio_direction_output(GTP_RST_PORT, 0);
+			gpio_free(GTP_RST_PORT);
+		}
 	}
 }
 
@@ -460,24 +465,24 @@ static void gt1x_release_resource(void)
 static s32 gt1x_request_gpio(void)
 {
 	s32 ret = 0;
-
+	
+	ret = gpio_request(GTP_RST_PORT, "GTP_RST_PORT");
+	if (ret < 0) {
+		GTP_ERROR("Failed to request GPIO:%d, ERRNO:%d", (s32) GTP_RST_PORT, ret);
+		return ret;
+	}
+	
 	ret = gpio_request(GTP_INT_PORT, "GTP_INT_IRQ");
 	if (ret < 0) {
 		GTP_ERROR("Failed to request GPIO:%d, ERRNO:%d", (s32) GTP_INT_PORT, ret);
-		ret = -ENODEV;
+		return ret;
 	} else {
 		GTP_GPIO_AS_INT(GTP_INT_PORT);
 		gt1x_i2c_client->irq = gpio_to_irq(GTP_INT_PORT);
 	}
 
-	ret = gpio_request(GTP_RST_PORT, "GTP_RST_PORT");
-	if (ret < 0) {
-		GTP_ERROR("Failed to request GPIO:%d, ERRNO:%d", (s32) GTP_RST_PORT, ret);
-		ret = -ENODEV;
-	}
 
-	GTP_GPIO_AS_INPUT(GTP_RST_PORT);
-	return ret;
+	return 0;
 }
 
 /**
@@ -487,24 +492,55 @@ static s32 gt1x_request_gpio(void)
  */
 static s32 gt1x_request_irq(void)
 {
-	s32 ret = -1;
+	s32 ret = 0;
 	const u8 irq_table[] = GTP_IRQ_TAB;
 
 	GTP_DEBUG("INT trigger type:%x", gt1x_int_type);
-	ret = devm_request_threaded_irq(&gt1x_i2c_client->dev,
-			gt1x_i2c_client->irq,
-			gt1x_ts_irq_handler,
-			gt1x_ts_work_thread,
-			irq_table[gt1x_int_type],
-			gt1x_i2c_client->name,
-			gt1x_i2c_client);
+	if(!request_conunt)
+		ret = devm_request_threaded_irq(&gt1x_i2c_client->dev,
+				gt1x_i2c_client->irq,
+				gt1x_ts_irq_handler,
+				gt1x_ts_work_thread,
+				irq_table[gt1x_int_type],
+				gt1x_i2c_client->name,
+				gt1x_i2c_client);
+	
 	if (ret) {
 		GTP_ERROR("Request IRQ failed!ERRNO:%d.", ret);
 		return -1;
 	} else {
+		request_conunt = 1;
 		gt1x_irq_disable();
 		return 0;
 	}
+}
+
+s32 reset_int_gpio(void){
+	
+	s32 ret = 0;
+	
+	if (gpio_is_valid(GTP_INT_PORT) && request_conunt) {
+		gpio_free(GTP_INT_PORT);
+		free_irq(gt1x_i2c_client->irq,gt1x_i2c_client);
+		request_conunt = 0;
+	}
+	
+	ret = gpio_request(GTP_INT_PORT, "GTP_INT_IRQ");
+	
+	if (ret < 0) {
+		GTP_ERROR("Failed to request int GPIO:%d, ERRNO:%d", (s32) GTP_INT_PORT, ret);
+		ret = ENODEV;
+	}
+
+	return ret;
+}
+
+s32 request_gtp_irq(void){
+	s32 ret = 0;
+	GTP_GPIO_AS_INT(GTP_INT_PORT);
+    gt1x_i2c_client->irq = gpio_to_irq(GTP_INT_PORT);
+	ret = gt1x_request_irq();
+	return ret;
 }
 
 /**
@@ -605,6 +641,13 @@ static int gt1x_ts_probe(struct i2c_client *client, const struct i2c_device_id *
 #error [GOODIX]only support devicetree platform
 #endif
 
+	/* gpio resource */
+	ret = gt1x_request_gpio();
+	if (ret < 0) {
+		GTP_ERROR("GTP request IO port failed.");
+		goto err_exit;
+	}
+
 	/* init pinctrl states */
 	ret  = goodix_pinctrl_init(client);
 	if (ret < 0) {
@@ -617,13 +660,6 @@ static int gt1x_ts_probe(struct i2c_client *client, const struct i2c_device_id *
 		ret = pinctrl_select_state(gt_pinctrl->ts_pinctrl, gt_pinctrl->pinctrl_poweroff);
 	if (ret < 0) {
 		GTP_ERROR("Set pin state as poweroff error: %d", ret);
-		goto exit_clean;
-	}
-
-	/* gpio resource */
-	ret = gt1x_request_gpio();
-	if (ret < 0) {
-		GTP_ERROR("GTP request IO port failed.");
 		goto exit_clean;
 	}
 
@@ -657,16 +693,18 @@ static int gt1x_ts_probe(struct i2c_client *client, const struct i2c_device_id *
 	ret = gt1x_request_input_dev();
 	if (ret < 0)
 		goto err_input;
+	
+#ifdef CONFIG_GTP_ESD_PROTECT
+	/* must before auto update */
+	gt1x_init_esd_protect();
+	gt1x_esd_switch(SWITCH_ON);
+#endif	
 
 	ret = gt1x_request_irq();
 	if (ret < 0)
 		goto err_irq;
 
-#ifdef CONFIG_GTP_ESD_PROTECT
-	/* must before auto update */
-	gt1x_init_esd_protect();
-	gt1x_esd_switch(SWITCH_ON);
-#endif
+
 
 #ifdef CONFIG_GTP_AUTO_UPDATE
 	do {
@@ -688,6 +726,7 @@ err_input:
 	gt1x_deinit();
 exit_clean:
 	gt1x_release_resource();
+err_exit:
 	GTP_ERROR("GTP probe failed:%d", ret);
 	return -ENODEV;
 }
