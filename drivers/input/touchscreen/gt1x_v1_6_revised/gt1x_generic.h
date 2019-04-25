@@ -78,12 +78,6 @@
 #define KEY_GES_REGULAR       KEY_F2	// regular gesture-key
 #define KEY_GES_CUSTOM        KEY_F3    //customize gesture-key
 
-#ifdef CONFIG_GTP_DEBUG_ON
-#define GTP_DEBUG_ON	1
-#else
-#define GTP_DEBUG_ON	0
-#endif
-
 #ifdef CONFIG_GTP_DEBUG_ARRAY_ON
 #define GTP_DEBUG_ARRAY_ON	1
 #else
@@ -201,12 +195,16 @@
 #define IS_NUM_OR_CHAR(x)    (((x) >= 'A' && (x) <= 'Z') || ((x) >= '0' && (x) <= '9'))
 
 //Log define
-#define GTP_INFO(fmt,arg...)           printk(KERN_INFO"<<GTP-INF>>[%s:%d] "fmt"\n", __func__, __LINE__, ##arg)
 #define GTP_ERROR(fmt,arg...)          printk(KERN_ERR"<<GTP-ERR>>[%s:%d] "fmt"\n", __func__, __LINE__, ##arg)
-#define GTP_DEBUG(fmt,arg...)          do{\
-                                         if(GTP_DEBUG_ON)\
-                                         printk(KERN_DEBUG"<<GTP-DBG>>[%s:%d]"fmt"\n",__func__, __LINE__, ##arg);\
-                                       }while(0)
+
+#ifdef CONFIG_GTP_DEBUG_ON
+#define GTP_INFO(fmt,arg...)           printk(KERN_ERR"<<GTP-INF>>[%s:%d] "fmt"\n", __func__, __LINE__, ##arg)
+#define GTP_DEBUG(fmt,arg...)          printk(KERN_ERR"<<GTP-DBG>>[%s:%d]"fmt"\n",__func__, __LINE__, ##arg)
+#else
+#define GTP_INFO(fmt,arg...)           printk(KERN_INFO"<<GTP-INF>>[%s:%d] "fmt"\n", __func__, __LINE__, ##arg)
+#define GTP_DEBUG(fmt,arg...)          printk(KERN_DEBUG"<<GTP-DBG>>[%s:%d]"fmt"\n",__func__, __LINE__, ##arg)
+#endif
+
 #define GTP_DEBUG_ARRAY(array, num)    do{\
                                          s32 i;\
                                          u8* a = array;\
@@ -331,6 +329,8 @@ extern struct goodix_pinctrl *gt_pinctrl;
 extern void gt1x_touch_down(s32 x, s32 y, s32 size, s32 id);
 extern void gt1x_touch_up(s32 id);
 extern int gt1x_power_switch(s32 state);
+extern s32 reset_int_gpio(void);
+extern s32 request_gtp_irq(void);
 extern void gt1x_irq_enable(void);
 extern void gt1x_irq_disable(void);
 extern int gt1x_debug_proc(u8 * buf, int count);

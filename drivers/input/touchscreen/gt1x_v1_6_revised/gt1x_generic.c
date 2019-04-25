@@ -777,15 +777,15 @@ s32 gt1x_init_panel(void)
 void gt1x_select_addr(void)
 {
 	int ret = 0;
-	/* Set pinctrl state as wakeup */
+	reset_int_gpio();
+	GTP_GPIO_OUTPUT(GTP_RST_PORT, 0);
+	usleep_range(1000, 1030);	
+	GTP_GPIO_OUTPUT(GTP_INT_PORT, gt1x_i2c_client->addr == 0x14);
+		/* Set pinctrl state as wakeup */
 	if ( gt_pinctrl->ts_pinctrl && gt_pinctrl->pinctrl_wakeup)
 		ret = pinctrl_select_state(gt_pinctrl->ts_pinctrl, gt_pinctrl->pinctrl_wakeup);
 	if (ret < 0) 
 		GTP_ERROR("Set pinctrl state as wakeup error: %d", ret);
-	
-	GTP_GPIO_OUTPUT(GTP_RST_PORT, 0);
-	usleep_range(1000, 1030);
-	GTP_GPIO_OUTPUT(GTP_INT_PORT, gt1x_i2c_client->addr == 0x14);
 	usleep_range(3000, 3030);
 	GTP_GPIO_OUTPUT(GTP_RST_PORT, 1);
 	usleep_range(2000, 2030);
@@ -917,16 +917,13 @@ s32 gt1x_reset_guitar(void)
     gt1x_select_addr();
     usleep_range(8000, 8000);     //must >= 6ms
 #endif
-
+	
     GTP_GPIO_OUTPUT(GTP_INT_PORT, 0);
     msleep(50);
-	/* Set pinctrl state as normal */
-	if ( gt_pinctrl->ts_pinctrl && gt_pinctrl->pinctrl_normal)
-		ret = pinctrl_select_state(gt_pinctrl->ts_pinctrl, gt_pinctrl->pinctrl_normal);
-	if (ret < 0) 
-		GTP_ERROR("Set pinctrl state as normal error: %d", ret);
-    GTP_GPIO_AS_INT(GTP_INT_PORT);
-
+	//reset_int_gpio();
+	usleep_range(2000, 2100);
+	request_gtp_irq();
+	
 	ret = gt1x_set_reset_status();
     return ret;
 }
@@ -1105,10 +1102,9 @@ static s32 gt1x_wakeup_sleep(void)
 	u8 retry = 0;
 	s32 ret = -1;
     int flag = 0;
-#endif
-    
-	GTP_DEBUG("Wake up begin.");
 	gt1x_irq_disable();
+#endif    
+	GTP_DEBUG("Wake up begin.");	
 
 #ifdef CONFIG_GTP_POWER_CTRL_SLEEP
 	/* power manager unit control the procedure */
