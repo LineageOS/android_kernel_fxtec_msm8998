@@ -316,6 +316,7 @@
         sck-gpio = <&tlmm 32 0x00>;
         sda-gpio = <&tlmm 33 0x00>;
         irq-gpio = <&tlmm 123 0x2008>;
+		status = "disable";
     };
 };
 
@@ -380,12 +381,12 @@
 	tlmm_gpio_key {
            gpio_key_active: gpio_key_active {
                  mux {                                                                                                              
-                     pins = "gpio21", "gpio114","gpio128","gpio129";
+                     pins = "gpio21", "gpio114","gpio128","gpio129","gpio32","gpio33";
                      function = "gpio";
                  };
  
                  config {
-                     pins = "gpio21", "gpio114","gpio128","gpio129";
+                     pins = "gpio21", "gpio114","gpio128","gpio129","gpio32","gpio33";
                      drive-strength = <2>;
                      bias-pull-up;
                  };
@@ -393,12 +394,12 @@
  
              gpio_key_suspend: gpio_key_suspend {
                  mux {
-                     pins = "gpio21", "gpio114","gpio128","gpio129";
+                     pins = "gpio21", "gpio114","gpio128","gpio129","gpio32","gpio33";
                      function = "gpio";
                  };
  
                  config {
-                     pins = "gpio21", "gpio114","gpio128","gpio129";
+                     pins = "gpio21", "gpio114","gpio128","gpio129","gpio32","gpio33";
                      drive-strength = <2>;
                      bias-pull-up;
                  };
@@ -449,6 +450,22 @@
 			debounce-interval = <15>;
 		};
 		
+		oeml{
+			label = "oeml";
+			gpios = <&tlmm 32 0x1>;
+			linux,input-type = <1>;
+			linux,code = <464>;
+			debounce-interval = <15>;
+		};
+		
+		oemr{
+			label = "oemr";
+			gpios = <&tlmm 33 0x1>;
+			linux,input-type = <1>;
+			linux,code = <464>;
+			debounce-interval = <15>;
+		};	
+		
 	};
 	
 	gpio_keys {
@@ -458,17 +475,18 @@
 		
 		oem_halla {
 			label = "hall_a";
-			gpios = <&tlmm 8 0x1>;
-			linux,input-type = <0x05>;
-			linux,code = <0x0b>;
-			debounce-interval = <15>;
+			gpios = <&tlmm 82 0x1>;
+			linux,input-type = <1>;
+			linux,code = <468>;
+			gpio-key,wakeup;
+			debounce-interval = <15>;			
 		};
-
+	
 		oem_hallb {
 			label = "hall_b";
 			gpios = <&tlmm 124 0x1>;
-			linux,input-type = <0x05>;
-			linux,code = <0x00>;
+			linux,input-type = <1>;
+			linux,code = <470>;
 			gpio-key,wakeup;
 			debounce-interval = <15>;
 		};
@@ -610,6 +628,7 @@
 			&mdss_hdmi_ddc_active &mdss_hdmi_cec_active>;
 	pinctrl-4 = <&mdss_hdmi_5v_suspend &mdss_hdmi_hpd_suspend
 			&mdss_hdmi_ddc_suspend &mdss_hdmi_cec_suspend>;
+	status = "disable";
 };
 
 &mdss_dp_ctrl {

@@ -671,7 +671,7 @@
 		clock-names = "iface_clk", "core_clk";
 		clocks = <&clock_gcc clk_gcc_blsp2_ahb_clk>,
 			 <&clock_gcc clk_gcc_blsp2_qup6_spi_apps_clk>;
-		status = "ok";
+		status = "disabled";
 	};
 
 

@@ -64,7 +64,7 @@ static struct syscore_ops gpio_keys_syscore_pm_ops;
 
 static void gpio_keys_syscore_resume(void);
 
-#define HALL_COVER_PIN (8)
+#define HALL_COVER_PIN (82)
 #define HALL_KEYBOARD_PIN (124)
 
 /*
@@ -378,10 +378,10 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 		dev_err(input->dev.parent, "failed to get gpio state\n");
 		return;
 	}
-#if 0
+#if 1
 	if(button->gpio == HALL_COVER_PIN||
 		button->gpio == HALL_KEYBOARD_PIN){
-/*			
+			
 		if(state){
 			input_event(input, type, button->code, 1);
 			input_sync(input);
@@ -395,18 +395,7 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 			input_event(input, type, button->code+1, 0);
 			input_sync(input);			
 		}
-*/		
-		//input_report_switch(input, SW_LID, !!state);
-		input_event(input, EV_SW, button->code, !!state);
-		input_sync(input);
-		/*
-		input_event(input, EV_SW, SW_TABLET_MODE, !!state);
-		input_sync(input);
-		input_event(input, EV_SW, SW_ROTATE_LOCK, !!state);
-		input_sync(input);
-			
-		*/
-		return;
+		return;	
 	}
 #endif	
 
