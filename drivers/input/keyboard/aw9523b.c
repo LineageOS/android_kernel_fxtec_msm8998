@@ -228,7 +228,7 @@ static const unsigned short  key_array[Y_NUM][X_NUM] = {
         {KEY_BACKSPACE, KEY_E,	  KEY_EQUAL,  KEY_SEMICOLON,KEY_K,        KEY_D,        KEY_X,         KEY_APOSTROPHE},
         {KEY_CAPSLOCK,  KEY_GRAVE,KEY_0,      KEY_O,        KEY_DOWN,     KEY_BACKSLASH,KEY_LEFTBRACE, KEY_K},
         {KEY_SPACE,     KEY_R, 	  KEY_8,      KEY_U,        KEY_N,        KEY_F,        KEY_C,         KEY_5},
-        {KEY_ESC,       KEY_TAB,  KEY_4,      KEY_2 ,       0XFF,         KEY_1, 0XFF,0XFF},
+        {KEY_BACK,       KEY_TAB,  KEY_4,      KEY_2 ,       0XFF,         KEY_1, 0XFF,0XFF},
 };
 
 #define P1_DEFAULT_VALUE  1  /*p1用来输出，这个值是p1的初始值*/
