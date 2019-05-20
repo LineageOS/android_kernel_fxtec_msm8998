@@ -30,6 +30,7 @@ struct goodix_pinctrl *gt_pinctrl;
 #ifdef CONFIG_OF
 static struct regulator *vdd_ana;
 int gt1x_rst_gpio;
+int gt1x_pwr_gpio;
 int gt1x_int_gpio;
 #endif
 
@@ -312,13 +313,14 @@ static int gt1x_parse_dt(struct device *dev)
     np = dev->of_node;
 	gt1x_int_gpio = of_get_named_gpio(np, "goodix,irq-gpio", 0);
 	gt1x_rst_gpio = of_get_named_gpio(np, "goodix,rst-gpio", 0);
+	gt1x_pwr_gpio = of_get_named_gpio(np, "goodix,pwr-gpio", 0);
 
-    if (!gpio_is_valid(gt1x_int_gpio) || !gpio_is_valid(gt1x_rst_gpio)) {
+    if (!gpio_is_valid(gt1x_int_gpio) || !gpio_is_valid(gt1x_rst_gpio) ||!gpio_is_valid(gt1x_pwr_gpio)) {
         GTP_ERROR("Invalid GPIO, irq-gpio:%d, rst-gpio:%d",
             gt1x_int_gpio, gt1x_rst_gpio);
         return -EINVAL;
     }
-
+	
     vdd_ana = regulator_get(dev, "vdd_ana");
     if (IS_ERR(vdd_ana)) {
 	    GTP_ERROR("regulator get of vdd_ana failed");
@@ -406,10 +408,13 @@ int gt1x_power_switch(int on)
 	
 	if (on) {
 		GTP_DEBUG("GTP power on.");
+		GTP_GPIO_OUTPUT(gt1x_pwr_gpio,1);
 		ret = regulator_enable(vdd_ana);
+		
 	} else {
 		GTP_DEBUG("GTP power off.");
 		ret = regulator_disable(vdd_ana);
+		GTP_GPIO_OUTPUT(gt1x_pwr_gpio,0);
 	}
 	
 	usleep_range(10000, 10100);
