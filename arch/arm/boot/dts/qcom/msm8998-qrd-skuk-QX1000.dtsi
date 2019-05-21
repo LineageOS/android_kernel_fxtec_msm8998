@@ -245,6 +245,7 @@
 			vdd_ana-supply = <&pm8998_l28>;
 			//vcc_i2c-supply = <&pm8998_l6>;
 			goodix,rst-gpio = <&tlmm 89 0x00>;
+			goodix,pwr-gpio = <&tlmm 81 0x00>;
 			goodix,irq-gpio = <&tlmm 125 0x2008>;
 			pinctrl-names = "pmx_ts_wakeup","pmx_ts_normal","pmx_ts_poweroff","pmx_ts_sleep";
 			pinctrl-0 = <&ts_int_pullup &ts_reset_pullup>;
@@ -672,6 +673,11 @@
 	qcom,qpnp-labibb-mode = "lcd";
 };
 
+&dsi_sw43404_boe_amoled_fhd_video{
+	 qcom,platform-enable-gpio = <&tlmm 62 0>;
+	//qcom,platform-avdd-en-gpio = <&tlmm 62 0>;
+};
+
 &dsi_dual_jdi_a407_cmd {
 	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
 	qcom,mdss-dsi-bl-min-level = <1>;
@@ -780,14 +786,14 @@
 			pmx_ts_reset_pullup {
 				ts_reset_pullup: ts_reset_pullup {
 					mux {
-						pins = "gpio89";
+						pins = "gpio89","gpio81";
 						function = "gpio";
 					};
 
 					config {
-						pins = "gpio89";
+						pins = "gpio89","gpio81";
 						drive-strength = <8>;
-						bias-pull-up;
+						output-high;
 					};
 				};
 			};
@@ -795,14 +801,14 @@
 			pmx_ts_reset_pulldown {
 				ts_reset_pulldown: ts_reset_pulldown {
 					mux {
-						pins = "gpio89";
+						pins = "gpio89","gpio81";
 						function = "gpio";
 					};
 
 					config {
-						pins = "gpio89";
+						pins = "gpio89","gpio81";
 						drive-strength = <2>;
-						bias-pull-down;
+						output-low;
 					};
 				};
 			};
