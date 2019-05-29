@@ -566,6 +566,15 @@ config LEDS_SEAD3
 	  This driver can also be built as a module. If so the module
 	  will be called leds-sead3.
 
+config LEDS_AW2023
+	tristate "LED support for the AW2023 board"
+	depends on LEDS_CLASS
+	depends on I2C
+	help
+	  Say Y here to include support for the LEDS_AW2023
+	  boards.
+
+
 comment "LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)"
 
 config LEDS_BLINKM

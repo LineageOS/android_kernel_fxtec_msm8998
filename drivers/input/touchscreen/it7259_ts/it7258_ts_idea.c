@@ -1202,9 +1202,9 @@ static irqreturn_t it7260_ts_threaded_handler(int irq, void *devid)
 	struct point_data pt_data;
 	struct it7260_ts_data *ts_data = devid;
 	struct input_dev *input_dev = ts_data->input_dev;
-	u8 dev_status, finger, touch_count = 0, finger_status;
+	u8 dev_status, finger_status, finger; //touch_count = 0, 
 	u8 pressure = FD_PRESSURE_NONE;
-	u16 x, y;
+	//u16 x, y;
 	bool palm_detected;
 	int ret;
 
@@ -1265,7 +1265,7 @@ static irqreturn_t it7260_ts_threaded_handler(int irq, void *devid)
 				ts_data->pdata->palm_detect_keycode, 0);
 		input_sync(input_dev);
 	}
-
+/*
 	for (finger = 0; finger < ts_data->pdata->num_of_fingers; finger++) {
 		finger_status = pt_data.flags & (0x01 << finger);
 
@@ -1293,7 +1293,22 @@ static irqreturn_t it7260_ts_threaded_handler(int irq, void *devid)
 	}
 
 	input_report_key(input_dev, BTN_TOUCH, touch_count > 0);
+*/
+for (finger = 0; finger < ts_data->pdata->num_of_fingers; finger++) {
+finger_status = pt_data.flags & (0x01 << finger);
+pressure = pt_data.fd[finger].pressure & FD_PRESSURE_BITS;
+	if (finger_status) {
+	if (pressure >= FD_PRESSURE_LIGHT) {
+	input_report_key(input_dev,131, 1);
 	input_sync(input_dev);
+	//printk("hyq down!!!!!!!\n");
+	}
+	}else{
+	input_report_key(input_dev,131, 0);
+	input_sync(input_dev);
+	//printk("hyq up!!!!!!!\n");
+	}
+}
 
 	return IRQ_HANDLED;
 }
@@ -1340,6 +1355,7 @@ static int it7260_ts_chip_identify(struct it7260_ts_data *ts_data)
 
 	ret = it7260_i2c_read_no_ready_check(ts_data, BUF_RESPONSE, chip_id,
 							sizeof(chip_id));
+
 	if (ret != IT_I2C_READ_RET) {
 		dev_err(&ts_data->client->dev,
 			"failed to read chip-id %d\n", ret);
@@ -1892,6 +1908,7 @@ static int it7260_ts_probe(struct i2c_client *client,
 	set_bit(EV_ABS, ts_data->input_dev->evbit);
 	set_bit(INPUT_PROP_DIRECT, ts_data->input_dev->propbit);
 	set_bit(BTN_TOUCH, ts_data->input_dev->keybit);
+	set_bit(KEY_UNDO, ts_data->input_dev->keybit);
 	input_set_abs_params(ts_data->input_dev, ABS_MT_POSITION_X,
 		ts_data->pdata->disp_minx, ts_data->pdata->disp_maxx, 0, 0);
 	input_set_abs_params(ts_data->input_dev, ABS_MT_POSITION_Y,
@@ -1960,7 +1977,7 @@ static int it7260_ts_probe(struct i2c_client *client,
 		ret = PTR_ERR(temp);
 		goto err_create_debugfs_file;
 	}
-printk("hyq it7258 probe ok!!!!!!!!!!!!!!!!!\n");
+//printk("hyq it7258 probe ok!!!!!!!!!!!!!!!!!\n");
 	return 0;
 
 err_create_debugfs_file:

@@ -88,7 +88,7 @@
 };
 
 &sdhc_2 {
-	vdd-supply = <&pm8998_l21>;
+	//vdd-supply = <&pm8998_l21>;
 	qcom,vdd-voltage-level = <2950000 2960000>;
 	qcom,vdd-current-level = <200 800000>;
 
@@ -156,7 +156,7 @@
 		interrupt-parent = <&tlmm>;
 		interrupts = <125 0x2008>;
 		focaltech,reset-gpio = <&tlmm 89 0x00>;
-		ysensor-supply = <&pm8998_l21>;
+		//ysensor-supply = <&pm8998_l21>;
 		//focaltech,power-gpio = <&tlmm 77 0x00>;
 		focaltech,irq-gpio = <&tlmm 125 0x2008>;
 		focaltech,max-touch-number = <5>;
@@ -241,6 +241,7 @@
 &i2c_9 {
 	status = "okay";
 	//status = "disabled";
+
 	it7260@46 {
 			compatible = "ite,it7260_idea";
 			reg = <0x46>;
@@ -266,6 +267,46 @@
 			//ite,low-reset;
 			ite,avdd-lpm-cur = <3000>;
 		};
+
+	aw2023@45 {
+		compatible = "awinic,aw2023_led";
+		reg = <0x45>;
+
+		aw2023,blue {
+			aw2023,name = "blue-k1";
+			aw2023,id = <0>;
+			aw2023,imax = <2>;
+			aw2023,led-current = <3>;
+			aw2023,max-brightness = <255>;
+			aw2023,rise-time-ms = <6>;
+			aw2023,hold-time-ms = <0>;
+			aw2023,fall-time-ms = <6>;
+			aw2023,off-time-ms = <4>;
+		};
+
+		aw2023,red {
+			aw2023,name = "red-k1";
+			aw2023,id = <1>;
+			aw2023,imax = <2>;
+			aw2023,led-current = <3>;
+			aw2023,max-brightness = <255>;
+			aw2023,rise-time-ms = <6>;
+			aw2023,hold-time-ms = <0>;
+			aw2023,fall-time-ms = <6>;
+			aw2023,off-time-ms = <4>;
+		};
+		aw2023,green {
+			aw2023,name = "green-k1";
+			aw2023,id = <2>;
+			aw2023,imax = <2>;
+			aw2023,led-current = <3>;
+			aw2023,max-brightness = <255>;
+			aw2023,rise-time-ms = <6>;
+			aw2023,hold-time-ms = <0>;
+			aw2023,fall-time-ms = <6>;
+			aw2023,off-time-ms = <4>;
+		};
+	};
 
 };
 
