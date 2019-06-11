@@ -508,6 +508,15 @@
 			gpio-key,wakeup;
 			debounce-interval = <15>;
 		};
+		
+		vol_down {
+			label = "volume_down";
+			gpios = <&pm8998_gpios 7 0x1>;
+			linux,input-type = <1>;
+			linux,code = <114>;
+			gpio-key,wakeup;
+			debounce-interval = <15>;
+		};
 		camera_f {
 			label = "camera_focus";
 			gpios = <&pm8998_gpios 8 0x1>;
@@ -516,7 +525,7 @@
 			gpio-key,wakeup;
 			debounce-interval = <15>;
 		};
-
+/*
 		camera {
 			label = "camera";
 			gpios = <&pm8998_gpios 7 0x1>;
@@ -525,7 +534,7 @@
 			gpio-key,wakeup;
 			debounce-interval = <15>;
 		};
-
+*/
 	};	
 
 	sound-tavil {
