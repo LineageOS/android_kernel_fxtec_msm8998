@@ -181,7 +181,7 @@ static int msm_actuator_bivcm_handle_i2c_ops(
 		reg_setting.size = 1;
 		switch (write_arr[i].reg_write_type) {
 		case MSM_ACTUATOR_WRITE_DAC:
-			#if defined(OEM_CUSTOMER_T5)
+			#if defined(OEM_CUSTOMER_T5) || (OEM_CUSTOMER_QX1000)
 					value = 1023 - ((next_lens_position <<
 					write_arr[i].data_shift) |
 					((hw_dword & write_arr[i].hw_mask) >>
