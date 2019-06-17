@@ -224,7 +224,7 @@ static const unsigned short  key_array[Y_NUM][X_NUM] = {
         {KEY_F1,        KEY_Y,	  KEY_ENTER,  KEY_UP,       KEY_7,        KEY_H,        KEY_B,         KEY_COMMA},
         {KEY_3,         KEY_W,	  KEY_9,      KEY_I,        KEY_M,        KEY_S,        KEY_Z,         KEY_J},
         {KEY_LEFT,      KEY_T,	  KEY_DELETE, KEY_RIGHT,    KEY_6,        KEY_G,        KEY_V,         KEY_DOT},
-        {KEY_F2,        KEY_Q,	  KEY_MINUS,  KEY_P,        KEY_HOMEPAGE, KEY_A,        KEY_RIGHTBRACE,KEY_L},
+        {KEY_SYM,        KEY_Q,	  KEY_MINUS,  KEY_P,        KEY_HOMEPAGE, KEY_A,        KEY_RIGHTBRACE,KEY_L},
         {KEY_BACKSPACE, KEY_E,	  KEY_EQUAL,  KEY_SEMICOLON,KEY_K,        KEY_D,        KEY_X,         KEY_APOSTROPHE},
         {KEY_CAPSLOCK,  KEY_GRAVE,KEY_0,      KEY_O,        KEY_DOWN,     KEY_BACKSLASH,KEY_LEFTBRACE, KEY_K},
         {KEY_SPACE,     KEY_R, 	  KEY_8,      KEY_U,        KEY_N,        KEY_F,        KEY_C,         KEY_5},
