@@ -61,7 +61,7 @@ config GTP_WARP_Y_ON
 
 config GTP_GESTURE_WAKEUP
 	bool "GTP_GESTURE_WAKEUP Feature"
-	default n
+	default y
 	help
 	Say Y here if you want to enable gesture feature.
 
@@ -161,7 +161,7 @@ config GTP_CHARGER_SWITCH
 
 config GTP_POWER_CTRL_SLEEP
 	bool "GTP_POWER_CTRL_SLEEP"
-	default y
+	default n
 	help
 	Say Y here if you want ot power off touch panel
 	after suspend.
