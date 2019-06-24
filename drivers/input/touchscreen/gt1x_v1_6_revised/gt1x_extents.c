@@ -54,8 +54,8 @@ typedef struct {
 #define CHKBITS_16          16
 #define CHKBITS_8           8
 
-int gesture_enabled = 0;    /* module switch */
-DOZE_T gesture_doze_status = DOZE_DISABLED; /* doze status */
+int gesture_enabled = 1;    /* module switch */
+DOZE_T gesture_doze_status = DOZE_DISABLED;//DOZE_DISABLED; /* doze status */
 
 static u8 gestures_flag[32]; /* gesture flag, every bit stands for a gesture */
 static st_gesture_data gesture_data; /* gesture data buffer */
@@ -162,7 +162,12 @@ s32 gesture_event_handler(struct input_dev * dev)
     if (DOZE_ENABLED != gesture_doze_status) {
         return -1;
     }
-    
+    GTP_DEBUG("hyq enter gesture_event_handler\n");
+	if (test == 1){
+		GTP_DEBUG("hyq 123..............\n");
+	test = 0;
+	return 0;
+	}
     /** package: -head 4B + track points + extra info- 
         * - head -
         *  doze_buf[0]: gesture type, 
@@ -236,14 +241,15 @@ s32 gesture_event_handler(struct input_dev * dev)
     }
     
     /* check gesture type (if available?) */
+	/*
 	if (ges_type == 0 || !QUERYBIT(gestures_flag, ges_type)) {
-		GTP_INFO("Gesture[0x%02X] has been disabled.", doze_buf[0]);
+		GTP_ERROR("Gesture[0x%02X] has been disabled.", doze_buf[0]);
         doze_buf[0] = 0x00;
 		gt1x_i2c_write(GTP_REG_WAKEUP_GESTURE, doze_buf, 1);
         gesture_enter_doze();
 		return 0;
 	}
-
+	*/
     /* get gesture point data */
     if (len > 0) { /* coor num * 4 + chksum 2*/
         u8 ges_data[len * 4 + 2];

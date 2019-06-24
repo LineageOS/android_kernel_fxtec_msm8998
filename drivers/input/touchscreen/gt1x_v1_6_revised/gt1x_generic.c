@@ -48,6 +48,7 @@ u8 gt1x_int_type = 0;
 u32 gt1x_abs_x_max = 0;
 u32 gt1x_abs_y_max = 0;
 int gt1x_halt = 0;
+int test = 0;
 
 static ssize_t gt1x_debug_read_proc(struct file *, char __user *, size_t,loff_t *);
 static ssize_t gt1x_debug_write_proc(struct file *, const char __user *, size_t, loff_t *);
@@ -1065,7 +1066,11 @@ static s32 gt1x_enter_sleep(void)
 			if (ret < 0) 
 				GTP_ERROR("Set pin state as sleep error: %d", ret);
 			/* high level wakeup */
+			reset_int_gpio();
+			usleep_range(1000, 1030);
 			GTP_GPIO_OUTPUT(GTP_INT_PORT, 0);
+			usleep_range(2000, 2100);
+			request_gtp_irq();
 		} else {
 			/* Set pinctrl state as wakeup */
 			if ( gt_pinctrl->ts_pinctrl && gt_pinctrl->pinctrl_wakeup)
@@ -1073,7 +1078,11 @@ static s32 gt1x_enter_sleep(void)
 			if (ret < 0) 
 				GTP_ERROR("Set pinctrl state as wakeup error: %d", ret);
 			/* low level wakeup */
+			reset_int_gpio();
+			usleep_range(1000, 1030);
 			GTP_GPIO_OUTPUT(GTP_INT_PORT, 1);
+			usleep_range(2000, 2100);
+			request_gtp_irq();
 		}
 		msleep(5);
 
@@ -2309,6 +2318,7 @@ static void gt1x_charger_work_func(struct work_struct *work)
 int gt1x_suspend(void)
 {
 	s32 ret = -1;
+	test = 1;
 #if defined(CONFIG_GTP_HOTKNOT) && !defined(CONFIG_HOTKNOT_BLOCK_RW)
 	u8 buf[1] = { 0 };
 #endif

@@ -392,6 +392,7 @@ extern u32 gt1x_abs_x_max;
 extern u32 gt1x_abs_y_max;
 extern u8 gt1x_init_failed;
 extern int gt1x_halt;
+extern int test;
 extern volatile int gt1x_rawdiff_mode;
 
 extern s32 gt1x_init(void);
