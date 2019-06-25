@@ -2318,7 +2318,6 @@ static void gt1x_charger_work_func(struct work_struct *work)
 int gt1x_suspend(void)
 {
 	s32 ret = -1;
-	test = 1;
 #if defined(CONFIG_GTP_HOTKNOT) && !defined(CONFIG_HOTKNOT_BLOCK_RW)
 	u8 buf[1] = { 0 };
 #endif

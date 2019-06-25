@@ -235,8 +235,10 @@ static irqreturn_t gt1x_ts_work_thread(int irq, void *data)
     
 #ifdef CONFIG_GTP_GESTURE_WAKEUP
 	ret = gesture_event_handler(input_dev);
-	if (ret >= 0)
+	if (ret >= 0){
+		GTP_ERROR("go to exit_work_func!!!!!!!!!!!!\n");
 		goto exit_work_func;
+	}
 #endif
 
 	if (gt1x_halt) {
@@ -470,7 +472,7 @@ static void gt1x_release_resource(void)
 static s32 gt1x_request_gpio(void)
 {
 	s32 ret = 0;
-	
+	GTP_DEBUG("hyq enter gt1x_request_gpio\n");
 	ret = gpio_request(GTP_RST_PORT, "GTP_RST_PORT");
 	if (ret < 0) {
 		GTP_ERROR("Failed to request GPIO:%d, ERRNO:%d", (s32) GTP_RST_PORT, ret);
@@ -523,11 +525,12 @@ static s32 gt1x_request_irq(void)
 s32 reset_int_gpio(void){
 	
 	s32 ret = 0;
-	
+	GTP_DEBUG("hyq enter reset_int_gpio\n");
 	if (gpio_is_valid(GTP_INT_PORT) && request_conunt) {
 		gpio_free(GTP_INT_PORT);
 		free_irq(gt1x_i2c_client->irq,gt1x_i2c_client);
 		request_conunt = 0;
+		GTP_ERROR("hyq enter reset_int_gpio22\n");
 	}
 	
 	ret = gpio_request(GTP_INT_PORT, "GTP_INT_IRQ");
