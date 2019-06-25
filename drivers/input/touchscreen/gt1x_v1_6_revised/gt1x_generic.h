@@ -67,9 +67,9 @@
 
 /* buffer used to store ges track points coor. */    
 //#define GES_BUFFER_ADDR       0xA2A0  // GT1151
-#define GES_BUFFER_ADDR       0x8A40    // GT9L
+//#define GES_BUFFER_ADDR       0x8A40    // GT9L
 //#define GES_BUFFER_ADDR       0x9734  // GT1152
-//#define GES_BUFFER_ADDR       0xBDA8  // GT9286
+#define GES_BUFFER_ADDR       0xBDA8  // GT9286
 //#define GES_BUFFER_ADDR       0xBC74  // GT6286
 #ifndef GES_BUFFER_ADDR
 #warning  [GOODIX] need define GES_BUFFER_ADDR .
