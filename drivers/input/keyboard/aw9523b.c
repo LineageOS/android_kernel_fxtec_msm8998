@@ -644,7 +644,7 @@ static void aw9523b_work_func(struct work_struct *work)
 #endif
     pdata = container_of(work, struct aw9523b_data, work);
 	AW9523_LOG("aw9523b_work_func  enter \n");
-
+    mdelay(20);
     aw9523b_disable_P0_interupt();
 
     //aw9523b_get_P0_value();
