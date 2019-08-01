@@ -145,7 +145,7 @@ config GTP_CREATE_WR_NODE
 
 config GTP_ESD_PROTECT
 	bool "GTP_ESD_PROTECT"
-	default y
+	default n
 	help
 	Say Y here if you want ESD protection.
 
