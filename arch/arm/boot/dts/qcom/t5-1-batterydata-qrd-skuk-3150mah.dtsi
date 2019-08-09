@@ -1,0 +1,71 @@
+
+qcom,qrd_msm8998_skuk_t5_1_3150mah {
+	qcom, = <24>;
+	/* #4067231_Idea_T3GX_3150mAh_averaged_MasterSlave_Jul22nd2019*/
+	qcom,max-voltage-uv = <4400000>;
+	qcom,fg-cc-cv-threshold-mv = <4390>;
+	qcom,nom-batt-capacity-mah = <3150>;
+	qcom,batt-id-kohm = <101>;
+	qcom,battery-beta = <3380>;
+	qcom,battery-type = "qrd_msm8998_skuk_t5_1_3150mah";
+	qcom,checksum = <0x20DD>;
+	qcom,gui-version = "PMI8998GUI - 2.0.0.58";
+	qcom,fg-profile-data = [
+		 E2 1F 34 05
+		 C5 0A 0C 06
+		 DB 1C E0 01
+		 F7 0D 51 0A
+		 C9 17 B2 23
+		 9F 44 1E 5A
+		 7C 00 00 00
+		 11 00 00 00
+		 00 00 22 A5
+		 F1 CD 89 BB
+		 37 00 08 00
+		 14 DB 36 E5
+		 6C 04 53 02
+		 C4 15 03 FC
+		 29 E5 03 2A
+		 37 06 09 20
+		 27 00 14 00
+		 3F 20 E7 04
+		 0D 0B B4 05
+		 BA 1C 0C 03
+		 F4 15 33 12
+		 85 18 AC 23
+		 21 44 D5 5A
+		 6E 00 00 00
+		 0E 00 00 00
+		 00 00 9D D5
+		 B0 A3 BA CB
+		 20 00 00 00
+		 06 EA 36 E5
+		 B6 05 31 01
+		 F5 F5 B8 03
+		 D4 EC 7C 22
+		 BC 33 CC FF
+		 07 10 00 00
+		 6A 0C 66 46
+		 20 00 40 00
+		 C4 01 0A FA
+		 FF 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+		 00 00 00 00
+	];
+};
