@@ -143,6 +143,8 @@ typedef enum {
     KEY_STATE_NULL 
 }TOUCHKEY_STATE;
 
+TOUCHKEY_STATE KeyBoardKey_State=KEY_STATE_NULL;
+
 /* 当有一部分P0\P1口用做扩展GPIO来控制子系统时,为了使软件控制方便,最好遵循一个原则:
  * 即当大部分P0口用做键盘扫描的输入时,那么其他的P0口作为输出来控制子系统;
  *   当大部分P1口用做键盘扫描的输出时,那么其他的P1口作为输入来控制子系统.
@@ -630,6 +632,9 @@ void aw9523b_irq_enable(struct aw9523b_data *data)
     spin_unlock_irqrestore(&data->irq_lock, irqflags);
 }
 
+  
+
+  
 static void aw9523b_work_func(struct work_struct *work)
 {
     struct aw9523b_data *pdata = NULL;
@@ -642,9 +647,10 @@ static void aw9523b_work_func(struct work_struct *work)
 	static u16 pre_func_keycode = 0xFF; 
     static int func_pressed = 0;
 #endif
+
     pdata = container_of(work, struct aw9523b_data, work);
 	AW9523_LOG("aw9523b_work_func  enter \n");
-    mdelay(20);
+
     aw9523b_disable_P0_interupt();
 
     //aw9523b_get_P0_value();
@@ -703,31 +709,41 @@ static void aw9523b_work_func(struct work_struct *work)
         AW9523_LOG("(func released) keycode = %x \n", pre_func_keycode);
     }
 normal_key:
-	if(!pressed) {
-        if(keycode == 0xFF)
-        {
-            goto func_exit;
-        }
-		if(keycode == KEY_CAPSLOCK){
-			if(capslock_led_enable == 0)
-				gpio_direction_output(pdata->gpio_caps_led, 1);
-			capslock_led_enable++;
-		}
-        pressed = 1;
-        input_report_key(aw9523b_input_dev, keycode, 1);
-        input_sync(aw9523b_input_dev);
-        pre_keycode = keycode;
-        AW9523_LOG("(press) keycode = %d \n", keycode);
-    } else {		
-		if(capslock_led_enable>=2){
-			gpio_direction_output(pdata->gpio_caps_led, 0);
-			capslock_led_enable = 0;
-		}
-        pressed = 0;
-        input_report_key(aw9523b_input_dev, pre_keycode, 0);
-        input_sync(aw9523b_input_dev);
-        AW9523_LOG("(released) keycode = %d \n", pre_keycode);
+	 if (KeyBoardKey_State==KEY_STATE_NULL||KeyBoardKey_State==KEY_STATE_RELEASED){
+	 //if(!pressed) {
+	      if(keycode == 0xFF)
+	      {
+	          goto func_exit;
+	      }
+				if(keycode == KEY_CAPSLOCK){
+					if(capslock_led_enable == 0)
+						gpio_direction_output(pdata->gpio_caps_led, 1);
+					capslock_led_enable++;
+				}
+	      pressed = 1;
+	      KeyBoardKey_State=KEY_STATE_PRESSED;
+	      input_report_key(aw9523b_input_dev, keycode, 1);
+	      input_sync(aw9523b_input_dev);
+	      pre_keycode = keycode;
+	      AW9523_LOG("(press) keycode = %d \n", keycode);
+    } 
+    //else 
+    else if (KeyBoardKey_State==KEY_STATE_PRESSED)
+    {		
+				if(capslock_led_enable>=2){
+					gpio_direction_output(pdata->gpio_caps_led, 0);
+					capslock_led_enable = 0;
+				}
+			  pressed = 0;
+			  if(keycode != pre_keycode)
+			  {	
+					  KeyBoardKey_State=KEY_STATE_RELEASED;
+					  input_report_key(aw9523b_input_dev, pre_keycode, 0);
+					  input_sync(aw9523b_input_dev);
+					  AW9523_LOG("(released) keycode = %d \n", pre_keycode);
+			  }
     }
+    
  func_exit:
     //aw9523b_enable_P0_interupt();
     //aw9523b_get_P0_value();
@@ -1110,7 +1126,6 @@ static int aw9523b_probe(struct i2c_client *client,
     aw9523b_get_P0_value();
 	aw9523b_get_P1_value();
 
-    
    // debug_printk("%s device_id = %d\n",__func__,devic_id);
     INIT_WORK(&pdata->work, aw9523b_work_func);
     pdata->irq_is_disabled = true;
@@ -1118,6 +1133,7 @@ static int aw9523b_probe(struct i2c_client *client,
             aw9523b_irq_handler,
             IRQ_TYPE_LEVEL_LOW,
             client->name, pdata);
+          
 	printk("request_threaded_irq %d\n",err);
     //schedule_delayed_work(&pdata->keypad_work, 0);
  	aw9523b_irq_enable(pdata);
@@ -1474,7 +1490,7 @@ static irqreturn_t gpio_keys_gpio_isr(int irq, void *dev_id)
 	struct gpio_button_data *bdata = dev_id;
 
 	BUG_ON(irq != bdata->irq);
-
+ 
 	if (bdata->button->wakeup)
 		pm_stay_awake(bdata->input->dev.parent);
 
