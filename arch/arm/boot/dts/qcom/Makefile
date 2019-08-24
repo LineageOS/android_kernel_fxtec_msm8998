@@ -154,25 +154,10 @@ dtb-$(CONFIG_MSM_GVM_QUIN) += vplatform-lfv-msm8996-telematics.dtb \
 
 ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
 dtbo-$(CONFIG_ARCH_MSM8998) += \
-	msm8998-cdp-overlay.dtbo \
-	msm8998-mtp-overlay.dtbo \
-	msm8998-v2-cdp-overlay.dtbo \
-	msm8998-v2-mtp-overlay.dtbo \
-	msm8998-v2.1-cdp-overlay.dtbo \
-	msm8998-v2.1-mtp-overlay.dtbo \
-	msm8998-qrd-overlay.dtbo \
-	msm8998-qrd-vr1-overlay.dtbo \
-	msm8998-qrd-skuk-overlay.dtbo
+  msm8998-v2-qrd-skuk-$(OEM_PRODUCT_NAME)-overlay.dtbo
 
-msm8998-cdp-overlay.dtbo-base :=  msm8998.dtb
-msm8998-mtp-overlay.dtbo-base :=  msm8998.dtb
-msm8998-v2-cdp-overlay.dtbo-base :=  msm8998-v2.dtb
-msm8998-v2-mtp-overlay.dtbo-base :=  msm8998-v2.dtb
-msm8998-v2.1-cdp-overlay.dtbo-base :=  msm8998-v2.1.dtb
-msm8998-v2.1-mtp-overlay.dtbo-base :=  msm8998-v2.1.dtb
-msm8998-qrd-overlay.dtbo-base :=  msm8998-qrd.dtb
-msm8998-qrd-vr1-overlay.dtbo-base :=  msm8998-qrd-vr1.dtb
-msm8998-qrd-skuk-overlay.dtbo-base :=  msm8998-qrd-skuk.dtb
+
+msm8998-v2-qrd-skuk-$(OEM_PRODUCT_NAME)-overlay.dtbo-base := msm8998-v2-qrd-skuk-$(OEM_PRODUCT_NAME).dtb
 else
 ifneq ($(OEM_PRODUCT_NAME),)
 dtb-$(CONFIG_ARCH_MSM8998) +=msm8998-v2-qrd-skuk-$(OEM_PRODUCT_NAME).dtb
