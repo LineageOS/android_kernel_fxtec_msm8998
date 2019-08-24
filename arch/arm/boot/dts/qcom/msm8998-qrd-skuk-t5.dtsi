@@ -962,3 +962,9 @@
 &wil6210 {
 	status = "ok";
 };
+
+/{
+	overlay_verify:overlay_verify {
+		oem,name="t5";
+	};
+};
