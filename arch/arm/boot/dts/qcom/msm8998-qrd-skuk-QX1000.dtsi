@@ -504,7 +504,7 @@
 			label = "camera_focus";
 			gpios = <&pm8998_gpios 8 0x1>;
 			linux,input-type = <1>;
-			linux,code = <0x210>;
+			linux,code = <528>;
 			gpio-key,wakeup;
 			debounce-interval = <15>;
 		};
