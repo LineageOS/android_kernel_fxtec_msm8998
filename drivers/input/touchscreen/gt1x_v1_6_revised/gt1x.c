@@ -107,12 +107,12 @@ void gt1x_irq_disable(void)
 	 * the bottom half thread, we need to wait until
 	 * bottom half thread finished.
 	 */
-	synchronize_irq(gt1x_i2c_client->irq);
+	//synchronize_irq(gt1x_i2c_client->irq);
 	spin_lock_irqsave(&irq_lock, irqflags);
 	if (!irq_disabled) {
 		irq_disabled = 1;
 		spin_unlock_irqrestore(&irq_lock, irqflags);
-		disable_irq(gt1x_i2c_client->irq);
+		disable_irq_nosync(gt1x_i2c_client->irq);
 	} else {
 		spin_unlock_irqrestore(&irq_lock, irqflags);
 	}
