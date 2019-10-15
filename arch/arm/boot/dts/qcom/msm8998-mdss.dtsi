@@ -266,16 +266,11 @@
 			};
 		};
 
-		mdss_fb1: qcom,mdss_fb_secondary {
+		mdss_fb1: qcom,mdss_fb_wfd {
 			cell-index = <1>;
 			compatible = "qcom,mdss-fb";
 		};
-/*
-		mdss_fb2: qcom,mdss_fb_wfd {
-			cell-index = <2>;
-			compatible = "qcom,mdss-fb";
-		};
-*/
+
 		mdss_fb2: qcom,mdss_fb_hdmi {
 			cell-index = <2>;
 			compatible = "qcom,mdss-fb";
@@ -426,13 +421,11 @@
 			reg-names = "dsi_ctrl", "dsi_phy", "mmss_misc_phys";
 
 			qcom,timing-db-mode;
-			hyq-vddio-supply = <&pm8998_l6>;
-			hyq-vci-supply = <&pm8998_l28>;
 			wqhd-vddio-supply = <&pm8998_l14>;
 			lab-supply = <&lab_regulator>;
 			ibb-supply = <&ibb_regulator>;
 			qcom,mdss-mdp = <&mdss_mdp>;
-			qcom,mdss-fb-map = <&mdss_fb1>;
+			qcom,mdss-fb-map = <&mdss_fb0>;
 
 			qcom,null-insertion-enabled;
 
@@ -458,14 +451,14 @@
 						00 00 00 80];
 		};
 	};
-/*
+
 	qcom,mdss_wb_panel {
 		compatible = "qcom,mdss_wb";
 		qcom,mdss_pan_res = <640 480>;
 		qcom,mdss_pan_bpp = <24>;
 		qcom,mdss-fb-map = <&mdss_fb1>;
 	};
-*/
+
 	msm_ext_disp: qcom,msm_ext_disp {
 		compatible = "qcom,msm-ext-disp";
 
