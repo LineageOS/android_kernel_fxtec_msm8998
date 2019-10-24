@@ -1129,9 +1129,9 @@ static int _gpiod_direction_output_raw(struct gpio_desc *desc, int value)
 {
 	struct gpio_chip	*chip;
 	int			status = -EINVAL;
-
+    //danny add for GTX Touchscreen INT pin
 	/* GPIOs used for IRQs shall not be set as output */
-	if (test_bit(FLAG_USED_AS_IRQ, &desc->flags)) {
+	if (test_bit(FLAG_USED_AS_IRQ, &desc->flags)&&(desc_to_gpio(desc)!=125)) {
 		gpiod_err(desc,
 			  "%s: tried to set a GPIO tied to an IRQ as output\n",
 			  __func__);
