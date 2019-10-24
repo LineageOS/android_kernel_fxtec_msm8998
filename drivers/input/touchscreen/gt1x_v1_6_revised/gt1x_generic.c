@@ -41,6 +41,10 @@ static const u16 gt1x_stylus_key_array[] = GTP_STYLUS_KEY_TAB;
 #define GOODIX_SYSFS_DIR      "goodix"
 static struct kobject *sysfs_rootdir = NULL; 
 
+
+//#define CONFIG_GTP_POWER_CTRL_SLEEP	1
+
+
 volatile int gt1x_rawdiff_mode = 0;
 static u8 gt1x_wakeup_level = 0;
 u8 gt1x_init_failed = 0;
@@ -48,7 +52,6 @@ u8 gt1x_int_type = 0;
 u32 gt1x_abs_x_max = 0;
 u32 gt1x_abs_y_max = 0;
 int gt1x_halt = 0;
-int test = 0;
 
 static ssize_t gt1x_debug_read_proc(struct file *, char __user *, size_t,loff_t *);
 static ssize_t gt1x_debug_write_proc(struct file *, const char __user *, size_t, loff_t *);
@@ -778,15 +781,15 @@ s32 gt1x_init_panel(void)
 void gt1x_select_addr(void)
 {
 	int ret = 0;
-	reset_int_gpio();
-	GTP_GPIO_OUTPUT(GTP_RST_PORT, 0);
-	usleep_range(1000, 1030);	
-	GTP_GPIO_OUTPUT(GTP_INT_PORT, gt1x_i2c_client->addr == 0x14);
-		/* Set pinctrl state as wakeup */
+	/* Set pinctrl state as wakeup */
 	if ( gt_pinctrl->ts_pinctrl && gt_pinctrl->pinctrl_wakeup)
 		ret = pinctrl_select_state(gt_pinctrl->ts_pinctrl, gt_pinctrl->pinctrl_wakeup);
 	if (ret < 0) 
 		GTP_ERROR("Set pinctrl state as wakeup error: %d", ret);
+	
+	GTP_GPIO_OUTPUT(GTP_RST_PORT, 0);
+	usleep_range(1000, 1030);
+	GTP_GPIO_OUTPUT(GTP_INT_PORT, gt1x_i2c_client->addr == 0x14);
 	usleep_range(3000, 3030);
 	GTP_GPIO_OUTPUT(GTP_RST_PORT, 1);
 	usleep_range(2000, 2030);
@@ -919,12 +922,21 @@ s32 gt1x_reset_guitar(void)
     usleep_range(8000, 8000);     //must >= 6ms
 #endif
 	
+	GTP_INFO("%s ===========sss======= \n",__func__);
     GTP_GPIO_OUTPUT(GTP_INT_PORT, 0);
     msleep(50);
-	//reset_int_gpio();
-	usleep_range(2000, 2100);
-	request_gtp_irq();
 	
+	GTP_INFO("%s ================== \n",__func__);
+	/* Set pinctrl state as normal */
+	if ( gt_pinctrl->ts_pinctrl && gt_pinctrl->pinctrl_normal)
+	{
+		ret = pinctrl_select_state(gt_pinctrl->ts_pinctrl, gt_pinctrl->pinctrl_normal);
+		GTP_INFO("%s ret=%d \n",__func__,ret);
+	}
+	if (ret < 0) 
+		GTP_ERROR("Set pinctrl state as normal error: %d", ret);
+    GTP_GPIO_AS_INT(GTP_INT_PORT);
+
 	ret = gt1x_set_reset_status();
     return ret;
 }
@@ -1054,10 +1066,13 @@ static s32 gt1x_enter_sleep(void)
 	if (ret < 0) 
 		GTP_ERROR("Set pin state as poweroff error: %d", ret);
 	gt1x_power_switch(SWITCH_OFF);
+	//ret = gt1x_vcc_i2c_switch(0);
+	
 	return 0;
 #else
 	{
 		s32 retry = 0;
+		gt1x_vcc_i2c_switch(1);
 		
 		if (gt1x_wakeup_level == 1) {
 			/* Set pin state as sleep */
@@ -1066,11 +1081,7 @@ static s32 gt1x_enter_sleep(void)
 			if (ret < 0) 
 				GTP_ERROR("Set pin state as sleep error: %d", ret);
 			/* high level wakeup */
-			reset_int_gpio();
-			usleep_range(1000, 1030);
 			GTP_GPIO_OUTPUT(GTP_INT_PORT, 0);
-			usleep_range(2000, 2100);
-			request_gtp_irq();
 		} else {
 			/* Set pinctrl state as wakeup */
 			if ( gt_pinctrl->ts_pinctrl && gt_pinctrl->pinctrl_wakeup)
@@ -1078,11 +1089,7 @@ static s32 gt1x_enter_sleep(void)
 			if (ret < 0) 
 				GTP_ERROR("Set pinctrl state as wakeup error: %d", ret);
 			/* low level wakeup */
-			reset_int_gpio();
-			usleep_range(1000, 1030);
 			GTP_GPIO_OUTPUT(GTP_INT_PORT, 1);
-			usleep_range(2000, 2100);
-			request_gtp_irq();
 		}
 		msleep(5);
 
@@ -1093,6 +1100,14 @@ static s32 gt1x_enter_sleep(void)
 			}
 			msleep(10);
 		}
+		ret = gt1x_vcc_i2c_switch(0);
+		if (ret < 0) 
+				GTP_ERROR("gt1x_vcc_i2c_switch: %d", ret);
+		
+		msleep(10);
+		ret = gt1x_power_switch(0);
+		if (ret < 0) 
+				GTP_ERROR("gt1x_power_switch: %d", ret);
 
 		GTP_ERROR("Enter sleep mode failed.");
 		return -1;
@@ -1111,9 +1126,10 @@ static s32 gt1x_wakeup_sleep(void)
 	u8 retry = 0;
 	s32 ret = -1;
     int flag = 0;
+#endif
+    
+	GTP_DEBUG("Wake up begin.");
 	gt1x_irq_disable();
-#endif    
-	GTP_DEBUG("Wake up begin.");	
 
 #ifdef CONFIG_GTP_POWER_CTRL_SLEEP
 	/* power manager unit control the procedure */
@@ -1254,7 +1270,7 @@ s32 gt1x_request_event_handler(void)
 		GTP_ERROR("I2C transfer error. errno:%d", ret);
 		return -1;
 	}
-	//GTP_DEBUG("Request state:0x%02x.", rqst_data);
+	GTP_DEBUG("Request state:0x%02x.", rqst_data);
 	switch (rqst_data & 0x0F) {
 	case GTP_RQST_CONFIG:
 		GTP_INFO("Request Config.");

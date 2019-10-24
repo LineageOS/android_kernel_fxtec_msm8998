@@ -162,8 +162,7 @@ s32 gesture_event_handler(struct input_dev * dev)
     if (DOZE_ENABLED != gesture_doze_status) {
         return -1;
     }
-    //GTP_DEBUG("hyq enter gesture_event_handler\n");
-
+    
     /** package: -head 4B + track points + extra info- 
         * - head -
         *  doze_buf[0]: gesture type, 
@@ -237,7 +236,6 @@ s32 gesture_event_handler(struct input_dev * dev)
     }
     
     /* check gesture type (if available?) */
-	
 	if (ges_type == 0 || !QUERYBIT(gestures_flag, ges_type)) {
 		GTP_ERROR("Gesture[0x%02X] has been disabled.", doze_buf[0]);
         doze_buf[0] = 0x00;
@@ -245,7 +243,7 @@ s32 gesture_event_handler(struct input_dev * dev)
         gesture_enter_doze();
 		return 0;
 	}
-	
+
     /* get gesture point data */
     if (len > 0) { /* coor num * 4 + chksum 2*/
         u8 ges_data[len * 4 + 2];
@@ -971,7 +969,7 @@ s32 gt1x_init_node(void)
 #ifdef CONFIG_GTP_GESTURE_WAKEUP
 	struct proc_dir_entry *proc_entry = NULL;
 	mutex_init(&gesture_data_mutex);
-	//memset(gestures_flag, 0, sizeof(gestures_flag));
+
 	memset(gestures_flag, 0xFF, sizeof(gestures_flag));
 	memset((u8 *) & gesture_data, 0, sizeof(st_gesture_data));
 
