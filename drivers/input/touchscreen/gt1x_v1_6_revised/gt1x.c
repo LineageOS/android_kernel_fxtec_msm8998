@@ -333,6 +333,13 @@ static int gt1x_parse_dt(struct device *dev)
 	    vdd_ana = NULL;
 	    return ret;
     }
+    //disable first 
+    ret = regulator_disable(vdd_ana);
+    if (ret) {
+        GTP_ERROR("Failed to disable VDD33 vdd_ana\n");
+    }
+    regulator_set_load(vdd_ana,0);
+
 	vcc_i2c = regulator_get(dev, "vcc_i2c");
     if (IS_ERR(vcc_i2c)) {
 	    GTP_ERROR("regulator get of vcc_i2c failed");
@@ -411,27 +418,29 @@ exit_put:
  */
 int gt1x_power_switch(int on)
 {
-
+	static int vdd_count = 0;
 	int ret;
 	struct i2c_client *client = gt1x_i2c_client;
 
     if (!client || !vdd_ana)
         return -1;
-	
+	GTP_ERROR("gt1x_power_switch on=%d vdd_count=%d",on,vdd_count);
 	if (on) {
 		GTP_DEBUG("GTP power on.");
 		GTP_GPIO_OUTPUT(gt1x_pwr_gpio,1);
 		ret = regulator_enable(vdd_ana);
+		vdd_count++;
 	} else {
 		GTP_DEBUG("GTP power off.");
 		ret = regulator_disable(vdd_ana);
 		GTP_GPIO_OUTPUT(gt1x_pwr_gpio,0);
 		regulator_set_load(vdd_ana,0);
+		vdd_count--;
 	}
-	
+
 	usleep_range(10000, 10100);
 	return ret;
-	
+
 }
 
 int gt1x_vcc_i2c_switch(int on)
