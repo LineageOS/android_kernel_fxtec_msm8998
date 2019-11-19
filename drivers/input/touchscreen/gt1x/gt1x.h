@@ -39,7 +39,7 @@
 #ifdef GTP_CONFIG_OF
 extern int gt1x_rst_gpio;
 extern int gt1x_int_gpio;
-#if defined(OEM_CUSTOMER_COMEIT)
+#if defined(CONFIG_DEVICE_IDEALTE_COMEIT)
 extern int gt1x_vdd_gpio;
 #define GTP_VDD_PORT gt1x_vdd_gpio
 #endif

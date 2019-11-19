@@ -1,0 +1,40 @@
+menu "Device selection"
+
+config DEVICE_IDEALTE
+	bool "IdeaLTE device"
+	depends on ARM64
+	help
+	  Support for IdeaLTE devices
+
+config DEVICE_IDEALTE_MSM8998
+	bool "IdeaLTE MSM8998 device"
+	depends on ARCH_MSM8998
+	select DEVICE_IDEALTE
+	help
+	  Support for MSM8998 IdeaLTE devices
+
+config DEVICE_IDEALTE_COMEIT
+	bool "IdeaLTE COMEIT device"
+	select DEVICE_IDEALTE_MSM8998
+
+config DEVICE_IDEALTE_CHUS_FQ8
+	bool "IdeaLTE CHUS FQ8 device"
+	select DEVICE_IDEALTE_MSM8998
+
+config DEVICE_IDEALTE_K1
+	bool "IdeaLTE K1 device"
+	select DEVICE_IDEALTE_MSM8998
+
+config DEVICE_IDEALTE_T3A
+	bool "IdeaLTE T3A device"
+	select DEVICE_IDEALTE_MSM8998
+
+config DEVICE_IDEALTE_T5
+	bool "IdeaLTE T5 device"
+	select DEVICE_IDEALTE_MSM8998
+
+config DEVICE_FXTEC_QX1000
+	bool "FxTec QX1000 device"
+	select DEVICE_IDEALTE_MSM8998
+
+endmenu
