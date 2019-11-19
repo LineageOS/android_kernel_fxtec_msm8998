@@ -1359,7 +1359,7 @@ static int mdss_fb_probe(struct platform_device *pdev)
 	pm_runtime_enable(mfd->fbi->dev);
 
 	/* android supports only one lcd-backlight/lcd for now */
-#if defined(OEM_CUSTOMER_K1)
+#if defined(CONFIG_DEVICE_IDEALTE_K1)
 	if ((!lcd_backlight_registered)&&(mfd->index == 1)) {
 		//if (!lcd_backlight_registered) {
 #else

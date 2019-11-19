@@ -37,7 +37,7 @@
 #include <linux/mmc/host.h>
 #include <linux/mmc/mmc.h>		/* for R1_SPI_* bit values */
 #include <linux/mmc/slot-gpio.h>
-#ifdef KERNEL_PATCH_FOR_XDJA
+#ifdef CONFIG_MMC_SSX1207
 #include <linux/gpio.h>
 #endif
 #include <linux/spi/spi.h>
@@ -1303,7 +1303,7 @@ mmc_spi_detect_irq(int irq, void *mmc)
 }
 
 
-#ifdef KERNEL_PATCH_FOR_XDJA
+#ifdef CONFIG_MMC_SSX1207
 #define XDJA_EN_GPIO 42
 static int mmc_control_reset_pin(void)
 {
@@ -1337,7 +1337,7 @@ static int mmc_spi_probe(struct spi_device *spi)
 	bool			has_ro = false;
     
     printk("mmc_spi_probe start\n");
-#ifdef KERNEL_PATCH_FOR_XDJA
+#ifdef CONFIG_MMC_SSX1207
 	mmc_control_reset_pin();
 #endif
 	/* We rely on full duplex transfers, mostly to reduce
@@ -1413,7 +1413,7 @@ static int mmc_spi_probe(struct spi_device *spi)
 		mmc->ocr_avail = host->pdata->ocr_mask;
 	if (!mmc->ocr_avail) {
 		dev_warn(&spi->dev, "ASSUMING 3.2-3.4 V slot power\n");
-#ifdef KERNEL_PATCH_FOR_XDJA
+#ifdef CONFIG_MMC_SSX1207
 		mmc->ocr_avail = MMC_VDD_32_33|MMC_VDD_33_34|MMC_VDD_165_195;
 #else
 		mmc->ocr_avail = MMC_VDD_32_33|MMC_VDD_33_34;
@@ -1431,7 +1431,7 @@ static int mmc_spi_probe(struct spi_device *spi)
 	host->data = kmalloc(sizeof(*host->data), GFP_KERNEL);
 	if (!host->data)
 		goto fail_nobuf1;
-#ifndef KERNEL_PATCH_FOR_XDJA
+#ifndef CONFIG_MMC_SSX1207
 	if (spi->master->dev.parent->dma_mask) {
 		struct device	*dev = spi->master->dev.parent;
 
@@ -1471,7 +1471,7 @@ static int mmc_spi_probe(struct spi_device *spi)
 		mmc->caps |= host->pdata->caps;
 		mmc->caps2 |= host->pdata->caps2;
 	}
-#ifdef KERNEL_PATCH_FOR_XDJA
+#ifdef CONFIG_MMC_SSX1207
 	mmc->caps &= ~MMC_CAP_NEEDS_POLL;//add for security card
 #endif
 
