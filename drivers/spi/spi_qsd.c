@@ -1214,7 +1214,7 @@ msm_spi_use_dma(struct msm_spi *dd, struct spi_transfer *tr, u8 bpw)
 	/* check constraints from platform data */
 	if ((dd->qup_ver == SPI_QUP_VERSION_BFAM) && !dd->pdata->use_bam)
 		return false;
-#ifdef KERNEL_PATCH_FOR_XDJA
+#ifdef CONFIG_MMC_SSX1207
 	//if (dd->cur_msg_len < 3*dd->input_block_size)
 	if (dd->cur_msg_len < dd->input_block_size)
 #else

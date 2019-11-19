@@ -515,6 +515,10 @@ config MMC_SPI
 
 	  If unsure, or if your system has no SPI master driver, say N.
 
+config MMC_SSX1207
+	bool "SSX1207 support"
+	depends on MMC_SPI
+
 config MMC_S3C
 	tristate "Samsung S3C SD/MMC Card Interface support"
 	depends on ARCH_S3C24XX

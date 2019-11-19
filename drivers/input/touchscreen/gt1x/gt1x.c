@@ -29,7 +29,7 @@ static struct workqueue_struct *gt1x_wq;
 static const char *gt1x_ts_name = "goodix-ts";
 static const char *input_dev_phys = "input/ts";
 #ifdef GTP_CONFIG_OF 
-#if defined(OEM_CUSTOMER_COMEIT)
+#if defined(CONFIG_DEVICE_IDEALTE_COMEIT)
 int gt1x_vdd_gpio;
 #endif
 int gt1x_rst_gpio;
@@ -311,7 +311,7 @@ static int gt1x_parse_dt(struct device *dev)
     np = dev->of_node;
 	gt1x_int_gpio = of_get_named_gpio(np, "goodix,irq-gpio", 0);
 	gt1x_rst_gpio = of_get_named_gpio(np, "goodix,rst-gpio", 0);
-#if defined(OEM_CUSTOMER_COMEIT)
+#if defined(CONFIG_DEVICE_IDEALTE_COMEIT)
 	gt1x_vdd_gpio = of_get_named_gpio(np, "goodix,vdd-gpio", 0);
 
     if (!gpio_is_valid(gt1x_int_gpio) || !gpio_is_valid(gt1x_rst_gpio)||!gpio_is_valid(gt1x_vdd_gpio)) {
@@ -366,7 +366,7 @@ int gt1x_power_switch(int on)
 	
 	if (on) {
 		GTP_DEBUG("GTP power on.");
-#if defined(OEM_CUSTOMER_COMEIT)
+#if defined(CONFIG_DEVICE_IDEALTE_COMEIT)
 		GTP_GPIO_OUTPUT(GTP_VDD_PORT,1);
 #else		
 		ret = regulator_enable(vdd_ana);
@@ -375,11 +375,11 @@ int gt1x_power_switch(int on)
 		ret = regulator_enable(vcc_i2c);
 	} else {
 		GTP_DEBUG("GTP power off.");
-#if !defined(OEM_CUSTOMER_COMEIT)
+#if !defined(CONFIG_DEVICE_IDEALTE_COMEIT)
 		ret = regulator_disable(vcc_i2c);
 #endif		
 		udelay(2);
-#if defined(OEM_CUSTOMER_COMEIT)
+#if defined(CONFIG_DEVICE_IDEALTE_COMEIT)
 		GTP_GPIO_OUTPUT(GTP_VDD_PORT,0);
 #else		
 		ret = regulator_disable(vdd_ana);
@@ -397,7 +397,7 @@ static void gt1x_remove_gpio_and_power(void)
 
     if (gpio_is_valid(gt1x_rst_gpio))
         gpio_free(gt1x_rst_gpio);
-#if defined(OEM_CUSTOMER_COMEIT)    
+#if defined(CONFIG_DEVICE_IDEALTE_COMEIT)
 	if (gpio_is_valid(gt1x_vdd_gpio))
     	gpio_free(gt1x_vdd_gpio);
 #endif
@@ -437,7 +437,7 @@ static s32 gt1x_request_io_port(void)
 		GTP_ERROR("Failed to request GPIO:%d, ERRNO:%d", (s32) GTP_RST_PORT, ret);
 		ret = -ENODEV;
 	}
-#if defined(OEM_CUSTOMER_COMEIT)
+#if defined(CONFIG_DEVICE_IDEALTE_COMEIT)
 	ret = gpio_request(GTP_VDD_PORT, "GTP_VDD_PORT");
 	if (ret < 0) {
 		GTP_ERROR("Failed to request GPIO:%d, ERRNO:%d", (s32) GTP_VDD_PORT, ret);
@@ -445,11 +445,11 @@ static s32 gt1x_request_io_port(void)
 	}
 #endif
 	GTP_GPIO_AS_INPUT(GTP_RST_PORT);
-#if defined(OEM_CUSTOMER_COMEIT)
+#if defined(CONFIG_DEVICE_IDEALTE_COMEIT)
     GTP_GPIO_AS_INPUT(GTP_VDD_PORT);
 #endif
 	if (ret < 0) {
-#if defined(OEM_CUSTOMER_COMEIT)
+#if defined(CONFIG_DEVICE_IDEALTE_COMEIT)
 		gpio_free(GTP_VDD_PORT);
 #endif
 		gpio_free(GTP_RST_PORT);

@@ -181,17 +181,17 @@ static int msm_actuator_bivcm_handle_i2c_ops(
 		reg_setting.size = 1;
 		switch (write_arr[i].reg_write_type) {
 		case MSM_ACTUATOR_WRITE_DAC:
-			#if defined(OEM_CUSTOMER_T5) || (OEM_CUSTOMER_QX1000)
+#if defined(CONFIG_DEVICE_IDEALTE_T5) || defined(CONFIG_DEVICE_FXTEC_QX1000)
 					value = 1023 - ((next_lens_position <<
 					write_arr[i].data_shift) |
 					((hw_dword & write_arr[i].hw_mask) >>
 					write_arr[i].hw_shift));
-			#else
+#else
 					value = (next_lens_position <<
 					write_arr[i].data_shift) |
 					((hw_dword & write_arr[i].hw_mask) >>
 					write_arr[i].hw_shift);
-			#endif
+#endif
 			pr_err("value = %d",value);
 			if (write_arr[i].reg_addr != 0xFFFF) {
 				i2c_byte1 = write_arr[i].reg_addr;

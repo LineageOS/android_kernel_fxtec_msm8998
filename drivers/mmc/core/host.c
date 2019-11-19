@@ -595,7 +595,7 @@ struct mmc_host *mmc_alloc_host(int extra, struct device *dev)
 {
 	int err;
 	struct mmc_host *host;
-#ifdef KERNEL_PATCH_FOR_XDJA
+#ifdef CONFIG_MMC_SSX1207
 	int start = 0,end = 0;
 #endif
 
@@ -608,7 +608,7 @@ struct mmc_host *mmc_alloc_host(int extra, struct device *dev)
 	host->rescan_disable = 1;
 	idr_preload(GFP_KERNEL);
 	spin_lock(&mmc_host_lock);
-#ifdef KERNEL_PATCH_FOR_XDJA
+#ifdef CONFIG_MMC_SSX1207
 	if (!strcmp("spi11.0",dev_name(dev))) //add for security card
 	{
 		start =3;

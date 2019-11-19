@@ -50,7 +50,7 @@
 #define GTP_CONFIG_OF
 #endif
 /***************************PART1:ON/OFF define*******************************/
-#if (1)//defined(OEM_CUSTOMER_COMEIT)
+#if (1)//defined(CONFIG_DEVICE_IDEALTE_COMEIT)
 #define GTP_INCELL_PANEL      0//0
 #define GTP_DRIVER_SEND_CFG   1	// send config to TP while initializing (for no config built in TP's flash)
 #define GTP_CUSTOM_CFG        1	// customize resolution & interrupt trigger mode
@@ -58,7 +58,7 @@
 #define GTP_WARP_X_ON         0//0
 #define GTP_WARP_Y_ON         0
 
-#elif defined(OEM_CUSTOMER_CHUS_FQ8)
+#elif defined(CONFIG_DEVICE_IDEALTE_CHUS_FQ8)
 #define GTP_INCELL_PANEL      0//0
 #define GTP_DRIVER_SEND_CFG   1	// send config to TP while initializing (for no config built in TP's flash)
 #define GTP_CUSTOM_CFG        0//0	// customize resolution & interrupt trigger mode
@@ -119,7 +119,7 @@
  *         a sample config, send this config should cause the chip cannot work normally
  */
 #define CFG_GROUP_LEN(p_cfg_grp)  (sizeof(p_cfg_grp) / sizeof(p_cfg_grp[0]))
-#if 1 //defined(OEM_CUSTOMER_CHUS_FQ8)
+#if 1 //defined(CONFIG_DEVICE_IDEALTE_CHUS_FQ8)
 #define GTP_CFG_GROUP0 {\
 	0x41,0x38,0x04,0x70,0x08,0x0A,0x0D,0x00,0x00,\
 	0x40,0x00,0x0B,0x50,0x3C,0x03,0x01,0x00,0x00,\
