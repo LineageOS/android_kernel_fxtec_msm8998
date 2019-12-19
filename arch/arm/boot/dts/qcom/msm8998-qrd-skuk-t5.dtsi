@@ -15,6 +15,15 @@
 #include "msm8998-audio.dtsi"
 
 / {
+	reserved-memory {
+		ramoops_mem: ramoops_mem@ac000000 {
+			reg = <0 0xAC000000 0 0x00200000>;
+			label = "ramoops_mem";
+		};
+	};
+};
+
+/ {
 	bluetooth: bt_wcn3990 {
 		compatible = "qca,wcn3990";
 		qca,bt-vdd-io-supply = <&pm8998_s3>;
@@ -320,6 +329,16 @@
         sda-gpio = <&tlmm 33 0x00>;
         irq-gpio = <&tlmm 123 0x2008>;
 		status = "disable";
+    };
+
+    ramoops {
+        compatible = "ramoops";
+        status = "ok";
+        memory-region = <&ramoops_mem>;
+        console-size = <0x0 0x00080000>;
+        pmsg-size    = <0x0 0x00040000>;
+        record-size  = <0x0 0x00008000>;
+        ftrace-size  = <0x0 0x00020000>;
     };
 };
 
