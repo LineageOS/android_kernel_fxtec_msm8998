@@ -507,8 +507,8 @@
 		oem_hallb {
 			label = "hall_b";
 			gpios = <&tlmm 124 0x1>;
-			linux,input-type = <1>;
-			linux,code = <470>;
+			linux,input-type = <5>;
+			linux,code = <0>;
 			gpio-key,wakeup;
 			debounce-interval = <15>;
 		};
