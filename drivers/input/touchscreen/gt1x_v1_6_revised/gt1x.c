@@ -432,10 +432,13 @@ int gt1x_power_switch(int on)
 		vdd_count++;
 	} else {
 		GTP_DEBUG("GTP power off.");
-		ret = regulator_disable(vdd_ana);
+		if (vdd_count>0)
+		{
+		    ret = regulator_disable(vdd_ana);
+		    vdd_count--;
+		}
 		GTP_GPIO_OUTPUT(gt1x_pwr_gpio,0);
 		regulator_set_load(vdd_ana,0);
-		vdd_count--;
 	}
 
 	usleep_range(10000, 10100);
