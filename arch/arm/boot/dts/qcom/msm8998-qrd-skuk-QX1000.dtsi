@@ -412,12 +412,12 @@
 
 &soc {
 
-	idea_keys{
+	idea_keys {
 		compatible = "idea-keys";
 		input-name = "idea-keys";
-		pinctrl-names = "idea_gpio_key_active","idea_gpio_key_suspend";
-        pinctrl-0 = <&gpio_key_active>;
-        pinctrl-1 = <&gpio_key_suspend>;
+		pinctrl-names = "idea_gpio_key_active", "idea_gpio_key_suspend";
+		pinctrl-0 = <&gpio_key_active>;
+		pinctrl-1 = <&gpio_key_suspend>;
 		
 		home {
 			label = "home";
@@ -451,17 +451,17 @@
 			debounce-interval = <15>;
 		};
 
-		oeml{
-			label = "oeml";
-			gpios = <&tlmm 32 0x1>;
+		fn_l {
+			label = "fn_l";
+			gpios = <&tlmm 33 0x1>;
 			linux,input-type = <1>;
 			linux,code = <464>;
 			debounce-interval = <15>;
 		};
 
-		oemr{
-			label = "oemr";
-			gpios = <&tlmm 33 0x1>;
+		fn_r {
+			label = "fn_r";
+			gpios = <&tlmm 32 0x1>;
 			linux,input-type = <1>;
 			linux,code = <464>;
 			debounce-interval = <15>;
