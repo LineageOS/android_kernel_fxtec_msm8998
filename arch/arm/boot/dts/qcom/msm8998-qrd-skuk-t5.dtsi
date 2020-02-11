@@ -146,19 +146,18 @@
 	};
 
 	awinic@58 {
-        compatible = "awinic,aw9523b";
-        reg = <0x58>;
-        interrupt-parent = <&tlmm>;
-        interrupts = <50 0x2008>;
-        interrupt-names = "kpd_irq";
-        awinic,reset-gpio = <&tlmm 51 0>;
-        awinic,caps-gpio = <&tlmm 26 0>;
-        awinic,irq-gpio = <&tlmm 50 0x2008>;
+		compatible = "awinic,aw9523b";
+		reg = <0x58>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <50 0x2008>;
+		interrupt-names = "kpd_irq";
+		awinic,reset-gpio = <&tlmm 51 0>;
+		awinic,caps-gpio = <&tlmm 26 0>;
+		awinic,irq-gpio = <&tlmm 50 0x2008>;
 	};
 };
 &i2c_7 {
 	status = "okay";
-	
 	focaltech@38{
 		compatible = "focaltech,fts";
 		reg = <0x38>;
@@ -427,19 +426,17 @@
                  };
              };
     };
-	
-
 };
 
 &soc {
 
-	idea_keys{
+	idea_keys {
 		compatible = "idea-keys";
 		input-name = "idea-keys";
-		pinctrl-names = "idea_gpio_key_active","idea_gpio_key_suspend";
-        pinctrl-0 = <&gpio_key_active>;
-        pinctrl-1 = <&gpio_key_suspend>;
-		
+		pinctrl-names = "idea_gpio_key_active", "idea_gpio_key_suspend";
+		pinctrl-0 = <&gpio_key_active>;
+		pinctrl-1 = <&gpio_key_suspend>;
+
 		home {
 			label = "home";
 			gpios = <&tlmm 21 0x1>;
@@ -447,7 +444,7 @@
 			linux,code = <172>;
 			debounce-interval = <15>;
 		};
-		
+
 		shift {
 			label = "shift";
 			gpios = <&tlmm 114 0x1>;
@@ -463,7 +460,7 @@
 			linux,code = <29>;
 			debounce-interval = <15>;
 		};
-		
+
 		alt {
 			label = "alt";
 			gpios = <&tlmm 129 0x1>;
@@ -471,25 +468,24 @@
 			linux,code = <56>;
 			debounce-interval = <15>;
 		};
-		
-		oeml{
-			label = "oeml";
+
+		fn_l {
+			label = "fn_l";
+			gpios = <&tlmm 33 0x1>;
+			linux,input-type = <1>;
+			linux,code = <464>;
+			debounce-interval = <15>;
+		};
+
+		fn_r {
+			label = "fn_r";
 			gpios = <&tlmm 32 0x1>;
 			linux,input-type = <1>;
 			linux,code = <464>;
 			debounce-interval = <15>;
 		};
-		
-		oemr{
-			label = "oemr";
-			gpios = <&tlmm 33 0x1>;
-			linux,input-type = <1>;
-			linux,code = <464>;
-			debounce-interval = <15>;
-		};	
-		
 	};
-	
+
 	gpio_keys {
 		compatible = "gpio-keys";
 		input-name = "gpio-keys";
@@ -501,9 +497,9 @@
 			linux,input-type = <1>;
 			linux,code = <468>;
 			gpio-key,wakeup;
-			debounce-interval = <15>;			
+			debounce-interval = <15>;
 		};
-	
+
 		oem_hallb {
 			label = "hall_b";
 			gpios = <&tlmm 124 0x1>;
@@ -512,7 +508,7 @@
 			gpio-key,wakeup;
 			debounce-interval = <15>;
 		};
-	
+
 		vol_up {
 			label = "volume_up";
 			gpios = <&pm8998_gpios 6 0x1>;
@@ -762,79 +758,79 @@
 		};
 	};
 	pmx_ts_int_pullup {
-				ts_int_pullup: ts_int_pullup {
-					mux {
-						pins = "gpio125";
-						function = "gpio";
-					};
-	
-					config {
-						pins = "gpio125";
-						drive-strength = <8>;
-						bias-pull-up;
-					};
-				};
+		ts_int_pullup: ts_int_pullup {
+			mux {
+				pins = "gpio125";
+				function = "gpio";
 			};
-	
-			pmx_ts_int_nopull {
-				ts_int_nopull: ts_int_nopull {
-					mux {
-						pins = "gpio125";
-						function = "gpio";
-					};
-	
-					config {
-						pins = "gpio125";
-						drive-strength = <2>;
-						bias-disable;
-					};
-				};
+
+			config {
+				pins = "gpio125";
+				drive-strength = <8>;
+				bias-pull-up;
 			};
-			
-			pmx_ts_int_pulldown {
-				ts_int_pulldown: ts_int_pulldown {
-					mux {
-						pins = "gpio125";
-						function = "gpio";
-					};
-	
-					config {
-						pins = "gpio125";
-						drive-strength = <2>;
-						bias-pull-down;
-					};
-				};
+		};
+	};
+
+	pmx_ts_int_nopull {
+		ts_int_nopull: ts_int_nopull {
+			mux {
+				pins = "gpio125";
+				function = "gpio";
 			};
-	
-			pmx_ts_reset_pullup {
-				ts_reset_pullup: ts_reset_pullup {
-					mux {
-						pins = "gpio89","gpio81";
-						function = "gpio";
-					};
-	
-					config {
-						pins = "gpio89","gpio81";
-						drive-strength = <8>;
-						output-high;
-					};
-				};
+
+			config {
+				pins = "gpio125";
+				drive-strength = <2>;
+				bias-disable;
 			};
-	
-			pmx_ts_reset_pulldown {
-				ts_reset_pulldown: ts_reset_pulldown {
-					mux {
-						pins = "gpio89","gpio81";
-						function = "gpio";
-					};
-	
-					config {
-						pins = "gpio89","gpio81";
-						drive-strength = <2>;
-						output-low;
-					};
-				};
+		};
+	};
+
+	pmx_ts_int_pulldown {
+		ts_int_pulldown: ts_int_pulldown {
+			mux {
+				pins = "gpio125";
+				function = "gpio";
 			};
+
+			config {
+				pins = "gpio125";
+				drive-strength = <2>;
+				bias-pull-down;
+			};
+		};
+	};
+
+	pmx_ts_reset_pullup {
+		ts_reset_pullup: ts_reset_pullup {
+			mux {
+				pins = "gpio89","gpio81";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio89","gpio81";
+				drive-strength = <8>;
+				output-high;
+			};
+		};
+	};
+
+	pmx_ts_reset_pulldown {
+		ts_reset_pulldown: ts_reset_pulldown {
+			mux {
+				pins = "gpio89","gpio81";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio89","gpio81";
+				drive-strength = <2>;
+				output-low;
+			};
+		};
+	};
 };
 
 &pm8998_vadc {
