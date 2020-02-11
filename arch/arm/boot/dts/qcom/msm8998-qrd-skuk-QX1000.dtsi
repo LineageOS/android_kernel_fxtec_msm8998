@@ -15,6 +15,15 @@
 #include "msm8998-audio.dtsi"
 
 / {
+	reserved-memory {
+		ramoops_mem: ramoops_mem@ac000000 {
+			reg = <0 0xAC000000 0 0x00200000>;
+			label = "ramoops_mem";
+		};
+	};
+};
+
+/ {
 	bluetooth: bt_wcn3990 {
 		compatible = "qca,wcn3990";
 		qca,bt-vdd-io-supply = <&pm8998_s3>;
@@ -137,14 +146,14 @@
 	};
 
 	awinic@58 {
-        compatible = "awinic,aw9523b";
-        reg = <0x58>;
-        interrupt-parent = <&tlmm>;
-        interrupts = <50 0x2008>;
-        interrupt-names = "kpd_irq";
-        awinic,reset-gpio = <&tlmm 51 0>;
-        awinic,caps-gpio = <&tlmm 26 0>;
-        awinic,irq-gpio = <&tlmm 50 0x2008>;
+		compatible = "awinic,aw9523b";
+		reg = <0x58>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <50 0x2008>;
+		interrupt-names = "kpd_irq";
+		awinic,reset-gpio = <&tlmm 51 0>;
+		awinic,caps-gpio = <&tlmm 26 0>;
+		awinic,irq-gpio = <&tlmm 50 0x2008>;
 	};
 };
 &i2c_7 {
@@ -320,6 +329,16 @@
         irq-gpio = <&tlmm 123 0x2008>;
 		status = "disable";
     };
+
+    ramoops {
+        compatible = "ramoops";
+        status = "ok";
+        memory-region = <&ramoops_mem>;
+        console-size = <0x0 0x00080000>;
+        pmsg-size    = <0x0 0x00040000>;
+        record-size  = <0x0 0x00008000>;
+        ftrace-size  = <0x0 0x00020000>;
+    };
 };
 
 &pm8998_gpios {
@@ -407,7 +426,6 @@
                  };
              };
     };
-
 };
 
 &soc {
@@ -418,7 +436,7 @@
 		pinctrl-names = "idea_gpio_key_active", "idea_gpio_key_suspend";
 		pinctrl-0 = <&gpio_key_active>;
 		pinctrl-1 = <&gpio_key_suspend>;
-		
+
 		home {
 			label = "home";
 			gpios = <&tlmm 21 0x1>;
@@ -466,7 +484,6 @@
 			linux,code = <464>;
 			debounce-interval = <15>;
 		};
-
 	};
 
 	gpio_keys {
@@ -741,79 +758,79 @@
 		};
 	};
 	pmx_ts_int_pullup {
-				ts_int_pullup: ts_int_pullup {
-					mux {
-						pins = "gpio125";
-						function = "gpio";
-					};
-
-					config {
-						pins = "gpio125";
-						drive-strength = <8>;
-						bias-pull-up;
-					};
-				};
+		ts_int_pullup: ts_int_pullup {
+			mux {
+				pins = "gpio125";
+				function = "gpio";
 			};
 
-			pmx_ts_int_nopull {
-				ts_int_nopull: ts_int_nopull {
-					mux {
-						pins = "gpio125";
-						function = "gpio";
-					};
+			config {
+				pins = "gpio125";
+				drive-strength = <8>;
+				bias-pull-up;
+			};
+		};
+	};
 
-					config {
-						pins = "gpio125";
-						drive-strength = <2>;
-						bias-disable;
-					};
-				};
+	pmx_ts_int_nopull {
+		ts_int_nopull: ts_int_nopull {
+			mux {
+				pins = "gpio125";
+				function = "gpio";
 			};
 
-			pmx_ts_int_pulldown {
-				ts_int_pulldown: ts_int_pulldown {
-					mux {
-						pins = "gpio125";
-						function = "gpio";
-					};
+			config {
+				pins = "gpio125";
+				drive-strength = <2>;
+				bias-disable;
+			};
+		};
+	};
 
-					config {
-						pins = "gpio125";
-						drive-strength = <2>;
-						bias-pull-down;
-					};
-				};
+	pmx_ts_int_pulldown {
+		ts_int_pulldown: ts_int_pulldown {
+			mux {
+				pins = "gpio125";
+				function = "gpio";
 			};
 
-			pmx_ts_reset_pullup {
-				ts_reset_pullup: ts_reset_pullup {
-					mux {
-						pins = "gpio89","gpio81";
-						function = "gpio";
-					};
+			config {
+				pins = "gpio125";
+				drive-strength = <2>;
+				bias-pull-down;
+			};
+		};
+	};
 
-					config {
-						pins = "gpio89","gpio81";
-						drive-strength = <8>;
-						output-high;
-					};
-				};
+	pmx_ts_reset_pullup {
+		ts_reset_pullup: ts_reset_pullup {
+			mux {
+				pins = "gpio89","gpio81";
+				function = "gpio";
 			};
 
-			pmx_ts_reset_pulldown {
-				ts_reset_pulldown: ts_reset_pulldown {
-					mux {
-						pins = "gpio89","gpio81";
-						function = "gpio";
-					};
-
-					config {
-						pins = "gpio89","gpio81";
-						drive-strength = <2>;
-						output-low;
-					};
-				};
+			config {
+				pins = "gpio89","gpio81";
+				drive-strength = <8>;
+				output-high;
 			};
+		};
+	};
+
+	pmx_ts_reset_pulldown {
+		ts_reset_pulldown: ts_reset_pulldown {
+			mux {
+				pins = "gpio89","gpio81";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio89","gpio81";
+				drive-strength = <2>;
+				output-low;
+			};
+		};
+	};
 };
 
 &pm8998_vadc {
