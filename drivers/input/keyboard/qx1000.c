@@ -113,6 +113,14 @@
 #include <linux/pinctrl/consumer.h>
 #include <linux/syscore_ops.h>
 
+/*
+ * These keys are reserved for stylus devices.  If they are included in
+ * the input device capabilities, Android will assume that the device
+ * is a stylus, not a keyboard.  So we must avoid them.
+ */
+#define KEY_STYLUS_MIN		BTN_DIGI
+#define KEY_STYLUS_MAX		BTN_WHEEL
+
 #define AWINIC_NAME		"aw9523b"
 
 /* aw9523b register addresses */
@@ -133,9 +141,11 @@
 
 #define AW9523_CHIP_ID		0x23
 
-#define P1_DEFAULT_VALUE	1
+#define AW9523_MIN_POLL_MS	10
+#define AW9523_MAX_POLL_MS	1000
+#define AW9523_DEFAULT_POLL_MS	40
+
 #define OUT_LOW_VALUE		0
-#define OUT_HIGH_VALUE		1
 
 #define KF_SHIFT		0x8000
 #define KF_CTRL			0x4000
@@ -181,7 +191,8 @@ struct aw9523b_data {
 	int			gpio_rst;
 	int			gpio_caps_led;
 	int			gpio_irq;
-	struct work_struct	work;
+	struct work_struct	irq_work;
+	struct delayed_work	poll_work;
 };
 
 static struct input_dev *aw9523b_input_dev;
@@ -189,6 +200,8 @@ static struct i2c_client *g_client = NULL;
 
 static u16 g_physical_modifiers = 0;
 static u16 g_logical_modifiers = 0;
+
+static unsigned int g_poll_interval;
 
 enum keylayout {
 	LAYOUT_NONE,
@@ -474,6 +487,11 @@ static void aw9523b_enable_P0_interrupt(void)
 	aw9523b_write_reg(REG_INT_PORT0, 0x00);
 }
 
+static void aw9523b_enable_P0_interrupt_mask(u8 mask)
+{
+	aw9523b_write_reg(REG_INT_PORT0, mask);
+}
+
 static void aw9523b_disable_P0_interrupt(void)
 {
 	aw9523b_write_reg(REG_INT_PORT0, 0xff);
@@ -504,16 +522,6 @@ static void aw9523b_set_P1_value(u8 data)
 	aw9523b_write_reg(REG_OUTPUT_PORT1, data);
 }
 
-static void default_p0_p1_settings(void)
-{
-	aw9523b_config_P0_input();
-	aw9523b_enable_P0_interrupt();    
-	aw9523b_config_P1_output();
-	aw9523b_disable_P1_interrupt();
-
-	aw9523b_set_P1_value(P1_DEFAULT_VALUE);
-}
-
 void aw9523b_irq_disable(struct aw9523b_data *data)
 {
 	unsigned long irqflags;
@@ -542,35 +550,13 @@ void aw9523b_irq_enable(struct aw9523b_data *data)
 static void aw9523b_read_keyboard_state(u8* keyboard_state)
 {
 	int port;
-	char keyboard_str[3 * AW9523_NR_PORTS + 1];
-	char* p = keyboard_str;
 
 	for (port = 0; port < AW9523_NR_PORTS; ++port) {
 		aw9523b_write_reg(REG_CONFIG_PORT1, ~(1 << port));
 		keyboard_state[port] = ~aw9523b_get_P0_value();
-		sprintf(p, "%02x ", keyboard_state[port]);
-		p += 3;
 	}
-	*(p-1) = '\0';
-	printk(KERN_INFO "%s: state=%s\n", __func__, keyboard_str);
 	aw9523b_write_reg(REG_CONFIG_PORT1, 0);
 }
-
-#if 0
-static bool aw9523b_check_keyboard_state(const u8* keyboard_state)
-{
-	u8 cur_state[AW9523_NR_PORTS];
-	int n;
-
-	aw9523b_read_keyboard_state(cur_state);
-	for (n = 0; n < AW9523_NR_PORTS; ++n) {
-		if (cur_state[n] != keyboard_state[n]) {
-			printk(KERN_INFO "%s: n=%d changed from 0x%02x to 0x%02x\n", __func__, n, cur_state[n], keyboard_state[n]);
-		}
-	}
-	return memcmp(keyboard_state, cur_state, sizeof(cur_state)) == 0;
-}
-#endif
 
 static bool aw9523b_key_state(const u8* keyboard_state, int key_nr)
 {
@@ -580,27 +566,38 @@ static bool aw9523b_key_state(const u8* keyboard_state, int key_nr)
 	return (keyboard_state[idx] >> bit) & 0x01;
 }
 
-static void aw9523b_work_func(struct work_struct *work)
+static void aw9523b_deghost(const u8* old_state, u8* new_state)
 {
-	struct aw9523b_data *pdata;
+	unsigned int row1, row2;
 
+	for (row1 = 0; row1 < AW9523_NR_PORTS; ++row1) {
+		if (hweight8(new_state[row1]) < 2)
+			continue;
+		for (row2 = 0; row2 < AW9523_NR_PORTS; ++row2) {
+			if (row2 == row1)
+				continue;
+			if (!(new_state[row2] & new_state[row1]))
+				continue;
+			new_state[row1] &= old_state[row1];
+			new_state[row2] &= old_state[row2];
+		}
+	}
+}
+
+static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
+{
 	static u8 capslock_led_enable = 0;
+	static u8 prev_keyboard_state[AW9523_NR_PORTS] = { 0 };
 	static u16 pressed[AW9523_NR_KEYS] = { 0 }; /* Elements are keycodes */
 
-	u8 keyboard_state[AW9523_NR_PORTS];
 	int key_nr;
 	u16 keycode;
 
-	pdata = container_of(work, struct aw9523b_data, work);
+	if (!memcmp(prev_keyboard_state, keyboard_state, sizeof(prev_keyboard_state)))
+	    return;
 
-	aw9523b_disable_P0_interrupt();
-	aw9523b_read_keyboard_state(keyboard_state);
-	aw9523b_config_P0_input();
-	aw9523b_enable_P0_interrupt();
-	aw9523b_config_P1_output();
-	aw9523b_disable_P1_interrupt();
-	aw9523b_set_P1_value(OUT_LOW_VALUE);
-	aw9523b_irq_enable(pdata);
+	aw9523b_deghost(prev_keyboard_state, keyboard_state);
+	memcpy(prev_keyboard_state, keyboard_state, sizeof(prev_keyboard_state));
 
 	for (key_nr = 0; key_nr < AW9523_NR_KEYS; ++key_nr) {
 		bool key_state = aw9523b_key_state(keyboard_state, key_nr);
@@ -687,13 +684,80 @@ static void aw9523b_work_func(struct work_struct *work)
 	}
 }
 
+static void aw9523b_irq_work(struct work_struct *work)
+{
+	struct aw9523b_data *pdata = container_of(work, struct aw9523b_data, irq_work);
+	u8 keyboard_state[AW9523_NR_PORTS];
+	int idx;
+	u8 p0_mask;
+
+	aw9523b_disable_P0_interrupt();
+	aw9523b_read_keyboard_state(keyboard_state);
+	aw9523b_check_keys(pdata, keyboard_state);
+	p0_mask = 0x00;
+	for (idx = 0; idx < AW9523_NR_PORTS; ++idx) {
+		if (keyboard_state[idx]) {
+			p0_mask = 0xff; /* |= (1 << idx); */
+		}
+	}
+	aw9523b_config_P0_input();
+	aw9523b_enable_P0_interrupt_mask(p0_mask);
+	if (p0_mask != 0x00) {
+		printk(KERN_INFO "%s: enter polling mode: p0_mask=%02x\n", __func__, p0_mask);
+		schedule_delayed_work(&pdata->poll_work, msecs_to_jiffies(g_poll_interval));
+	}
+	aw9523b_config_P1_output();
+	aw9523b_disable_P1_interrupt();
+	aw9523b_set_P1_value(OUT_LOW_VALUE);
+	aw9523b_irq_enable(pdata);
+}
+
+static void aw9523b_poll_work(struct work_struct *work)
+{
+	struct delayed_work *dwork = container_of(work, struct delayed_work, work);
+	struct aw9523b_data *pdata = container_of(dwork, struct aw9523b_data, poll_work);
+	u8 keyboard_state[AW9523_NR_PORTS];
+	int idx;
+	u8 p0_mask;
+	unsigned int poll_delay = g_poll_interval;
+
+	aw9523b_read_keyboard_state(keyboard_state);
+	aw9523b_check_keys(pdata, keyboard_state);
+	p0_mask = 0x00;
+	for (idx = 0; idx < AW9523_NR_PORTS; ++idx) {
+		if (keyboard_state[idx]) {
+			p0_mask = 0xff; /* |= (1 << idx); */
+		}
+	}
+	aw9523b_enable_P0_interrupt_mask(p0_mask);
+	if (p0_mask == 0x00) {
+		u8 val = ~aw9523b_get_P0_value();
+		if (val) {
+			/*
+			 * A key was pressed between reading the keyboard
+			 * state and enabling interrupts.  Reschedule ourself
+			 * immediately and disable interrupts.
+			 */
+			poll_delay = 0;
+			p0_mask = 0xff;
+			aw9523b_enable_P0_interrupt_mask(p0_mask);
+		}
+	}
+	if (p0_mask != 0x00) {
+		schedule_delayed_work(&pdata->poll_work, msecs_to_jiffies(poll_delay));
+	}
+	else {
+		printk(KERN_INFO "%s: enter irq mode\n", __func__);
+	}
+}
+
 static irqreturn_t aw9523b_irq_handler(int irq, void *dev_id)
 {
 	struct aw9523b_data *pdata = dev_id;
 
 	printk(KERN_INFO "%s: enter\n", __func__);
 	aw9523b_irq_disable(pdata);
-	schedule_work(&pdata->work);
+	schedule_work(&pdata->irq_work);
 
 	return IRQ_HANDLED;
 }
@@ -858,6 +922,34 @@ static ssize_t aw9523b_store_keymap(struct device *dev,
 	return count;
 }
 
+static ssize_t aw9523b_show_poll_interval(struct device *dev,
+		struct device_attribute *attr,
+		char *buf)
+{
+	char *ptr = buf;
+	char *end = buf + PAGE_SIZE;
+
+	ptr += snprintf(ptr, (end - ptr), "%u\n", g_poll_interval);
+
+	return (ptr - buf);
+}
+
+static ssize_t aw9523b_store_poll_interval(struct device *dev,
+		struct device_attribute *attr,
+		const char *buf, size_t count)
+{
+	unsigned int val;
+
+	if (kstrtouint(buf, 0, &val) != 0)
+		return -EINVAL;
+	if (val < AW9523_MIN_POLL_MS || val > AW9523_MAX_POLL_MS)
+		return -EINVAL;
+
+	g_poll_interval = val;
+
+	return count;
+}
+
 static DEVICE_ATTR(layout, (S_IRUGO | S_IWUSR | S_IWGRP),
 	aw9523b_show_layout,
 	aw9523b_store_layout);
@@ -866,6 +958,10 @@ static DEVICE_ATTR(keymap, (S_IRUGO | S_IWUSR | S_IWGRP),
 	aw9523b_show_keymap,
 	aw9523b_store_keymap);
 
+static DEVICE_ATTR(poll_interval, (S_IRUGO | S_IWUSR | S_IWGRP),
+	aw9523b_show_poll_interval,
+	aw9523b_store_poll_interval);
+
 static struct attribute *aw9523b_attrs[] = {
 #ifdef DEBUG
 	&dev_attr_regs.attr,
@@ -873,6 +969,7 @@ static struct attribute *aw9523b_attrs[] = {
 #endif
 	&dev_attr_layout.attr,
 	&dev_attr_keymap.attr,
+	&dev_attr_poll_interval.attr,
 	NULL
 };
 
@@ -882,7 +979,7 @@ static const struct attribute_group aw9523b_attr_group = {
 
 static int register_aw9523b_input_dev(struct device *pdev)
 {
-	int key_nr;
+	int key;
 
 	aw9523b_input_dev = input_allocate_device();
 	if (!aw9523b_input_dev)
@@ -896,15 +993,11 @@ static int register_aw9523b_input_dev(struct device *pdev)
 
 	__set_bit(EV_KEY, aw9523b_input_dev->evbit);
 
-	for (key_nr = 0; key_nr < AW9523_NR_KEYS; ++key_nr) {
-		unsigned short key = key_array[key_nr];
-		unsigned short fnkey = KEY_VALUE(key_fn_array[key_nr]);
-		if (key != KEY_RESERVED) {
-			input_set_capability(aw9523b_input_dev, EV_KEY, key);
-			if (fnkey != key) {
-				input_set_capability(aw9523b_input_dev, EV_KEY, fnkey);
-			}
-		}
+	/* We can potentially generate all keys due to remapping */
+	for (key = 1; key < 0xff; ++key) {
+		if (key >= KEY_STYLUS_MIN && key < KEY_STYLUS_MAX)
+			continue;
+		input_set_capability(aw9523b_input_dev, EV_KEY, key);
 	}
 
 	aw9523b_input_dev->dev.parent = pdev;
@@ -973,7 +1066,6 @@ static int aw9523b_parse_dt(struct device *dev,
 			return -ENODEV;
 		}
 		err = gpio_direction_input(pdata->gpio_irq);
-		//err = gpio_direction_output(pdata->gpio_rst,0);
 		if (err) {
 			dev_err(&pdata->client->dev,
 				"set_direction for pdata->gpio_irq failed\n");
@@ -1034,6 +1126,8 @@ static int aw9523b_probe(struct i2c_client *client,
 	memcpy(key_array, qwerty_keys, sizeof(key_array));
 	memcpy(key_fn_array, qwerty_fn_keys, sizeof(key_fn_array));
 
+	g_poll_interval = AW9523_DEFAULT_POLL_MS;
+
 	err = aw9523b_power_init(pdata);
 	if (err) {
 		dev_err(&client->dev, "Failed to get aw9523b regulators\n");
@@ -1073,11 +1167,17 @@ static int aw9523b_probe(struct i2c_client *client,
 		dev_err(&client->dev, "aw9523b failed to register sysfs\n");
 	}
 
-	default_p0_p1_settings();
+	/* Configure the chip */
+	aw9523b_config_P0_input();
+	aw9523b_enable_P0_interrupt();
+	aw9523b_config_P1_output();
+	aw9523b_disable_P1_interrupt();
+	aw9523b_set_P1_value(OUT_LOW_VALUE);
 	aw9523b_get_P0_value();
 	aw9523b_get_P1_value();
 
-	INIT_WORK(&pdata->work, aw9523b_work_func);
+	INIT_WORK(&pdata->irq_work, aw9523b_irq_work);
+	INIT_DELAYED_WORK(&pdata->poll_work, aw9523b_poll_work);
 	pdata->irq_is_disabled = true;
 	err = request_irq(client->irq,
 			  aw9523b_irq_handler,
@@ -1111,6 +1211,8 @@ static int aw9523b_remove(struct i2c_client *client)
 {
 	struct aw9523b_data *data = i2c_get_clientdata(client);
     
+	cancel_delayed_work_sync(&data->poll_work);
+
 	aw9523b_power_deinit(data);
 	i2c_set_clientdata(client, NULL);
 
@@ -1125,8 +1227,8 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 	struct input_dev *input = bdata->input;
 	int state;
 	u16 mask = 0;
-	u16 keycode = KEY_RESERVED;
-	bool report = false;
+	u16 keycode = button->code;
+	bool report = true;
 
 	state = (__gpio_get_value(button->gpio) ? 1 : 0) ^ button->active_low;
  printk(KERN_INFO "aw9523b: gpio_keys_gpio_report_event: desc=%s code=%u state=%d\n",
@@ -1147,38 +1249,37 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 	if (button->code == KEY_LEFTALT || button->code == KEY_RIGHTALT) {
 		mask = KF_ALT;
 		keycode = KEY_LEFTALT;
-		report = true;
 	}
 	if (button->code == KEY_LEFTCTRL || button->code == KEY_RIGHTCTRL) {
 		mask = KF_CTRL;
 		keycode = KEY_LEFTCTRL;
-		report = true;
 	}
 	if (button->code == KEY_LEFTSHIFT || button->code == KEY_RIGHTSHIFT) {
 		mask = KF_SHIFT;
 		keycode = KEY_LEFTSHIFT;
-		report = true;
-	}
-	if (keycode == KEY_RESERVED) {
-		dev_err(input->dev.parent, "unhandled code %u\n", button->code);
-		return;
 	}
 
-	if (state) {
-		g_physical_modifiers |= mask;
-		if (report && !(g_logical_modifiers & mask)) {
-			input_report_key(input, keycode, 1);
-			input_sync(input);
-			g_logical_modifiers |= mask;
+	if (mask) {
+		if (state) {
+			g_physical_modifiers |= mask;
+			if (report && !(g_logical_modifiers & mask)) {
+				input_report_key(input, keycode, 1);
+				input_sync(input);
+				g_logical_modifiers |= mask;
+			}
+		}
+		else {
+			g_physical_modifiers &= ~mask;
+			if (report && (g_logical_modifiers & mask)) {
+				input_report_key(input, keycode, 0);
+				input_sync(input);
+				g_logical_modifiers &= ~mask;
+			}
 		}
 	}
 	else {
-		g_physical_modifiers &= ~mask;
-		if (report && (g_logical_modifiers & mask)) {
-			input_report_key(input, keycode, 0);
-			input_sync(input);
-			g_logical_modifiers &= ~mask;
-		}
+		input_report_key(input, keycode, state);
+		input_sync(input);
 	}
 }
 
@@ -1563,9 +1664,6 @@ static int gpio_keys_probe(struct platform_device *pdev)
 		if (button->wakeup)
 			wakeup = 1;
 	}
-	input_set_capability(input, EV_KEY, KEY_LEFTSHIFT);
-	input_set_capability(input, EV_KEY, KEY_LEFTCTRL);
-	input_set_capability(input, EV_KEY, KEY_LEFTALT);
 
 	error = input_register_device(input);
 	if (error) {
