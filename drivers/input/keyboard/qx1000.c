@@ -69,6 +69,8 @@
 #include <asm/irq.h>
 #include <linux/regulator/consumer.h>
 #include <linux/of_gpio.h>
+#include <linux/notifier.h>
+#include <linux/fb.h>
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
 #include <linux/earlysuspend.h>
@@ -193,6 +195,9 @@ struct aw9523b_data {
 	int			gpio_irq;
 	struct work_struct	irq_work;
 	struct delayed_work	poll_work;
+
+	struct notifier_block   fb_client;
+	bool			fb_blanked;
 };
 
 static struct input_dev *aw9523b_input_dev;
@@ -603,7 +608,12 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 		bool key_state = aw9523b_key_state(keyboard_state, key_nr);
 		if (key_state && !pressed[key_nr]) {
 			u16 force_flags;
-			if (g_physical_modifiers & KF_FN) {
+			if (pdata->fb_blanked) {
+				printk(KERN_INFO "aw9523b: wakeup\n");
+				keycode = KEY_WAKEUP;
+				force_flags = 0;
+			}
+			else if (g_physical_modifiers & KF_FN) {
 				keycode = KEY_VALUE(key_fn_array[key_nr]);
 				force_flags = KEY_FLAGS(key_fn_array[key_nr]);
 			}
@@ -761,6 +771,8 @@ static irqreturn_t aw9523b_irq_handler(int irq, void *dev_id)
 
 	return IRQ_HANDLED;
 }
+
+/* sysfs */
 
 #ifdef DEBUG
 static ssize_t aw9523b_show_regs(struct device *dev,
@@ -977,6 +989,23 @@ static const struct attribute_group aw9523b_attr_group = {
 	.attrs = aw9523b_attrs,
 };
 
+/* framebuffer */
+
+static int qx1000_fb_notifier_callback(struct notifier_block *self,
+	unsigned long event, void *data)
+{
+	struct fb_event *evdata = data;
+	struct aw9523b_data *pdata = container_of(self, struct aw9523b_data, fb_client);
+	int *blank;
+
+	if (event == FB_EVENT_BLANK) {
+		blank = evdata->data;
+		pdata->fb_blanked = (*blank != FB_BLANK_UNBLANK);
+	}
+
+	return 0;
+}
+
 static int register_aw9523b_input_dev(struct device *pdev)
 {
 	int key;
@@ -1087,8 +1116,6 @@ static int aw9523b_parse_dt(struct device *dev,
 }
 #endif
 
-/* sysfs */
-
 static int aw9523b_probe(struct i2c_client *client,
         const struct i2c_device_id *id)
 {
@@ -1165,6 +1192,12 @@ static int aw9523b_probe(struct i2c_client *client,
 	err = sysfs_create_group(&client->dev.kobj, &aw9523b_attr_group);
 	if (err) {
 		dev_err(&client->dev, "aw9523b failed to register sysfs\n");
+	}
+
+	pdata->fb_client.notifier_call = qx1000_fb_notifier_callback;
+	err = fb_register_client(&pdata->fb_client);
+	if (err) {
+		dev_err(&client->dev, "aw9523b failed to register framebuffer client\n");
 	}
 
 	/* Configure the chip */
