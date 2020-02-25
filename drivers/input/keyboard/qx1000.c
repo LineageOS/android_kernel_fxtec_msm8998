@@ -283,7 +283,7 @@ static const u16 qwerty_fn_keys[AW9523_NR_KEYS] = {
 	KEY_I,				KEY_9 | KF_SHIFT,		KEY_W,				KEY_J,
 	/* 16..23 */
 	KEY_HOME,			KEY_G,				KEY_V,				KEY_6 | KF_SHIFT,
-	KEY_END,			KEY_DELETE,			KEY_T,				KEY_DOT | KF_SHIFT,
+	KEY_END,			KEY_INSERT,			KEY_T,				KEY_DOT | KF_SHIFT,
 	/* 24..31 */
 	KEY_RIGHTALT,			KEY_A,				KEY_RIGHTBRACE | KF_SHIFT,	KEY_RESERVED,
 	KEY_SLASH,			KEY_MINUS | KF_SHIFT,		KEY_Q,				KEY_SLASH | KF_SHIFT,
@@ -336,7 +336,7 @@ static const u16 qwertz_fn_keys[AW9523_NR_KEYS] = {
 	KEY_O,				KEY_9 | KF_SHIFT,		KEY_E,				KEY_K,
 	/* 16..23 */
 	KEY_HOME,			KEY_H,				KEY_B,				KEY_6 | KF_SHIFT,
-	KEY_END,			KEY_DELETE,			KEY_Y,				KEY_SLASH | KF_SHIFT,
+	KEY_END,			KEY_INSERT,			KEY_Y,				KEY_SLASH | KF_SHIFT,
 	/* 24..31 */
 	KEY_RIGHTALT,			KEY_S,				KEY_Z,				KEY_RESERVED,
 	KEY_LEFTBRACE | KF_SHIFT,	KEY_MINUS | KF_SHIFT,		KEY_W,				KEY_SEMICOLON | KF_SHIFT,
@@ -1211,7 +1211,7 @@ static int aw9523b_probe(struct i2c_client *client,
 
 	INIT_WORK(&pdata->irq_work, aw9523b_irq_work);
 	INIT_DELAYED_WORK(&pdata->poll_work, aw9523b_poll_work);
-	pdata->irq_is_disabled = true;
+	pdata->irq_is_disabled = false;
 	err = request_irq(client->irq,
 			  aw9523b_irq_handler,
 			  IRQ_TYPE_LEVEL_LOW,
