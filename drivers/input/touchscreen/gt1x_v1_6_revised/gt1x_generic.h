@@ -393,6 +393,8 @@ extern s32 gt1x_i2c_read_dbl_check(u16 addr, u8 * buffer, s32 len);
 extern u8 gt1x_int_type;
 extern u32 gt1x_abs_x_max;
 extern u32 gt1x_abs_y_max;
+extern u32 gt1x_margin_x;
+extern u32 gt1x_margin_y;
 extern u8 gt1x_init_failed;
 extern int gt1x_halt;
 extern volatile int gt1x_rawdiff_mode;

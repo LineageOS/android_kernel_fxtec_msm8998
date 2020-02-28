@@ -51,6 +51,8 @@ u8 gt1x_init_failed = 0;
 u8 gt1x_int_type = 0;
 u32 gt1x_abs_x_max = 0;
 u32 gt1x_abs_y_max = 0;
+u32 gt1x_margin_x = 0;
+u32 gt1x_margin_y = 0;
 int gt1x_halt = 0;
 
 static ssize_t gt1x_debug_read_proc(struct file *, char __user *, size_t,loff_t *);
@@ -1475,6 +1477,15 @@ s32 gt1x_touch_event_handler(u8 * data, struct input_dev * dev,
 				input_x = GTP_WARP_X(gt1x_abs_x_max, input_x);
 				input_y = GTP_WARP_Y(gt1x_abs_y_max, input_y);
 
+				if (input_x < gt1x_margin_x ||
+				    input_x >= gt1x_abs_x_max - gt1x_margin_x ||
+				    input_y < gt1x_margin_y ||
+				    input_y >= gt1x_abs_y_max - gt1x_margin_y) {
+					GTP_DEBUG("Skip touch event (%d)(%d,%d)",
+						  id, input_x, input_y);
+					continue;
+				}
+
 				GTP_DEBUG("(%d)(%d,%d)[%d]", id, input_x, input_y, input_w);
 				gt1x_touch_down(input_x, input_y, input_w, i);
 				if (report_num++ < touch_num) {
@@ -1610,6 +1621,85 @@ void gt1x_pen_up(s32 id)
 #endif
 }
 #endif
+
+/**
+ *		Touch Module
+ */
+
+static ssize_t gt1x_touch_margin_x_store(struct kobject *kobj,
+		struct kobj_attribute *attr, const char *buf, size_t count)
+{
+	unsigned int val;
+
+	if (sscanf(buf, "%u", &val) != 1) {
+		return -EINVAL;
+	}
+	gt1x_margin_x = val;
+
+	return count;
+}
+
+static ssize_t gt1x_touch_margin_x_show(struct kobject *kobj,
+		struct kobj_attribute *attr, char *buf)
+{
+	return snprintf(buf, PAGE_SIZE, "%u", gt1x_margin_x);
+}
+
+static ssize_t gt1x_touch_margin_y_store(struct kobject *kobj,
+		struct kobj_attribute *attr, const char *buf, size_t count)
+{
+	unsigned int val;
+
+	if (sscanf(buf, "%u", &val) != 1) {
+		return -EINVAL;
+	}
+	gt1x_margin_y = val;
+
+	return count;
+}
+
+static ssize_t gt1x_touch_margin_y_show(struct kobject *kobj,
+		struct kobj_attribute *attr, char *buf)
+{
+	return snprintf(buf, PAGE_SIZE, "%u", gt1x_margin_y);
+}
+
+static struct kobj_attribute touch_attrs[] = {
+	__ATTR(margin_x, S_IWUSR | S_IWGRP | S_IRUSR | S_IRGRP,
+		gt1x_touch_margin_x_show, gt1x_touch_margin_x_store),
+	__ATTR(margin_y, S_IWUSR | S_IWGRP | S_IRUSR | S_IRGRP,
+		gt1x_touch_margin_y_show, gt1x_touch_margin_y_store)
+};
+
+static int gt1x_touch_init(void)
+{
+	int err = 0;
+	int i;
+
+	if (!sysfs_rootdir) {
+		sysfs_rootdir = kobject_create_and_add("goodix", NULL);
+		if (!sysfs_rootdir) {
+			GTP_ERROR("Failed to create and add sysfs interface: goodix.");
+			err = -ENOMEM;
+			goto out;
+		}
+	}
+	for (i = 0; i < ARRAY_SIZE(touch_attrs); ++i) {
+		err = sysfs_create_file(sysfs_rootdir, &touch_attrs[i].attr);
+		if (err) {
+			goto out;
+		}
+	}
+
+	return 0;
+
+out:
+	return err;
+}
+
+static void gt1x_touch_deinit(void)
+{
+}
 
 /**
  *		Proximity Module
@@ -2536,6 +2626,8 @@ s32 gt1x_init(void)
 	if (gt1x_workqueue == NULL)
 		GTP_ERROR("Create workqueue failed!");
 
+	gt1x_touch_init();
+
 	/* init auxiliary node and functions */
 	gt1x_init_debug_node();
 
@@ -2595,6 +2687,8 @@ void gt1x_deinit(void)
 #ifdef CONFIG_GTP_SMART_COVER
     gt1x_smart_cover_deinit();
 #endif
+
+    gt1x_touch_deinit();
 
     if (sysfs_rootdir) {
         kobject_del(sysfs_rootdir);
