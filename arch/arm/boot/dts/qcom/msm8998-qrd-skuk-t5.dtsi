@@ -941,7 +941,7 @@
 	qcom,idx-len = <10>;
 	qcom,duty-pcts = [00 19 32 4b 64
 			64 4b 32 19 00];
-	qcom,lut-flags = <3>;
+	qcom,lut-flags = <0x1f>;
 	qcom,pause-lo = <0>;
 	qcom,pause-hi = <0>;
 	qcom,ramp-step-ms = <255>;
@@ -954,7 +954,7 @@
 	qcom,idx-len = <10>;
 	qcom,duty-pcts = [00 19 32 4b 64
 			64 4b 32 19 00];
-	qcom,lut-flags = <3>;
+	qcom,lut-flags = <0x1f>;
 	qcom,pause-lo = <0>;
 	qcom,pause-hi = <0>;
 	qcom,ramp-step-ms = <255>;
@@ -967,7 +967,7 @@
 	qcom,idx-len = <10>;
 	qcom,duty-pcts = [00 19 32 4b 64
 			64 4b 32 19 00];
-	qcom,lut-flags = <3>;
+	qcom,lut-flags = <0x1f>;
 	qcom,pause-lo = <0>;
 	qcom,pause-hi = <0>;
 	qcom,ramp-step-ms = <255>;
