@@ -162,7 +162,6 @@ dtbo-$(CONFIG_ARCH_MSM8998) += msm8998-v2-qrd-skuk-t5-overlay.dtbo
 msm8998-v2-qrd-skuk-t5-overlay.dtbo-base := msm8998-v2-qrd-skuk-t5.dtb
 endif
 else # ! overlay
-$(info CONFIG_BUILD_ARM64_DT_OVERLAY!=y)
 ifdef CONFIG_DEVICE_IDEALTE
 ifdef CONFIG_DEVICE_IDEALTE_K1
 dtb-$(CONFIG_ARCH_MSM8998) += msm8998-v2-qrd-skuk-k1.dtb
