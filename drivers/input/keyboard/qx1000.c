@@ -149,10 +149,16 @@
 
 #define OUT_LOW_VALUE		0
 
+/*
+ * KEY_MAX is 0x2ff (see input-event-codes.h) so we can use 6 bits for
+ * modifiers.  If more are needed, key valuess must switch to 32 bits.
+ */
 #define KF_SHIFT		0x8000
 #define KF_CTRL			0x4000
 #define KF_ALT			0x2000
-#define KF_FN			0x1000	/* Not used in key array */
+#define KF_ALTGR		0x1000
+#define KF_UNUSED1		0x0800	/* For future use */
+#define KF_FN			0x0400	/* Not used in key array */
 
 #define KEY_FLAGS(key) ((key) & 0xf000)
 #define KEY_VALUE(key) ((key) & 0x0fff)
@@ -318,7 +324,7 @@ static const u16 qwertz_keys[AW9523_NR_KEYS] = {
 	KEY_BACKSPACE,	KEY_F,		KEY_C,		KEY_RESERVED,
 	KEY_RIGHTBRACE,	KEY_EQUAL,	KEY_R,		KEY_APOSTROPHE,
 	/* 40..47 */
-	KEY_CAPSLOCK,	KEY_A,		KEY_GRAVE,	KEY_DOWN,
+	KEY_CAPSLOCK,	KEY_A,		KEY_102ND,	KEY_DOWN,
 	KEY_P,		KEY_0,		KEY_Q,		KEY_L,
 	/* 48..55 */
 	KEY_SPACE,	KEY_G,		KEY_V,		KEY_M,
@@ -330,25 +336,25 @@ static const u16 qwertz_keys[AW9523_NR_KEYS] = {
 static const u16 qwertz_fn_keys[AW9523_NR_KEYS] = {
 	/* 0..7 */
 	KEY_RESERVED,			KEY_J,				KEY_N,				KEY_7 | KF_SHIFT,
-	KEY_PAGEUP,			KEY_ENTER,			KEY_U,				KEY_DOT | KF_SHIFT,
+	KEY_PAGEUP,			KEY_ENTER,			KEY_7 | KF_ALTGR,		KEY_DOT | KF_SHIFT,
 	/* 8..15 */
-	KEY_3 | KF_SHIFT,		KEY_D,				KEY_X,				KEY_COMMA,
-	KEY_O,				KEY_9 | KF_SHIFT,		KEY_E,				KEY_K,
+	KEY_3 | KF_SHIFT,		KEY_D,				KEY_X,				KEY_COMMA | KF_SHIFT,
+	KEY_9 | KF_ALTGR,		KEY_9 | KF_SHIFT,		KEY_E | KF_ALTGR,		KEY_K,
 	/* 16..23 */
 	KEY_HOME,			KEY_H,				KEY_B,				KEY_6 | KF_SHIFT,
 	KEY_END,			KEY_INSERT,			KEY_Y,				KEY_SLASH | KF_SHIFT,
 	/* 24..31 */
-	KEY_RIGHTALT,			KEY_S,				KEY_Z,				KEY_RESERVED,
-	KEY_LEFTBRACE | KF_SHIFT,	KEY_MINUS | KF_SHIFT,		KEY_W,				KEY_SEMICOLON | KF_SHIFT,
+	KEY_RIGHTALT,			KEY_S,				KEY_102ND | KF_ALTGR,		KEY_RESERVED,
+	KEY_RIGHTBRACE | KF_ALTGR,	KEY_MINUS | KF_SHIFT,		KEY_GRAVE,			KEY_MINUS | KF_ALTGR,
 	/* 32..39 */
 	KEY_BACKSPACE,			KEY_F,				KEY_C,				KEY_RESERVED,
-	KEY_RIGHTBRACE | KF_SHIFT,	KEY_EQUAL | KF_SHIFT,		KEY_R,				KEY_APOSTROPHE | KF_SHIFT,
+	KEY_RIGHTBRACE | KF_SHIFT,	KEY_EQUAL | KF_SHIFT,		KEY_GRAVE | KF_SHIFT,		KEY_BACKSLASH,
 	/* 40..47 */
-	KEY_CAPSLOCK,			KEY_A,				KEY_GRAVE | KF_SHIFT,		KEY_PAGEDOWN,
-	KEY_P,				KEY_0 | KF_SHIFT,		KEY_Q,				KEY_L,
+	KEY_CAPSLOCK,			KEY_A,				KEY_102ND | KF_SHIFT,		KEY_PAGEDOWN,
+	KEY_0 | KF_ALTGR,		KEY_0 | KF_SHIFT,		KEY_Q | KF_ALTGR,		KF_SHIFT | KEY_BACKSLASH,
 	/* 48..55 */
-	KEY_WWW,			KEY_G,				KEY_V,				KEY_M,
-	KEY_I,				KEY_8 | KF_SHIFT,		KEY_T,				KEY_5 | KF_SHIFT,
+	KEY_WWW,			KEY_G,				KEY_V,				KEY_M | KF_ALTGR,
+	KEY_8 | KF_ALTGR,		KEY_8 | KF_SHIFT,		KEY_T,				KEY_5 | KF_SHIFT,
 	/* 56..63 */
 	KEY_BACK,			KEY_1 | KF_SHIFT,		KEY_RESERVED,			KEY_RESERVED,
 	KEY_2 | KF_SHIFT,		KEY_4 | KF_SHIFT,		KEY_TAB,			KEY_RESERVED,
@@ -646,6 +652,12 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers |= KF_ALT;
 			}
+			if ((force_flags & KF_ALTGR) && !(g_logical_modifiers & KF_ALTGR)) {
+				printk(KERN_INFO "aw9523b: press logical altgr\n");
+				input_report_key(aw9523b_input_dev, KEY_RIGHTALT, 1);
+				input_sync(aw9523b_input_dev);
+				g_logical_modifiers |= KF_ALTGR;
+			}
 			input_report_key(aw9523b_input_dev, keycode, 1);
 			input_sync(aw9523b_input_dev);
 			if (keycode == KEY_CAPSLOCK) {
@@ -666,6 +678,12 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 			pressed[key_nr] = 0;
 			input_report_key(aw9523b_input_dev, keycode, 0);
 			input_sync(aw9523b_input_dev);
+			if ((g_logical_modifiers & KF_ALTGR) && !(g_physical_modifiers & KF_ALTGR)) {
+				printk(KERN_INFO "aw9523b: release logical altgr\n");
+				input_report_key(aw9523b_input_dev, KEY_RIGHTALT, 0);
+				input_sync(aw9523b_input_dev);
+				g_logical_modifiers &= ~KF_ALTGR;
+			}
 			if ((g_logical_modifiers & KF_ALT) && !(g_physical_modifiers & KF_ALT)) {
 				printk(KERN_INFO "aw9523b: release logical alt\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTALT, 0);
