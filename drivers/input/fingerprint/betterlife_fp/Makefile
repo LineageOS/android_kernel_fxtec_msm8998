@@ -88,5 +88,5 @@ ccflags-y += -DPLATFORM_RK
 endif
 
 # -w -Wno-strict-aliasing -Wno-error=unused-function -Wno-error=unused-label -Wno-warning=unused-function -Wno-warning=unused-label
-ccflags-y += -Wno-unused-label -Wno-unused-variables
+ccflags-y += -Wno-unused-label -Wno-unused-variable
 obj-y := bf_fp_spi.o bf_fp_platform.o
