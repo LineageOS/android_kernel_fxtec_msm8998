@@ -163,4 +163,8 @@ config QCA_CLD_DEBUG
 	bool "Debug Qualcomm Atheros CLD WLAN module"
 	default n
 
+config WLAN_POWER_DEBUGFS
+	bool "Enable power_stats debugfs node"
+	default y
+
 endif # QCA_CLD_WLAN
