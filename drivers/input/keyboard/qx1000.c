@@ -211,6 +211,7 @@ static struct i2c_client *g_client = NULL;
 
 static u16 g_physical_modifiers = 0;
 static u16 g_logical_modifiers = 0;
+static u16 g_sticky_modifiers = 0;
 
 static unsigned int g_poll_interval;
 
@@ -613,13 +614,14 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 	for (key_nr = 0; key_nr < AW9523_NR_KEYS; ++key_nr) {
 		bool key_state = aw9523b_key_state(keyboard_state, key_nr);
 		if (key_state && !pressed[key_nr]) {
+			// key_nr pressed
 			u16 force_flags;
 			if (pdata->fb_blanked) {
 				printk(KERN_INFO "aw9523b: wakeup\n");
 				keycode = KEY_WAKEUP;
 				force_flags = 0;
 			}
-			else if (g_physical_modifiers & KF_FN) {
+			else if ((g_physical_modifiers & KF_FN) || (g_sticky_modifiers & KF_FN)) {
 				keycode = KEY_VALUE(key_fn_array[key_nr]);
 				force_flags = KEY_FLAGS(key_fn_array[key_nr]);
 			}
@@ -666,8 +668,10 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 				}
 				++capslock_led_enable;
 			}
+			g_sticky_modifiers = 0;
 		}
 		else if (!key_state && pressed[key_nr]) {
+			// key_nr released
 			keycode = pressed[key_nr];
 			printk(KERN_INFO "aw9523b: key release: key_nr=%d keycode=%04hx gpm=%04hx glm=%04hx\n",
 			    key_nr, keycode, g_physical_modifiers, g_logical_modifiers);
@@ -1280,6 +1284,7 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 	u16 mask = 0;
 	u16 keycode = button->code;
 	bool report = true;
+	bool sticky = false;
 
 	state = (__gpio_get_value(button->gpio) ? 1 : 0) ^ button->active_low;
 	printk(KERN_INFO "aw9523b: gpio_keys_gpio_report_event: desc=%s code=%u state=%d\n",
@@ -1296,6 +1301,7 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 		mask = KF_FN;
 		keycode = KEY_FN;
 		report = false;
+		sticky = true;
 	}
 	if (button->code == KEY_LEFTALT || button->code == KEY_RIGHTALT) {
 		mask = KF_ALT;
@@ -1317,6 +1323,9 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 				input_report_key(input, keycode, 1);
 				input_sync(input);
 				g_logical_modifiers |= mask;
+			}
+			if (sticky) {
+				g_sticky_modifiers |= mask;
 			}
 		}
 		else {
