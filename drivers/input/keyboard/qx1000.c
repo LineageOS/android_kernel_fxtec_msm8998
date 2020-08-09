@@ -615,7 +615,6 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 		if (key_state && !pressed[key_nr]) {
 			u16 force_flags;
 			if (pdata->fb_blanked) {
-				printk(KERN_INFO "aw9523b: wakeup\n");
 				keycode = KEY_WAKEUP;
 				force_flags = 0;
 			}
@@ -627,33 +626,26 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 				keycode = key_array[key_nr];
 				force_flags = 0;
 			}
-			printk(KERN_INFO "aw9523b: key press: key_nr=%d keycode=%04hx ff=%04hx gpm=%04hx glm=%04hx\n",
-			    key_nr, keycode, force_flags, g_physical_modifiers, g_logical_modifiers);
 			if (keycode == KEY_RESERVED) {
-				printk(KERN_ERR "aw9523b: pressed dead key\n");
 				continue;
 			}
 			pressed[key_nr] = keycode;
 			if ((force_flags & KF_SHIFT) && !(g_logical_modifiers & KF_SHIFT)) {
-				printk(KERN_INFO "aw9523b: press logical shift\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTSHIFT, 1);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers |= KF_SHIFT;
 			}
 			if ((force_flags & KF_CTRL) && !(g_logical_modifiers & KF_CTRL)) {
-				printk(KERN_INFO "aw9523b: press logical ctrl\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTCTRL, 1);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers |= KF_CTRL;
 			}
 			if ((force_flags & KF_ALT) && !(g_logical_modifiers & KF_ALT)) {
-				printk(KERN_INFO "aw9523b: press logical alt\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTALT, 1);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers |= KF_ALT;
 			}
 			if ((force_flags & KF_ALTGR) && !(g_logical_modifiers & KF_ALTGR)) {
-				printk(KERN_INFO "aw9523b: press logical altgr\n");
 				input_report_key(aw9523b_input_dev, KEY_RIGHTALT, 1);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers |= KF_ALTGR;
@@ -669,35 +661,28 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 		}
 		else if (!key_state && pressed[key_nr]) {
 			keycode = pressed[key_nr];
-			printk(KERN_INFO "aw9523b: key release: key_nr=%d keycode=%04hx gpm=%04hx glm=%04hx\n",
-			    key_nr, keycode, g_physical_modifiers, g_logical_modifiers);
 			if (keycode == KEY_RESERVED) {
-				printk(KERN_ERR "aw9523b: released dead key\n");
 				continue;
 			}
 			pressed[key_nr] = 0;
 			input_report_key(aw9523b_input_dev, keycode, 0);
 			input_sync(aw9523b_input_dev);
 			if ((g_logical_modifiers & KF_ALTGR) && !(g_physical_modifiers & KF_ALTGR)) {
-				printk(KERN_INFO "aw9523b: release logical altgr\n");
 				input_report_key(aw9523b_input_dev, KEY_RIGHTALT, 0);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers &= ~KF_ALTGR;
 			}
 			if ((g_logical_modifiers & KF_ALT) && !(g_physical_modifiers & KF_ALT)) {
-				printk(KERN_INFO "aw9523b: release logical alt\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTALT, 0);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers &= ~KF_ALT;
 			}
 			if ((g_logical_modifiers & KF_CTRL) && !(g_physical_modifiers & KF_CTRL)) {
-				printk(KERN_INFO "aw9523b: release logical ctrl\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTCTRL, 0);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers &= ~KF_CTRL;
 			}
 			if ((g_logical_modifiers & KF_SHIFT) && !(g_physical_modifiers & KF_SHIFT)) {
-				printk(KERN_INFO "aw9523b: release logical shift\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTSHIFT, 0);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers &= ~KF_SHIFT;
