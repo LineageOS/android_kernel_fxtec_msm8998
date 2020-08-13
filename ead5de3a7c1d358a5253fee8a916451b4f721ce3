@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0149bdbe_ac19fc3a",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2020-08-13T04:01:52Z",
+      "side": 1,
+      "message": "nit: kernel style comments are /* */",
+      "range": {
+        "startLine": 617,
+        "startChar": 3,
+        "endLine": 617,
+        "endChar": 20
+      },
+      "revId": "ead5de3a7c1d358a5253fee8a916451b4f721ce3",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
