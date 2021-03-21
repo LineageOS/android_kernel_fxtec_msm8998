@@ -719,7 +719,6 @@
 
 &pmi8998_haptics {
 	status = "okay";
-	qcom,play-mode = "buffer";
 	qcom,wave-play-rate-us = <5000>;
 	qcom,wave-samples = [14 14 14 14 14 14 14 14];
 };
