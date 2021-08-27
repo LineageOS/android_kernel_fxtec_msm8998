@@ -468,14 +468,14 @@ static int aw9523b_hw_reset(struct aw9523b_data *data)
 		dev_err(&data->client->dev,"set_direction for pdata->gpio_rst failed\n");
 		return -EINVAL;
 	}
-	udelay(50); 
+	udelay(50);
 
 	return 0;
 }
 
 
 static u8 aw9523b_chip_id(void)
-{ 
+{
 	u8 chip_id;
 
 	aw9523b_read_reg(REG_IC_ID, &chip_id);
@@ -484,7 +484,7 @@ static u8 aw9523b_chip_id(void)
 }
 
 static void aw9523b_config_P1_output(void)
-{    
+{
 	aw9523b_write_reg(REG_CONFIG_PORT1, 0x00);
 }
 
@@ -521,8 +521,8 @@ static u8 aw9523b_get_P0_value(void)
 }
 
 
-static u8 aw9523b_get_P1_value(void) 
-{    
+static u8 aw9523b_get_P1_value(void)
+{
 	u8 value = 0;
 	aw9523b_read_reg(REG_INPUT_PORT1, &value);
 	return value;
@@ -557,7 +557,7 @@ void aw9523b_irq_enable(struct aw9523b_data *data)
 	spin_unlock_irqrestore(&data->irq_lock, irqflags);
 }
 
-  
+
 static void aw9523b_read_keyboard_state(u8* keyboard_state)
 {
 	int port;
@@ -595,6 +595,24 @@ static void aw9523b_deghost(const u8* old_state, u8* new_state)
 	}
 }
 
+/**
+ * Tells if the specified KF_XXXX modifier need to be forced.
+ * Return true if specified modifier needs to be forced.
+ */
+static inline bool need_forced_modifier(u16 aModifier, u16 aBitField) {
+	// We need to force aModifier if is specified in aBitField but not in our logical modifier bit field already
+	return (aBitField & aModifier) && !(g_logical_modifiers & aModifier);
+}
+
+/**
+ * Tells if the specified KF_XXX modifier was forced.
+ * Return true if specified modifier was forced.
+ */
+static inline bool modifier_forced(u16 aFlag) {
+	// We know a modifier was forced if it is set in the logical bit field but not in the physical bit field.
+	return (g_logical_modifiers & aFlag) && !(g_physical_modifiers & aFlag);
+}
+
 static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 {
 	static u8 capslock_led_enable = 0;
@@ -612,6 +630,7 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 
 	for (key_nr = 0; key_nr < AW9523_NR_KEYS; ++key_nr) {
 		bool key_state = aw9523b_key_state(keyboard_state, key_nr);
+		// If that key was pressed
 		if (key_state && !pressed[key_nr]) {
 			u16 force_flags;
 			if (pdata->fb_blanked) {
@@ -622,6 +641,11 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 			else if (g_physical_modifiers & KF_FN) {
 				keycode = KEY_VALUE(key_fn_array[key_nr]);
 				force_flags = KEY_FLAGS(key_fn_array[key_nr]);
+				// Emulate alt+tab from Fn keys
+				if (keycode==KEY_TAB) {
+					printk(KERN_INFO "aw9523b: fn+tab as alt+tab forces alt modifier\n");
+					force_flags |= KF_ALT;
+				}
 			}
 			else {
 				keycode = key_array[key_nr];
@@ -634,25 +658,25 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 				continue;
 			}
 			pressed[key_nr] = keycode;
-			if ((force_flags & KF_SHIFT) && !(g_logical_modifiers & KF_SHIFT)) {
+			if (need_forced_modifier(KF_SHIFT,force_flags)) {
 				printk(KERN_INFO "aw9523b: press logical shift\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTSHIFT, 1);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers |= KF_SHIFT;
 			}
-			if ((force_flags & KF_CTRL) && !(g_logical_modifiers & KF_CTRL)) {
+			if (need_forced_modifier(KF_CTRL,force_flags)) {
 				printk(KERN_INFO "aw9523b: press logical ctrl\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTCTRL, 1);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers |= KF_CTRL;
 			}
-			if ((force_flags & KF_ALT) && !(g_logical_modifiers & KF_ALT)) {
+			if (need_forced_modifier(KF_ALT,force_flags)) {
 				printk(KERN_INFO "aw9523b: press logical alt\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTALT, 1);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers |= KF_ALT;
 			}
-			if ((force_flags & KF_ALTGR) && !(g_logical_modifiers & KF_ALTGR)) {
+			if (need_forced_modifier(KF_ALTGR,force_flags)) {
 				printk(KERN_INFO "aw9523b: press logical altgr\n");
 				input_report_key(aw9523b_input_dev, KEY_RIGHTALT, 1);
 				input_sync(aw9523b_input_dev);
@@ -667,6 +691,7 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 				++capslock_led_enable;
 			}
 		}
+		// If that key was released
 		else if (!key_state && pressed[key_nr]) {
 			keycode = pressed[key_nr];
 			printk(KERN_INFO "aw9523b: key release: key_nr=%d keycode=%04hx gpm=%04hx glm=%04hx\n",
@@ -676,27 +701,36 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 				continue;
 			}
 			pressed[key_nr] = 0;
+			// Report our key release
 			input_report_key(aw9523b_input_dev, keycode, 0);
 			input_sync(aw9523b_input_dev);
-			if ((g_logical_modifiers & KF_ALTGR) && !(g_physical_modifiers & KF_ALTGR)) {
+
+			// Start removing our forced modifiers
+			if (modifier_forced(KF_ALTGR)) {
 				printk(KERN_INFO "aw9523b: release logical altgr\n");
 				input_report_key(aw9523b_input_dev, KEY_RIGHTALT, 0);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers &= ~KF_ALTGR;
 			}
-			if ((g_logical_modifiers & KF_ALT) && !(g_physical_modifiers & KF_ALT)) {
-				printk(KERN_INFO "aw9523b: release logical alt\n");
-				input_report_key(aw9523b_input_dev, KEY_LEFTALT, 0);
-				input_sync(aw9523b_input_dev);
-				g_logical_modifiers &= ~KF_ALT;
+			if (modifier_forced(KF_ALT)) {
+				// Do not remove forced ALT modifier as long as Fn is pushed
+				if (((keycode==KEY_TAB) && (g_physical_modifiers & KF_FN))) {
+					printk(KERN_INFO "aw9523b: fn+tab as alt+tab prevents alt release\n");
+				}
+				else {
+					printk(KERN_INFO "aw9523b: release logical alt\n");
+					input_report_key(aw9523b_input_dev, KEY_LEFTALT, 0);
+					input_sync(aw9523b_input_dev);
+					g_logical_modifiers &= ~KF_ALT;
+				}
 			}
-			if ((g_logical_modifiers & KF_CTRL) && !(g_physical_modifiers & KF_CTRL)) {
+			if (modifier_forced(KF_CTRL)) {
 				printk(KERN_INFO "aw9523b: release logical ctrl\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTCTRL, 0);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers &= ~KF_CTRL;
 			}
-			if ((g_logical_modifiers & KF_SHIFT) && !(g_physical_modifiers & KF_SHIFT)) {
+			if (modifier_forced(KF_SHIFT)) {
 				printk(KERN_INFO "aw9523b: release logical shift\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTSHIFT, 0);
 				input_sync(aw9523b_input_dev);
@@ -1151,7 +1185,7 @@ static int aw9523b_probe(struct i2c_client *client,
 		err = -ENOMEM;
 		goto exit;
 	}
-    
+
 	if (client->dev.of_node) {
 		err = aw9523b_parse_dt(&client->dev, pdata);
 		if (err) {
@@ -1161,7 +1195,7 @@ static int aw9523b_probe(struct i2c_client *client,
 		}
 	}
 
-	spin_lock_init(&pdata->irq_lock);   
+	spin_lock_init(&pdata->irq_lock);
 	g_client = client;
 	i2c_set_clientdata(client, pdata);
 	pdata->client = client;
@@ -1200,7 +1234,7 @@ static int aw9523b_probe(struct i2c_client *client,
 		err = -EINVAL;
 		goto deinit_power_exit;
 	}
-	
+
 	err = register_aw9523b_input_dev(&client->dev);
 	if (err) {
 		dev_err(&client->dev, "Failed to register aw9523b input device\n");
@@ -1251,7 +1285,7 @@ pdata_free_exit:
 	if (pdata && (client->dev.of_node))
 		devm_kfree(&client->dev, pdata);
 free_i2c_clientdata_exit:
-	i2c_set_clientdata(client, NULL);    
+	i2c_set_clientdata(client, NULL);
 	kfree(pdata);
 exit:
 	return err;
@@ -1261,7 +1295,7 @@ exit:
 static int aw9523b_remove(struct i2c_client *client)
 {
 	struct aw9523b_data *data = i2c_get_clientdata(client);
-    
+
 	cancel_delayed_work_sync(&data->poll_work);
 
 	aw9523b_power_deinit(data);
@@ -1272,6 +1306,17 @@ static int aw9523b_remove(struct i2c_client *client)
 	return 0;
 }
 
+/**
+ * This is our gpio handler.
+ * Looks like the following keys are coming through here:
+ * - Shift both of them are hardwired
+ * - Ctrl both of them are hardwired
+ * - Fn left
+ * - Fn right
+ * - Home AKA FxTec key
+ *
+ * All other keys are coming through aw9523b_irq_work to aw9523b_check_keys.
+ */
 static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 {
 	const struct gpio_keys_button *button = bdata->button;
@@ -1320,6 +1365,15 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 			}
 		}
 		else {
+			// If Fn is being released, check if our ALT was forced for alt+tab emulation
+			if (keycode==KEY_FN && modifier_forced(KF_ALT)) {
+				printk(KERN_INFO "aw9523b: fn+tab as alt+tab fn release does alt release too\n");
+				// We need to simulate release of ALT
+				input_report_key(input, KEY_LEFTALT, 0);
+				input_sync(input);
+				g_logical_modifiers &= ~KF_ALT;
+			}
+
 			g_physical_modifiers &= ~mask;
 			if (report && (g_logical_modifiers & mask)) {
 				input_report_key(input, keycode, 0);
@@ -1350,7 +1404,7 @@ static irqreturn_t gpio_keys_gpio_isr(int irq, void *dev_id)
 	struct gpio_button_data *bdata = dev_id;
 
 	BUG_ON(irq != bdata->irq);
- 
+
 	if (bdata->button->wakeup)
 		pm_stay_awake(bdata->input->dev.parent);
 
