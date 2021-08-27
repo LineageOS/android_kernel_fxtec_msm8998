@@ -304,7 +304,7 @@ static const u16 qwerty_fn_keys[AW9523_NR_KEYS] = {
 	KEY_U,				KEY_8 | KF_SHIFT,		KEY_R,				KEY_5 | KF_SHIFT,
 	/* 56..63 */
 	KEY_BACK,			KEY_1 | KF_SHIFT,		KEY_RESERVED,			KEY_RESERVED,
-	KEY_2 | KF_SHIFT,		KEY_4 | KF_SHIFT,		KEY_TAB,			KEY_RESERVED,
+	KEY_2 | KF_SHIFT,		KEY_4 | KF_SHIFT,		KEY_CYCLEWINDOWS,		KEY_RESERVED,
 };
 
 static const u16 qwertz_keys[AW9523_NR_KEYS] = {
@@ -357,7 +357,7 @@ static const u16 qwertz_fn_keys[AW9523_NR_KEYS] = {
 	KEY_8 | KF_ALTGR,		KEY_8 | KF_SHIFT,		KEY_T,				KEY_5 | KF_SHIFT,
 	/* 56..63 */
 	KEY_BACK,			KEY_1 | KF_SHIFT,		KEY_RESERVED,			KEY_RESERVED,
-	KEY_2 | KF_SHIFT,		KEY_4 | KF_SHIFT,		KEY_TAB,			KEY_RESERVED,
+	KEY_2 | KF_SHIFT,		KEY_4 | KF_SHIFT,		KEY_CYCLEWINDOWS,		KEY_RESERVED,
 };
 
 static int aw9523b_i2c_read(struct i2c_client *client, char *writebuf,
