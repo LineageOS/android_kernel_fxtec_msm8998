@@ -1292,10 +1292,13 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 		dev_err(input->dev.parent, "button is not a key\n");
 		return;
 	}
-	if (button->code == KEY_FN) {
+	if (button->code == KEY_FN_L) {
 		mask = KF_FN;
-		keycode = KEY_FN;
-		report = false;
+		keycode = KEY_FN_L;
+	}
+	if (button->code == KEY_FN_R) {
+		mask = KF_FN;
+		keycode = KEY_FN_R;
 	}
 	if (button->code == KEY_LEFTALT || button->code == KEY_RIGHTALT) {
 		mask = KF_ALT;

@@ -272,6 +272,8 @@
 #define KEY_F22			192
 #define KEY_F23			193
 #define KEY_F24			194
+#define KEY_FN_L		195
+#define KEY_FN_R		196
 
 #define KEY_PLAYCD		200
 #define KEY_PAUSECD		201
