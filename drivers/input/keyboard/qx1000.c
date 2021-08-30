@@ -160,6 +160,9 @@
 #define KF_UNUSED1		0x0800	/* For future use */
 #define KF_FN			0x0400	/* Not used in key array */
 
+#define KEY_FN_L        KEY_FN
+#define KEY_FN_R        KEY_RIGHTALT
+
 #define KEY_FLAGS(key) ((key) & 0xf000)
 #define KEY_VALUE(key) ((key) & 0x0fff)
 
@@ -253,6 +256,10 @@ static enum keylayout g_layout;
 static bool g_layout_modified = false;
 static u16 key_array[AW9523_NR_KEYS];
 static u16 key_fn_array[AW9523_NR_KEYS];
+static bool load_key_fn_array = true;
+static u16 exposed_key_fn_l = 0;
+static u16 exposed_key_fn_r = 0;
+static u16 exposed_key_fx = 0;
 
 static const u16 qwerty_keys[AW9523_NR_KEYS] = {
 	/* 0..7 */
@@ -658,6 +665,12 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers |= KF_ALTGR;
 			}
+			if ((force_flags & KF_FN) && !(g_logical_modifiers & KF_FN)) {
+				printk(KERN_INFO "aw9523b: press logical fn\n");
+				input_report_key(aw9523b_input_dev, KEY_FN, 1);
+				input_sync(aw9523b_input_dev);
+				g_logical_modifiers |= KF_FN;
+			}
 			input_report_key(aw9523b_input_dev, keycode, 1);
 			input_sync(aw9523b_input_dev);
 			if (keycode == KEY_CAPSLOCK) {
@@ -678,6 +691,12 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 			pressed[key_nr] = 0;
 			input_report_key(aw9523b_input_dev, keycode, 0);
 			input_sync(aw9523b_input_dev);
+			if ((g_logical_modifiers & KF_FN) && !(g_physical_modifiers & KF_FN)) {
+				printk(KERN_INFO "aw9523b: release logical fn\n");
+				input_report_key(aw9523b_input_dev, KEY_FN, 0);
+				input_sync(aw9523b_input_dev);
+				g_logical_modifiers &= ~KF_FN;
+			}
 			if ((g_logical_modifiers & KF_ALTGR) && !(g_physical_modifiers & KF_ALTGR)) {
 				printk(KERN_INFO "aw9523b: release logical altgr\n");
 				input_report_key(aw9523b_input_dev, KEY_RIGHTALT, 0);
@@ -885,11 +904,17 @@ static ssize_t aw9523b_store_layout(struct device *dev,
 	switch (g_layout) {
 	case LAYOUT_QWERTY:
 		memcpy(key_array, qwerty_keys, sizeof(key_array));
-		memcpy(key_fn_array, qwerty_fn_keys, sizeof(key_fn_array));
+		if (load_key_fn_array)
+			memcpy(key_fn_array, qwerty_fn_keys, sizeof(key_fn_array));
+		else
+			memcpy(key_fn_array, qwerty_keys, sizeof(key_fn_array));
 		break;
 	case LAYOUT_QWERTZ:
 		memcpy(key_array, qwertz_keys, sizeof(key_array));
-		memcpy(key_fn_array, qwertz_fn_keys, sizeof(key_fn_array));
+		if (load_key_fn_array)
+			memcpy(key_fn_array, qwertz_fn_keys, sizeof(key_fn_array));
+		else
+			memcpy(key_fn_array, qwertz_keys, sizeof(key_fn_array));
 		break;
 	default:
 		return -EINVAL;
@@ -980,6 +1005,113 @@ static ssize_t aw9523b_store_poll_interval(struct device *dev,
 	return count;
 }
 
+static ssize_t aw9523b_show_load_fn_array(struct device *dev,
+		struct device_attribute *attr,
+		char *buf)
+{
+	char *ptr = buf;
+	char *end = buf + PAGE_SIZE;
+
+	ptr += snprintf(ptr, (end - ptr), "%u\n", load_key_fn_array);
+
+	return (ptr - buf);
+}
+
+static ssize_t aw9523b_store_load_fn_array(struct device *dev,
+		struct device_attribute *attr,
+		const char *buf, size_t count)
+{
+	if (*buf == '0'){
+	    memcpy(key_fn_array, key_array, sizeof(key_fn_array));
+		load_key_fn_array = false;
+	}
+	else if (*buf == '1'){
+	    load_key_fn_array = true;
+	}
+	else
+		return -EINVAL;
+
+	return count;
+}
+
+static ssize_t aw9523b_show_exposed_key_fn_l(struct device *dev,
+		struct device_attribute *attr,
+		char *buf)
+{
+	char *ptr = buf;
+	char *end = buf + PAGE_SIZE;
+
+	ptr += snprintf(ptr, (end - ptr), "%u\n", exposed_key_fn_l);
+
+	return (ptr - buf);
+}
+
+static ssize_t aw9523b_store_exposed_key_fn_l(struct device *dev,
+		struct device_attribute *attr,
+		const char *buf, size_t count)
+{
+	unsigned int val;
+
+	if (kstrtouint(buf, 0, &val) != 0)
+		return -EINVAL;
+
+	exposed_key_fn_l = val;
+
+	return count;
+}
+
+static ssize_t aw9523b_show_exposed_key_fn_r(struct device *dev,
+		struct device_attribute *attr,
+		char *buf)
+{
+	char *ptr = buf;
+	char *end = buf + PAGE_SIZE;
+
+	ptr += snprintf(ptr, (end - ptr), "%u\n", exposed_key_fn_r);
+
+	return (ptr - buf);
+}
+
+static ssize_t aw9523b_store_exposed_key_fn_r(struct device *dev,
+		struct device_attribute *attr,
+		const char *buf, size_t count)
+{
+	unsigned int val;
+
+	if (kstrtouint(buf, 0, &val) != 0)
+		return -EINVAL;
+
+	exposed_key_fn_r = val;
+
+	return count;
+}
+
+static ssize_t aw9523b_show_exposed_key_fx(struct device *dev,
+		struct device_attribute *attr,
+		char *buf)
+{
+	char *ptr = buf;
+	char *end = buf + PAGE_SIZE;
+
+	ptr += snprintf(ptr, (end - ptr), "%u\n", exposed_key_fx);
+
+	return (ptr - buf);
+}
+
+static ssize_t aw9523b_store_exposed_key_fx(struct device *dev,
+		struct device_attribute *attr,
+		const char *buf, size_t count)
+{
+	unsigned int val;
+
+	if (kstrtouint(buf, 0, &val) != 0)
+		return -EINVAL;
+
+	exposed_key_fx = val;
+
+	return count;
+}
+
 static DEVICE_ATTR(layout, (S_IRUGO | S_IWUSR | S_IWGRP),
 	aw9523b_show_layout,
 	aw9523b_store_layout);
@@ -992,6 +1124,22 @@ static DEVICE_ATTR(poll_interval, (S_IRUGO | S_IWUSR | S_IWGRP),
 	aw9523b_show_poll_interval,
 	aw9523b_store_poll_interval);
 
+static DEVICE_ATTR(load_fn_array, (S_IRUGO | S_IWUSR | S_IWGRP),
+	aw9523b_show_load_fn_array,
+	aw9523b_store_load_fn_array);
+
+static DEVICE_ATTR(exposed_key_fn_l, (S_IRUGO | S_IWUSR | S_IWGRP),
+	aw9523b_show_exposed_key_fn_l,
+	aw9523b_store_exposed_key_fn_l);
+
+static DEVICE_ATTR(exposed_key_fn_r, (S_IRUGO | S_IWUSR | S_IWGRP),
+	aw9523b_show_exposed_key_fn_r,
+	aw9523b_store_exposed_key_fn_r);
+
+static DEVICE_ATTR(exposed_key_fx, (S_IRUGO | S_IWUSR | S_IWGRP),
+	aw9523b_show_exposed_key_fx,
+	aw9523b_store_exposed_key_fx);
+
 static struct attribute *aw9523b_attrs[] = {
 #ifdef DEBUG
 	&dev_attr_regs.attr,
@@ -1000,6 +1148,10 @@ static struct attribute *aw9523b_attrs[] = {
 	&dev_attr_layout.attr,
 	&dev_attr_keymap.attr,
 	&dev_attr_poll_interval.attr,
+	&dev_attr_load_fn_array.attr,
+	&dev_attr_exposed_key_fn_l.attr,
+	&dev_attr_exposed_key_fn_r.attr,
+	&dev_attr_exposed_key_fx.attr,
 	NULL
 };
 
@@ -1292,7 +1444,10 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 		dev_err(input->dev.parent, "button is not a key\n");
 		return;
 	}
-	if (button->code == KEY_FN) {
+	if (button->code == KEY_LEFTMETA && exposed_key_fx) {
+		keycode = exposed_key_fx;
+	}
+	if ((button->code == KEY_FN_L) || (button->code == KEY_FN_R)) {
 		mask = KF_FN;
 		keycode = KEY_FN;
 		report = false;
@@ -1317,6 +1472,8 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 				input_report_key(input, keycode, 1);
 				input_sync(input);
 				g_logical_modifiers |= mask;
+				printk(KERN_INFO "aw9523b: gpio_keys_gpio_reported: keycode=%u, mask=%u, state=1\n",
+                     keycode, mask);
 			}
 		}
 		else {
@@ -1325,12 +1482,30 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 				input_report_key(input, keycode, 0);
 				input_sync(input);
 				g_logical_modifiers &= ~mask;
+				printk(KERN_INFO "aw9523b: gpio_keys_gpio_reported: keycode=%u, mask=%u, state=0\n",
+                     keycode, mask);
 			}
+		}
+		if (!report) {
+			if ((button->code == KEY_FN_L) && exposed_key_fn_l) {
+				input_report_key(input, exposed_key_fn_l, state);
+				input_sync(input);
+				printk(KERN_INFO "aw9523b: gpio_keys_gpio_reported: keycode=%u, mask=%u, state=%d\n",
+					keycode, mask, state);
+            }
+            else if ((button->code == KEY_FN_R) && exposed_key_fn_r) {
+				input_report_key(input, exposed_key_fn_r, state);
+				input_sync(input);
+				printk(KERN_INFO "aw9523b: gpio_keys_gpio_reported: keycode=%u, mask=%u, state=%d\n",
+					keycode, mask, state);
+            }
 		}
 	}
 	else {
 		input_report_key(input, keycode, state);
 		input_sync(input);
+		printk(KERN_INFO "aw9523b: gpio_keys_gpio_reported: keycode=%u, mask=%u, state=%d\n",
+             keycode, mask, state);
 	}
 }
 
