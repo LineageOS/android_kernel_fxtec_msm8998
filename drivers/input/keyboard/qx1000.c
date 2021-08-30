@@ -1441,13 +1441,13 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 		dev_err(input->dev.parent, "button is not a key\n");
 		return;
 	}
-    if (button->code == KEY_LEFTMETA && exposed_key_fx) {
-        keycode = exposed_key_fx;
-    }
+	if (button->code == KEY_LEFTMETA && exposed_key_fx) {
+		keycode = exposed_key_fx;
+	}
 	if ((button->code == KEY_FN_L) || (button->code == KEY_FN_R)) {
 		mask = KF_FN;
 		keycode = KEY_FN;
-        report = false;
+		report = false;
 	}
 	if (button->code == KEY_LEFTALT || button->code == KEY_RIGHTALT) {
 		mask = KF_ALT;
@@ -1501,7 +1501,7 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 	else {
 		input_report_key(input, keycode, state);
 		input_sync(input);
-        printk(KERN_INFO "aw9523b: gpio_keys_gpio_reported: keycode=%u, mask=%u, state=%d\n",
+		printk(KERN_INFO "aw9523b: gpio_keys_gpio_reported: keycode=%u, mask=%u, state=%d\n",
              keycode, mask, state);
 	}
 }
