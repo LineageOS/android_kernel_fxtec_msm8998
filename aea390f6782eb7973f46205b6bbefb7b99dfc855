@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "485735fa_5f9d1072",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 667,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-08-30T20:00:17Z",
+      "side": 1,
+      "message": "This won\u0027t generate any key events, as input_report_key() will drop KEY_FN",
+      "revId": "aea390f6782eb7973f46205b6bbefb7b99dfc855",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a229672d_d0cb0ad3",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 693,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-08-30T20:00:17Z",
+      "side": 1,
+      "message": "This won\u0027t generate any key events, as input_report_key() will drop KEY_FN",
+      "revId": "aea390f6782eb7973f46205b6bbefb7b99dfc855",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
