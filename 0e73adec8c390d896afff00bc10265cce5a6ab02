@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4a2533fe_a390ea2b",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-08-30T20:31:07Z",
+      "side": 0,
+      "message": "Remove the extra space from the end of the line",
+      "revId": "0e73adec8c390d896afff00bc10265cce5a6ab02",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6fe3f17e_5bf9ea7a",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 478,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-08-30T20:31:07Z",
+      "side": 0,
+      "message": "Remove the extra space from the end of the line",
+      "revId": "0e73adec8c390d896afff00bc10265cce5a6ab02",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "74a25f1d_851c5f2d",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-08-30T20:31:07Z",
+      "side": 0,
+      "message": "Remove the extra spaces from the end of the line",
+      "revId": "0e73adec8c390d896afff00bc10265cce5a6ab02",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "131c32c0_2d11b94c",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 524,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-08-30T20:31:07Z",
+      "side": 0,
+      "message": "Remove the extra space from the end of the line",
+      "revId": "0e73adec8c390d896afff00bc10265cce5a6ab02",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "64e88b13_db11eed0",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 525,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-08-30T20:31:07Z",
+      "side": 0,
+      "message": "Remove the extra spaces from the end of the line",
+      "revId": "0e73adec8c390d896afff00bc10265cce5a6ab02",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "634a9b1c_303c22c2",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 560,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-08-30T20:31:07Z",
+      "side": 0,
+      "message": "Remove the extra spaces",
+      "revId": "0e73adec8c390d896afff00bc10265cce5a6ab02",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e0ae761_6f7392cd",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1154,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-08-30T20:31:07Z",
+      "side": 0,
+      "message": "Remove the extra spaces",
+      "revId": "0e73adec8c390d896afff00bc10265cce5a6ab02",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "64f24314_32be2b4d",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1164,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-08-30T20:31:07Z",
+      "side": 0,
+      "message": "Remove the extra spaces from the end of the line",
+      "revId": "0e73adec8c390d896afff00bc10265cce5a6ab02",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c96f9cff_f0cb58fb",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1203,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-08-30T20:31:07Z",
+      "side": 0,
+      "message": "Remove the extra tab",
+      "revId": "0e73adec8c390d896afff00bc10265cce5a6ab02",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec3fb34f_3fac9f76",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1254,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-08-30T20:31:07Z",
+      "side": 0,
+      "message": "Remove the extra spaces from the end of the line",
+      "revId": "0e73adec8c390d896afff00bc10265cce5a6ab02",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c85e678_a0e5ca21",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1264,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-08-30T20:31:07Z",
+      "side": 0,
+      "message": "Remove the extra spaces",
+      "revId": "0e73adec8c390d896afff00bc10265cce5a6ab02",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9de2f48_7faa351b",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1353,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-08-30T20:31:07Z",
+      "side": 0,
+      "message": "Remove the extra space",
+      "revId": "0e73adec8c390d896afff00bc10265cce5a6ab02",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
