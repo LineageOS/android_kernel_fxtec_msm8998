@@ -627,7 +627,7 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 				keycode = key_array[key_nr];
 				force_flags = 0;
 			}
-			printk(KERN_INFO "aw9523b: key press: key_nr=%d keycode=%04hx ff=%04hx gpm=%04hx glm=%04hx\n",
+			printk(KERN_DEBUG "aw9523b: key press: key_nr=%d keycode=%04hx ff=%04hx gpm=%04hx glm=%04hx\n",
 			    key_nr, keycode, force_flags, g_physical_modifiers, g_logical_modifiers);
 			if (keycode == KEY_RESERVED) {
 				printk(KERN_ERR "aw9523b: pressed dead key\n");
@@ -669,7 +669,7 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 		}
 		else if (!key_state && pressed[key_nr]) {
 			keycode = pressed[key_nr];
-			printk(KERN_INFO "aw9523b: key release: key_nr=%d keycode=%04hx gpm=%04hx glm=%04hx\n",
+			printk(KERN_DEBUG "aw9523b: key release: key_nr=%d keycode=%04hx gpm=%04hx glm=%04hx\n",
 			    key_nr, keycode, g_physical_modifiers, g_logical_modifiers);
 			if (keycode == KEY_RESERVED) {
 				printk(KERN_ERR "aw9523b: released dead key\n");
@@ -1041,7 +1041,7 @@ static int register_aw9523b_input_dev(struct device *pdev)
 	__set_bit(EV_KEY, aw9523b_input_dev->evbit);
 
 	/* We can potentially generate all keys due to remapping */
-	for (key = 1; key < 0xff; ++key) {
+	for (key = 1; key < KEY_MAX; ++key) {
 		if (key >= KEY_STYLUS_MIN && key < KEY_STYLUS_MAX)
 			continue;
 		input_set_capability(aw9523b_input_dev, EV_KEY, key);
