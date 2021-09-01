@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "4f3b5e77_80a88b0e",
+        "filename": "arch/arm/boot/dts/qcom/msm8998-qrd-skuk-t5.dtsi",
+        "patchSetId": 1
+      },
+      "lineNbr": 476,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-01T19:25:21Z",
+      "side": 1,
+      "message": "We should keep 464 here which is FUNCTION",
+      "range": {
+        "startLine": 476,
+        "startChar": 17,
+        "endLine": 476,
+        "endChar": 20
+      },
+      "revId": "aea390f6782eb7973f46205b6bbefb7b99dfc855",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a92ce58e_b0570b39",
+        "filename": "arch/arm/boot/dts/qcom/msm8998-qrd-skuk-t5.dtsi",
+        "patchSetId": 1
+      },
+      "lineNbr": 484,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-01T19:25:21Z",
+      "side": 1,
+      "message": "This should be 100 for RIGHTALT",
+      "range": {
+        "startLine": 484,
+        "startChar": 17,
+        "endLine": 484,
+        "endChar": 20
+      },
+      "revId": "aea390f6782eb7973f46205b6bbefb7b99dfc855",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "485735fa_5f9d1072",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 1
@@ -69,6 +115,29 @@
       "revId": "aea390f6782eb7973f46205b6bbefb7b99dfc855",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5f9f3782_df8d52bd",
+        "filename": "include/uapi/linux/input-event-codes.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-01T19:25:21Z",
+      "side": 1,
+      "message": "I don\u0027t think we need them now that we can use key codes \u003e255",
+      "range": {
+        "startLine": 275,
+        "startChar": 8,
+        "endLine": 275,
+        "endChar": 18
+      },
+      "revId": "aea390f6782eb7973f46205b6bbefb7b99dfc855",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
