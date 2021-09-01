@@ -140,6 +140,7 @@
 
 #define AW9523_NR_PORTS         8
 #define AW9523_NR_KEYS          (AW9523_NR_PORTS * BITS_PER_BYTE)
+#define IDEA_MASK		0x40 /* 1 << ceil(log2(AW9523_NR_KEYS)) */
 
 #define AW9523_CHIP_ID		0x23
 
@@ -163,8 +164,8 @@
 #define KF_UNUSED1		0x0800	/* For future use */
 #define KF_FN			0x0400	/* Not used in key array */
 
-#define KEY_FLAGS(key) ((key) & 0xf000)
-#define KEY_VALUE(key) ((key) & 0x0fff)
+#define KEY_FLAGS(key) ((key) & 0xfc00)
+#define KEY_VALUE(key) ((key) & 0x03ff)
 
 struct gpio_button_data {
 	const struct gpio_keys_button *button;
@@ -214,6 +215,10 @@ static struct i2c_client *g_client = NULL;
 
 static u16 g_physical_modifiers = 0;
 static u16 g_logical_modifiers = 0;
+
+static int idea_nr_keys = 0;
+static struct gpio_keys_button *idea_key = NULL;
+static u16 *idea_default = NULL;
 
 static unsigned int g_poll_interval;
 
@@ -913,6 +918,9 @@ static ssize_t aw9523b_store_layout(struct device *dev,
 	default:
 		return -EINVAL;
 	}
+	for (int n = 0; n < idea_nr_keys; ++n) {
+		idea_key[n].code = idea_default[n];
+	}
 
 	return count;
 }
@@ -928,6 +936,10 @@ static ssize_t aw9523b_show_keymap(struct device *dev,
 	for (n = 0; n < AW9523_NR_KEYS; ++n) {
 		ptr += snprintf(ptr, (end - ptr), "%d:%04hx:%04hx\n",
 				n, key_array[n], key_fn_array[n]);
+	}
+	for (n = 0; n < idea_nr_keys; ++n) {
+		ptr += snprintf(ptr, (end - ptr), "%d:%04hx:%04hx\n",
+				(n | IDEA_MASK), idea_key[n].code, idea_key[n].code);
 	}
 
 	return (ptr - buf);
@@ -960,15 +972,35 @@ static ssize_t aw9523b_store_keymap(struct device *dev,
 		if (sscanf(keybuf, "%d:%hx:%hx", &key_idx, &key_val, &key_fn_val) != 3) {
 			return -EINVAL;
 		}
-		if (key_idx < 0 || key_idx >= AW9523_NR_KEYS) {
+		if (key_idx < 0 || key_idx >= AW9523_NR_KEYS + idea_nr_keys) {
 			return -EINVAL;
 		}
-		key_array[key_idx] = key_val;
-		key_fn_array[key_idx] = key_fn_val;
+		if (key_idx & IDEA_MASK) {
+			idea_key[key_idx & ~IDEA_MASK].code = key_val;
+			/* key_fn_val is discarded for IDEA keys */
+		} else {
+			key_array[key_idx] = key_val;
+			key_fn_array[key_idx] = key_fn_val;
+		}
 		g_layout_modified = true;
 	}
 
 	return count;
+}
+
+static ssize_t keymap_list_keys(struct device *dev,
+		struct device_attribute *attr,
+		char *buf)
+{
+	char *ptr = buf;
+	char *end = buf + PAGE_SIZE;
+
+	for (int n = 0; n < idea_nr_keys; ++n) {
+		ptr += snprintf(ptr, (end - ptr), "%d:%s\n",
+				(n | IDEA_MASK), idea_key[n].desc);
+	}
+
+	return (ptr - buf);
 }
 
 static ssize_t aw9523b_show_poll_interval(struct device *dev,
@@ -1007,6 +1039,10 @@ static DEVICE_ATTR(keymap, (S_IRUGO | S_IWUSR | S_IWGRP),
 	aw9523b_show_keymap,
 	aw9523b_store_keymap);
 
+static DEVICE_ATTR(list_keys, S_IRUGO,
+	keymap_list_keys,
+	NULL);
+
 static DEVICE_ATTR(poll_interval, (S_IRUGO | S_IWUSR | S_IWGRP),
 	aw9523b_show_poll_interval,
 	aw9523b_store_poll_interval);
@@ -1018,6 +1054,7 @@ static struct attribute *aw9523b_attrs[] = {
 #endif
 	&dev_attr_layout.attr,
 	&dev_attr_keymap.attr,
+	&dev_attr_list_keys.attr,
 	&dev_attr_poll_interval.attr,
 	NULL
 };
@@ -1311,20 +1348,21 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 		dev_err(input->dev.parent, "button is not a key\n");
 		return;
 	}
-	if (button->code == KEY_FN) {
+	if (keycode == KEY_RESERVED) {
 		mask = KF_FN;
-		keycode = KEY_FN;
 		report = false;
 	}
-	if (button->code == KEY_LEFTALT || button->code == KEY_RIGHTALT) {
+	if (keycode == KEY_LEFTALT) {
 		mask = KF_ALT;
-		keycode = KEY_LEFTALT;
 	}
-	if (button->code == KEY_LEFTCTRL || button->code == KEY_RIGHTCTRL) {
+	if (keycode == KEY_RIGHTALT) {
+		mask = KF_ALTGR;
+	}
+	if (keycode == KEY_LEFTCTRL || keycode == KEY_RIGHTCTRL) {
 		mask = KF_CTRL;
 		keycode = KEY_LEFTCTRL;
 	}
-	if (button->code == KEY_LEFTSHIFT || button->code == KEY_RIGHTSHIFT) {
+	if (keycode == KEY_LEFTSHIFT || keycode == KEY_RIGHTSHIFT) {
 		mask = KF_SHIFT;
 		keycode = KEY_LEFTSHIFT;
 	}
@@ -1669,6 +1707,19 @@ static int gpio_keys_probe(struct platform_device *pdev)
 		pdata = gpio_keys_get_devtree_pdata(dev);
 		if (IS_ERR(pdata))
 			return PTR_ERR(pdata);
+	}
+
+	/* Save default values for IDEA keys */
+	idea_key = pdata->buttons;
+	idea_nr_keys = pdata->nbuttons;
+	size = idea_nr_keys * sizeof(u16);
+	idea_default = devm_kzalloc(dev, size, GFP_KERNEL);
+	if (!idea_default) {
+		dev_err(dev, "failed to allocate default values\n");
+		return -ENOMEM;
+	}
+	for (int n = 0; n < idea_nr_keys; ++n) {
+		idea_default[n] = idea_key[n].code;
 	}
 
 	size = sizeof(struct gpio_keys_drvdata) +
