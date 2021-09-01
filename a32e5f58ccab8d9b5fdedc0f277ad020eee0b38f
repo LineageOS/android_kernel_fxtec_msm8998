@@ -65,6 +65,30 @@
     },
     {
       "key": {
+        "uuid": "62fae392_693517d5",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-01T22:15:41Z",
+      "side": 1,
+      "message": "Just set fn_r to 100 which is KEY_RIGHTALT in the DTSI file.",
+      "parentUuid": "653ad7be_e7e4d461",
+      "range": {
+        "startLine": 229,
+        "startChar": 27,
+        "endLine": 229,
+        "endChar": 39
+      },
+      "revId": "a32e5f58ccab8d9b5fdedc0f277ad020eee0b38f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8d716a19_b140055d",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 1
