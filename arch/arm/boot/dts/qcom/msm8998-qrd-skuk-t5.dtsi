@@ -441,7 +441,7 @@
 			label = "home";
 			gpios = <&tlmm 21 0x1>;
 			linux,input-type = <1>;
-			linux,code = <125>;
+			linux,code = <3>;
 			debounce-interval = <15>;
 		};
 
@@ -449,7 +449,7 @@
 			label = "shift";
 			gpios = <&tlmm 114 0x1>;
 			linux,input-type = <1>;
-			linux,code = <54>;
+			linux,code = <0>;
 			debounce-interval = <15>;
 		};
 		
@@ -457,7 +457,7 @@
 			label = "ctrl";
 			gpios = <&tlmm 128 0x1>;
 			linux,input-type = <1>;
-			linux,code = <29>;
+			linux,code = <1>;
 			debounce-interval = <15>;
 		};
 
@@ -465,7 +465,7 @@
 			label = "alt";
 			gpios = <&tlmm 129 0x1>;
 			linux,input-type = <1>;
-			linux,code = <56>;
+			linux,code = <4>;
 			debounce-interval = <15>;
 		};
 
@@ -473,7 +473,7 @@
 			label = "fn_l";
 			gpios = <&tlmm 33 0x1>;
 			linux,input-type = <1>;
-			linux,code = <464>;
+			linux,code = <2>;
 			debounce-interval = <15>;
 		};
 
@@ -481,7 +481,7 @@
 			label = "fn_r";
 			gpios = <&tlmm 32 0x1>;
 			linux,input-type = <1>;
-			linux,code = <464>;
+			linux,code = <5>;
 			debounce-interval = <15>;
 		};
 	};
