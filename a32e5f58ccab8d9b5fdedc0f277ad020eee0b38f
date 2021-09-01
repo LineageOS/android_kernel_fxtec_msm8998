@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4b886587_ebacdf2d",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-01T21:44:15Z",
+      "side": 1,
+      "message": "Those should be set to the RESERVED index in qwerty_keys. For instance:\nIDEA_SHIFT\u003d0",
+      "revId": "a32e5f58ccab8d9b5fdedc0f277ad020eee0b38f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fbbe35b2_0f560081",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-01T21:44:15Z",
+      "side": 1,
+      "message": "IDEA_CTRL\u003d31\nand so on",
+      "range": {
+        "startLine": 223,
+        "startChar": 1,
+        "endLine": 223,
+        "endChar": 10
+      },
+      "revId": "a32e5f58ccab8d9b5fdedc0f277ad020eee0b38f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "653ad7be_e7e4d461",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-01T21:44:15Z",
+      "side": 1,
+      "message": "I reckon we could do the mapping without string comparison.",
+      "range": {
+        "startLine": 229,
+        "startChar": 27,
+        "endLine": 229,
+        "endChar": 39
+      },
+      "revId": "a32e5f58ccab8d9b5fdedc0f277ad020eee0b38f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d716a19_b140055d",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-01T21:44:15Z",
+      "side": 1,
+      "message": "Did you consider just putting those in qwerty_keys array and co?\nThus they could just be redefined using the existing keymap logic with minimal changes.",
+      "range": {
+        "startLine": 288,
+        "startChar": 17,
+        "endLine": 288,
+        "endChar": 25
+      },
+      "revId": "a32e5f58ccab8d9b5fdedc0f277ad020eee0b38f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fd5f9b95_ed8c0a92",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 1000,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-01T21:44:15Z",
+      "side": 1,
+      "message": "Ho I see want you did there. Though if they are in the same array I guess the code is simplified.",
+      "revId": "a32e5f58ccab8d9b5fdedc0f277ad020eee0b38f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a808a13e_03900dae",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 1226,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-01T21:44:15Z",
+      "side": 1,
+      "message": "Here too, no need for an extra copy.",
+      "revId": "a32e5f58ccab8d9b5fdedc0f277ad020eee0b38f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
