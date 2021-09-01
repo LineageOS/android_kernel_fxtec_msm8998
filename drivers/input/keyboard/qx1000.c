@@ -138,6 +138,9 @@
 #define REG_CTL			0x11
 #define REG_SOFT_RESET		0x7f
 
+#define IDEA_NR_KEYS		6
+#define IDEA_MASK		0x40
+
 #define AW9523_NR_PORTS         8
 #define AW9523_NR_KEYS          (AW9523_NR_PORTS * BITS_PER_BYTE)
 
@@ -214,6 +217,15 @@ static u16 g_logical_modifiers = 0;
 
 static unsigned int g_poll_interval;
 
+enum idea_key {
+	IDEA_SHIFT,
+	IDEA_CTRL,
+	IDEA_FN_L,
+	IDEA_HOME,
+	IDEA_ALT,
+	IDEA_FN_R,
+};
+
 enum keylayout {
 	LAYOUT_NONE,
 	LAYOUT_QWERTY,
@@ -251,8 +263,19 @@ static enum keylayout keylayout_enum(const char *name)
 
 static enum keylayout g_layout;
 static bool g_layout_modified = false;
+static u16 mod_array[IDEA_NR_KEYS];
+static u16 mod_fn_array[IDEA_NR_KEYS];
 static u16 key_array[AW9523_NR_KEYS];
 static u16 key_fn_array[AW9523_NR_KEYS];
+
+static const u16 mod_keys[IDEA_NR_KEYS] = {
+	KEY_LEFTSHIFT,		/* shift */
+	KEY_LEFTCTRL,		/* ctrl */
+	KEY_RESERVED,		/* fn_l */
+	KEY_LEFTMETA,		/* home */
+	KEY_LEFTALT,		/* alt */
+	KEY_RESERVED,		/* fn_r */
+};
 
 static const u16 qwerty_keys[AW9523_NR_KEYS] = {
 	/* 0..7 */
@@ -894,6 +917,8 @@ static ssize_t aw9523b_store_layout(struct device *dev,
 	default:
 		return -EINVAL;
 	}
+	memcpy(mod_array, mod_keys, sizeof(mod_array));
+	memcpy(mod_fn_array, mod_keys, sizeof(mod_fn_array));
 
 	return count;
 }
@@ -910,6 +935,10 @@ static ssize_t aw9523b_show_keymap(struct device *dev,
 		ptr += snprintf(ptr, (end - ptr), "%d:%04hx:%04hx\n",
 				n, key_array[n], key_fn_array[n]);
 	}
+	for (n = IDEA_MASK; n < IDEA_MASK + IDEA_NR_KEYS; ++n) {
+		ptr += snprintf(ptr, (end - ptr), "%d:%04hx:%04hx\n",
+				n, mod_array[n], mod_fn_array[n]);
+	}
 
 	return (ptr - buf);
 }
@@ -921,7 +950,7 @@ static ssize_t aw9523b_store_keymap(struct device *dev,
 	char keybuf[80];
 	const char *end = buf + count;
 	const char *eol;
-	int key_idx;
+	int key_idx, mod_idx;
 	u16 key_val, key_fn_val;
 
 	while (buf < end) {
@@ -941,11 +970,17 @@ static ssize_t aw9523b_store_keymap(struct device *dev,
 		if (sscanf(keybuf, "%d:%hx:%hx", &key_idx, &key_val, &key_fn_val) != 3) {
 			return -EINVAL;
 		}
-		if (key_idx < 0 || key_idx >= AW9523_NR_KEYS) {
+		if (key_idx < 0 || key_idx >= AW9523_NR_KEYS + IDEA_NR_KEYS) {
 			return -EINVAL;
 		}
-		key_array[key_idx] = key_val;
-		key_fn_array[key_idx] = key_fn_val;
+		if (key_idx & IDEA_MASK) {
+			mod_idx = key_idx & ~IDEA_MASK;
+			mod_array[mod_idx] = key_val;
+			mod_fn_array[mod_idx] = key_fn_val;
+		} else {
+			key_array[key_idx] = key_val;
+			key_fn_array[key_idx] = key_fn_val;
+		}
 		g_layout_modified = true;
 	}
 
@@ -1170,6 +1205,8 @@ static int aw9523b_probe(struct i2c_client *client,
 	g_layout = LAYOUT_QWERTY;
 	memcpy(key_array, qwerty_keys, sizeof(key_array));
 	memcpy(key_fn_array, qwerty_fn_keys, sizeof(key_fn_array));
+	memcpy(mod_array, mod_keys, sizeof(mod_array));
+	memcpy(mod_fn_array, mod_keys, sizeof(mod_fn_array));
 
 	g_poll_interval = AW9523_DEFAULT_POLL_MS;
 
@@ -1278,8 +1315,9 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 	struct input_dev *input = bdata->input;
 	int state;
 	u16 mask = 0;
-	u16 keycode = button->code;
+	u16 keycode = KEY_RESERVED;
 	bool report = true;
+	enum idea_key key = (enum idea_key) button->code;
 
 	state = (__gpio_get_value(button->gpio) ? 1 : 0) ^ button->active_low;
  printk(KERN_INFO "aw9523b: gpio_keys_gpio_report_event: desc=%s code=%u state=%d\n",
@@ -1292,20 +1330,26 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 		dev_err(input->dev.parent, "button is not a key\n");
 		return;
 	}
-	if (button->code == KEY_FN) {
+	if (key < IDEA_SHIFT || key > IDEA_FN_R) {
+		dev_err(input->dev.parent, "unable to map idea key\n");
+		return;
+	}
+	keycode = (g_physical_modifiers & KF_FN ? mod_fn_array[key] : mod_array[key]);
+	if (keycode == KEY_RESERVED) {
 		mask = KF_FN;
-		keycode = KEY_FN;
 		report = false;
 	}
-	if (button->code == KEY_LEFTALT || button->code == KEY_RIGHTALT) {
+	if (keycode == KEY_LEFTALT) {
 		mask = KF_ALT;
-		keycode = KEY_LEFTALT;
 	}
-	if (button->code == KEY_LEFTCTRL || button->code == KEY_RIGHTCTRL) {
+	if (keycode == KEY_RIGHTALT) {
+		mask = KF_ALTGR;
+	}
+	if (keycode == KEY_LEFTCTRL || keycode == KEY_RIGHTCTRL) {
 		mask = KF_CTRL;
 		keycode = KEY_LEFTCTRL;
 	}
-	if (button->code == KEY_LEFTSHIFT || button->code == KEY_RIGHTSHIFT) {
+	if (keycode == KEY_LEFTSHIFT || keycode == KEY_RIGHTSHIFT) {
 		mask = KF_SHIFT;
 		keycode = KEY_LEFTSHIFT;
 	}
