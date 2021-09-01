@@ -481,7 +481,7 @@
 			label = "fn_r";
 			gpios = <&tlmm 32 0x1>;
 			linux,input-type = <1>;
-			linux,code = <464>;
+			linux,code = <485>;
 			debounce-interval = <15>;
 		};
 	};
