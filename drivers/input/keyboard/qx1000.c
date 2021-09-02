@@ -187,6 +187,8 @@ struct gpio_keys_drvdata {
 	struct gpio_button_data data[0];
 };
 
+static struct gpio_keys_platform_data *global_pdata;
+
 static struct device *global_dev;
 static struct syscore_ops gpio_keys_syscore_pm_ops;
 
@@ -979,6 +981,77 @@ static ssize_t aw9523b_store_poll_interval(struct device *dev,
 	return count;
 }
 
+static ssize_t gpio_show_keymap(struct device *dev,
+		struct device_attribute *attr,
+		char *buf)
+{
+	struct gpio_keys_button *buttons = global_pdata->buttons;
+	int nbuttons = global_pdata->nbuttons;
+
+	char *ptr = buf;
+	char *end = buf + PAGE_SIZE;
+	int n;
+
+	for (n = 0; n < nbuttons; ++n) {
+		ptr += snprintf(ptr, (end - ptr), "%s:%04hx\n",
+				buttons[n].desc, buttons[n].code);
+	}
+
+	return (ptr - buf);
+}
+
+static ssize_t gpio_store_keymap(struct device *dev,
+		struct device_attribute *attr,
+		const char *buf, size_t count)
+{
+	struct gpio_keys_button *buttons = global_pdata->buttons;
+	int nbuttons = global_pdata->nbuttons;
+
+	char keybuf[80];
+	const char *end = buf + count;
+	const char *eol;
+	char *sep;
+	const char *key_name;
+	u16 key_val;
+	int n;
+
+	while (buf < end) {
+		memset(keybuf, 0, sizeof(keybuf));
+		eol = memchr(buf, '\n', end - buf);
+		if (eol) {
+			if (eol - buf >= sizeof(keybuf)) {
+				return -EINVAL;
+			}
+			memcpy(keybuf, buf, eol - buf);
+			buf = eol + 1;
+		}
+		else {
+			memcpy(keybuf, buf, end - buf);
+			buf = end;
+		}
+		sep = strchr(keybuf, ':');
+		if (!sep) {
+			return -EINVAL;
+		}
+		*sep = '\0';
+		key_name = keybuf;
+		if (sscanf(sep + 1, "%hx", &key_val) != 1) {
+			return -EINVAL;
+		}
+		for (n = 0; n < nbuttons; ++n) {
+			if (!strcmp(key_name, buttons[n].desc)) {
+				buttons[n].code = key_val;
+				break;
+			}
+		}
+		if (n == nbuttons) {
+			return -EINVAL;
+		}
+	}
+
+	return count;
+}
+
 static DEVICE_ATTR(layout, (S_IRUGO | S_IWUSR | S_IWGRP),
 	aw9523b_show_layout,
 	aw9523b_store_layout);
@@ -991,6 +1064,10 @@ static DEVICE_ATTR(poll_interval, (S_IRUGO | S_IWUSR | S_IWGRP),
 	aw9523b_show_poll_interval,
 	aw9523b_store_poll_interval);
 
+static DEVICE_ATTR(gpiomap, (S_IRUGO | S_IWUSR | S_IWGRP),
+	gpio_show_keymap,
+	gpio_store_keymap);
+
 static struct attribute *aw9523b_attrs[] = {
 #ifdef DEBUG
 	&dev_attr_regs.attr,
@@ -999,6 +1076,7 @@ static struct attribute *aw9523b_attrs[] = {
 	&dev_attr_layout.attr,
 	&dev_attr_keymap.attr,
 	&dev_attr_poll_interval.attr,
+	&dev_attr_gpiomap.attr,
 	NULL
 };
 
@@ -1281,8 +1359,6 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 	bool report = true;
 
 	state = (__gpio_get_value(button->gpio) ? 1 : 0) ^ button->active_low;
- printk(KERN_INFO "aw9523b: gpio_keys_gpio_report_event: desc=%s code=%u state=%d\n",
-     (button->desc ? button->desc : "(null)"), button->code, state);
 	if (state < 0) {
 		dev_err(input->dev.parent, "failed to get gpio state\n");
 		return;
@@ -1650,6 +1726,7 @@ static int gpio_keys_probe(struct platform_device *pdev)
 		if (IS_ERR(pdata))
 			return PTR_ERR(pdata);
 	}
+	global_pdata = pdata;
 
 	size = sizeof(struct gpio_keys_drvdata) +
 			pdata->nbuttons * sizeof(struct gpio_button_data);
