@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "f119a80c_865bafa6",
+        "filename": "arch/arm/boot/dts/qcom/msm8998-qrd-skuk-t5.dtsi",
+        "patchSetId": 4
+      },
+      "lineNbr": 446,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-02T08:09:59Z",
+      "side": 0,
+      "message": "Why is the home key in here and still getting through to our AW9523 handler?\nCould we not handle all keys from GPIO? Is that a hardware limitation?",
+      "range": {
+        "startLine": 440,
+        "startChar": 0,
+        "endLine": 446,
+        "endChar": 4
+      },
+      "revId": "b20211eec8b8463e24ede7206d60af6604c19df8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2ec8be57_e54c787b",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 1
