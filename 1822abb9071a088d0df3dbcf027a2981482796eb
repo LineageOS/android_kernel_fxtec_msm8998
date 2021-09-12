@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "709d430a_f52a4a38",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:46:49Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "45c1be99_738e4d4b",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27e7e31b_316ba105",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 9
@@ -30,6 +48,24 @@
       "writtenOn": "2021-09-12T06:11:21Z",
       "side": 1,
       "message": "Changing the default keymap so that it doesn\u0027t match the printed keycaps is a bad idea. I realize F(x)tec made some poor choices here, but the default behavior should match the printing to avoid confusing the users.",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a44e605f_a321054a",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:46:49Z",
+      "side": 1,
+      "message": "I\u0027m with you. It\u0027s just convenient for me to do that while developing. That should be an advanced settings option really.",
+      "parentUuid": "27e7e31b_316ba105",
       "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "b0bfa6e4_2007db5a",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:46:49Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5ebb215f_4ad1ffc7",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bf1bc306_1ced3db8",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 9
@@ -67,6 +121,24 @@
       "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "680c7646_f648c655",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 615,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:46:49Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "bf1bc306_1ced3db8",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     },
     {
       "key": {
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "213985a8_84849471",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 622,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:46:49Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "105a4024_af6d1c49",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bc7bd9e2_924a9dbe",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 9
@@ -101,6 +191,24 @@
       "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02cb6c54_1ebf79f7",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:46:49Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "bc7bd9e2_924a9dbe",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     },
     {
       "key": {
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "0c000aad_2a4e6eba",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 628,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:46:49Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "2be1ae5c_ee0c6720",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "93d8d341_3cc73696",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 9
@@ -138,6 +264,24 @@
     },
     {
       "key": {
+        "uuid": "73605d60_396c5dd4",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 646,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:46:49Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "93d8d341_3cc73696",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cfa3a78d_d7a7b377",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 9
@@ -149,6 +293,24 @@
       "writtenOn": "2021-09-12T06:11:21Z",
       "side": 1,
       "message": "Do you need a new case to handle KF_SYM here? What about allowing KF_FN in force_flags?",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e30c9358_c0895d66",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 692,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:46:49Z",
+      "side": 1,
+      "message": "Good points!",
+      "parentUuid": "cfa3a78d_d7a7b377",
       "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
@@ -172,6 +334,24 @@
     },
     {
       "key": {
+        "uuid": "242dbe40_1a827138",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 702,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:46:49Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "513a2a66_e95e65d4",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ff138354_da251a6f",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 9
@@ -186,6 +366,24 @@
       "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dec7fc61_a8850270",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:46:49Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "ff138354_da251a6f",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     },
     {
       "key": {
@@ -206,6 +404,24 @@
     },
     {
       "key": {
+        "uuid": "8fbe2307_74a5e832",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 716,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:46:49Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "a20bdc20_80461e6b",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d567d2ed_dfdeb8ca",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 9
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "8eb4536b_e8410370",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 740,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:46:49Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "d567d2ed_dfdeb8ca",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "779d9ce2_24cb9f44",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 9
@@ -237,6 +471,24 @@
       "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "af629719_df239bcc",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 751,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:46:49Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "779d9ce2_24cb9f44",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     },
     {
       "key": {
