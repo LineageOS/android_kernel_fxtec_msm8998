@@ -72,6 +72,23 @@
     },
     {
       "key": {
+        "uuid": "94d43bbe_c1e97124",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T17:19:01Z",
+      "side": 1,
+      "message": "This might be simpler if implemented as a preprocessor macro instead of a static inline function",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5ebb215f_4ad1ffc7",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 9
@@ -104,6 +121,23 @@
       "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "316d9fa0_65934ef8",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 614,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T17:19:01Z",
+      "side": 1,
+      "message": "This might be simpler if implemented as a preprocessor macro instead of a static inline function",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     },
     {
       "key": {
@@ -769,6 +803,23 @@
       "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "02e8709d_94a9e330",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1376,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T17:19:01Z",
+      "side": 1,
+      "message": "I missed this one. There is a tab on this blank line",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     },
     {
       "key": {
