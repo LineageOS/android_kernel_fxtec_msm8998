@@ -157,7 +157,7 @@
 #define KF_CTRL			0x4000
 #define KF_ALT			0x2000
 #define KF_ALTGR		0x1000
-#define KF_UNUSED1		0x0800	/* For future use */
+#define KF_SYM			0x0800	/* For future use */
 #define KF_FN			0x0400	/* Not used in key array */
 
 #define KEY_FLAGS(key) ((key) & 0xf000)
@@ -254,9 +254,12 @@ static bool g_layout_modified = false;
 static u16 key_array[AW9523_NR_KEYS];
 static u16 key_fn_array[AW9523_NR_KEYS];
 
+
+
+
 static const u16 qwerty_keys[AW9523_NR_KEYS] = {
 	/* 0..7 */
-	KEY_RESERVED,	KEY_H,		KEY_B,		KEY_7,
+	KEY_LEFTMETA/*GPIO - F(x)tec*/,	KEY_H,		KEY_B,		KEY_7,
 	KEY_UP,		KEY_ENTER,	KEY_Y,		KEY_COMMA,
 	/* 8..15 */
 	KEY_3,		KEY_S,		KEY_Z,		KEY_M,
@@ -265,10 +268,10 @@ static const u16 qwerty_keys[AW9523_NR_KEYS] = {
 	KEY_LEFT,	KEY_G,		KEY_V,		KEY_6,
 	KEY_RIGHT,	KEY_DELETE,	KEY_T,		KEY_DOT,
 	/* 24..31 */
-	KEY_RIGHTALT,	KEY_A,		KEY_RIGHTBRACE,	KEY_RESERVED,
+	KEY_RIGHTALT,	KEY_A,		KEY_RIGHTBRACE,	KEY_LEFTSHIFT/*GPIO*/,
 	KEY_P,		KEY_MINUS,	KEY_Q,		KEY_L,
 	/* 32..39 */
-	KEY_BACKSPACE,	KEY_D,		KEY_X,		KEY_RESERVED,
+	KEY_BACKSPACE,	KEY_D,		KEY_X,		KEY_LEFTCTRL/*GPIO*/,
 	KEY_SEMICOLON,	KEY_EQUAL,	KEY_E,		KEY_APOSTROPHE,
 	/* 40..47 */
 	KEY_CAPSLOCK,	KEY_BACKSLASH,	KEY_LEFTBRACE,	KEY_DOWN,
@@ -277,8 +280,8 @@ static const u16 qwerty_keys[AW9523_NR_KEYS] = {
 	KEY_SPACE,	KEY_F,		KEY_C,		KEY_N,
 	KEY_U,		KEY_8,		KEY_R,		KEY_5,
 	/* 56..63 */
-	KEY_ESC,	KEY_1,		KEY_RESERVED,	KEY_RESERVED,
-	KEY_2,		KEY_4,		KEY_TAB,	KEY_RESERVED,
+	KEY_ESC,	KEY_1,		KEY_LEFTALT/*GPIO*/,	KEY_RESERVED/*GPIO - Silent Fn*/,
+	KEY_2,		KEY_4,		KEY_TAB,	KEY_RIGHTALT/*GPIO - Right Fn as AltGr */,
 };
 static const u16 qwerty_fn_keys[AW9523_NR_KEYS] = {
 	/* 0..7 */
@@ -595,6 +598,34 @@ static void aw9523b_deghost(const u8* old_state, u8* new_state)
 	}
 }
 
+/**
+ * Tells if the specified KF_XXXX modifier need to be forced.
+ * Return true if specified modifier needs to be forced.
+ */
+static inline bool need_forced_modifier(u16 aModifier, u16 aBitField) {
+	// We need to force aModifier if it is specified in aBitField but not in our logical modifier bit field already
+	return (aBitField & aModifier) && !(g_logical_modifiers & aModifier);
+}
+
+/**
+ * Tells if the specified KF_XXX modifier was forced.
+ * Return true if specified modifier was forced.
+ */
+static inline bool modifier_forced(u16 aFlag) {
+	// We know a modifier was forced if it is set in the logical bit field but not in the physical bit field.
+	return (g_logical_modifiers & aFlag) && !(g_physical_modifiers & aFlag);
+}
+
+/**
+ * Tells whether we should use our driver level function keymap
+ */
+static inline bool use_driver_fn() {
+	// This is the case if our logical modifiers do not contain Fn and if our physical modifiers do contain it
+	return !(g_logical_modifiers & KF_FN) && (g_physical_modifiers & KF_FN);
+}
+
+
+
 static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 {
 	static u8 capslock_led_enable = 0;
@@ -612,6 +643,7 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 
 	for (key_nr = 0; key_nr < AW9523_NR_KEYS; ++key_nr) {
 		bool key_state = aw9523b_key_state(keyboard_state, key_nr);
+		// If that key was pressed
 		if (key_state && !pressed[key_nr]) {
 			u16 force_flags;
 			if (pdata->fb_blanked) {
@@ -619,7 +651,7 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 				keycode = KEY_WAKEUP;
 				force_flags = 0;
 			}
-			else if (g_physical_modifiers & KF_FN) {
+			else if (use_driver_fn()) {
 				keycode = KEY_VALUE(key_fn_array[key_nr]);
 				force_flags = KEY_FLAGS(key_fn_array[key_nr]);
 			}
@@ -634,25 +666,25 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 				continue;
 			}
 			pressed[key_nr] = keycode;
-			if ((force_flags & KF_SHIFT) && !(g_logical_modifiers & KF_SHIFT)) {
+			if (need_forced_modifier(KF_SHIFT,force_flags)) {
 				printk(KERN_INFO "aw9523b: press logical shift\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTSHIFT, 1);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers |= KF_SHIFT;
 			}
-			if ((force_flags & KF_CTRL) && !(g_logical_modifiers & KF_CTRL)) {
+			if (need_forced_modifier(KF_CTRL,force_flags)) {
 				printk(KERN_INFO "aw9523b: press logical ctrl\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTCTRL, 1);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers |= KF_CTRL;
 			}
-			if ((force_flags & KF_ALT) && !(g_logical_modifiers & KF_ALT)) {
+			if (need_forced_modifier(KF_ALT,force_flags)) {
 				printk(KERN_INFO "aw9523b: press logical alt\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTALT, 1);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers |= KF_ALT;
 			}
-			if ((force_flags & KF_ALTGR) && !(g_logical_modifiers & KF_ALTGR)) {
+			if (need_forced_modifier(KF_ALTGR,force_flags)) {
 				printk(KERN_INFO "aw9523b: press logical altgr\n");
 				input_report_key(aw9523b_input_dev, KEY_RIGHTALT, 1);
 				input_sync(aw9523b_input_dev);
@@ -667,6 +699,7 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 				++capslock_led_enable;
 			}
 		}
+		// If that key was released
 		else if (!key_state && pressed[key_nr]) {
 			keycode = pressed[key_nr];
 			printk(KERN_DEBUG "aw9523b: key release: key_nr=%d keycode=%04hx gpm=%04hx glm=%04hx\n",
@@ -676,27 +709,30 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 				continue;
 			}
 			pressed[key_nr] = 0;
+			// Report our key release
 			input_report_key(aw9523b_input_dev, keycode, 0);
 			input_sync(aw9523b_input_dev);
-			if ((g_logical_modifiers & KF_ALTGR) && !(g_physical_modifiers & KF_ALTGR)) {
+
+			// Start removing our forced modifiers
+			if (modifier_forced(KF_ALTGR)) {
 				printk(KERN_INFO "aw9523b: release logical altgr\n");
 				input_report_key(aw9523b_input_dev, KEY_RIGHTALT, 0);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers &= ~KF_ALTGR;
 			}
-			if ((g_logical_modifiers & KF_ALT) && !(g_physical_modifiers & KF_ALT)) {
+			if (modifier_forced(KF_ALT)) {
 				printk(KERN_INFO "aw9523b: release logical alt\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTALT, 0);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers &= ~KF_ALT;
 			}
-			if ((g_logical_modifiers & KF_CTRL) && !(g_physical_modifiers & KF_CTRL)) {
+			if (modifier_forced(KF_CTRL)) {
 				printk(KERN_INFO "aw9523b: release logical ctrl\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTCTRL, 0);
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers &= ~KF_CTRL;
 			}
-			if ((g_logical_modifiers & KF_SHIFT) && !(g_physical_modifiers & KF_SHIFT)) {
+			if (modifier_forced(KF_SHIFT)) {
 				printk(KERN_INFO "aw9523b: release logical shift\n");
 				input_report_key(aw9523b_input_dev, KEY_LEFTSHIFT, 0);
 				input_sync(aw9523b_input_dev);
@@ -711,6 +747,7 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 		}
 	}
 }
+
 
 static void aw9523b_irq_work(struct work_struct *work)
 {
@@ -1272,13 +1309,23 @@ static int aw9523b_remove(struct i2c_client *client)
 	return 0;
 }
 
+/**
+ * This is our gpio handler.
+ * Looks like the following keys are coming through here:
+ * - Shift both of them are hardwired
+ * - Ctrl both of them are hardwired
+ * - Fn left
+ * - Fn right
+ * - Home AKA FxTec key
+ *
+ * All other keys are coming through aw9523b_irq_work to aw9523b_check_keys.
+ */
 static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 {
 	const struct gpio_keys_button *button = bdata->button;
 	struct input_dev *input = bdata->input;
 	int state;
-	u16 mask = 0;
-	u16 keycode = button->code;
+	u16 mask = 0;	
 	bool report = true;
 
 	state = (__gpio_get_value(button->gpio) ? 1 : 0) ^ button->active_low;
@@ -1292,20 +1339,42 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 		dev_err(input->dev.parent, "button is not a key\n");
 		return;
 	}
-	if (button->code == KEY_FN) {
+
+	// We expect our button code to be within range of our keys array as defined in DTSI file
+	if (button->code<0 || button->code>=AW9523_NR_KEYS) {
+		dev_err(input->dev.parent, "button code out of range\n");
+		return;
+	}
+
+
+	//
+	u16 keycode = (use_driver_fn()  ? key_fn_array[button->code] : key_array[button->code]);
+
+	// Silent Hardware/Driver Fn modifier
+	if (keycode == KEY_RESERVED) {
 		mask = KF_FN;
-		keycode = KEY_FN;
 		report = false;
 	}
-	if (button->code == KEY_LEFTALT || button->code == KEY_RIGHTALT) {
-		mask = KF_ALT;
-		keycode = KEY_LEFTALT;
+
+	//
+	if (keycode == KEY_FN) {
+		mask = KF_FN;
 	}
-	if (button->code == KEY_LEFTCTRL || button->code == KEY_RIGHTCTRL) {
+
+	if (keycode == KEY_LEFTALT) {
+		mask = KF_ALT;
+	}
+
+	if (keycode == KEY_RIGHTALT) {
+		mask = KF_ALTGR;
+	}
+
+	if (keycode == KEY_LEFTCTRL || keycode == KEY_RIGHTCTRL) {
 		mask = KF_CTRL;
 		keycode = KEY_LEFTCTRL;
 	}
-	if (button->code == KEY_LEFTSHIFT || button->code == KEY_RIGHTSHIFT) {
+	
+	if (keycode == KEY_LEFTSHIFT || keycode == KEY_RIGHTSHIFT) {
 		mask = KF_SHIFT;
 		keycode = KEY_LEFTSHIFT;
 	}
