@@ -257,6 +257,24 @@
     },
     {
       "key": {
+        "uuid": "f6efee4e_360af286",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1328,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:37:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c3ce5e9a_15fc43f3",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cfc137b0_9fceee25",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 9
@@ -268,6 +286,24 @@
       "writtenOn": "2021-09-12T06:11:21Z",
       "side": 1,
       "message": "Use /* */",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f955f87_e4a7ba41",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1343,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:37:20Z",
+      "side": 1,
+      "message": "C++ style comments are used in several other places in that file. Moreover even though it\u0027s been a while since I last bothered writing some strict C it seems to me that enums and structs in here are using C++ styles rather than C style. Then again as stated I\u0027m no expert and I\u0027m not very interested in those discussions either. If ever people are happy with us committing those changes then I would be happy to align to the coding guidelines whatever they are. As it stands this is a bit premature :)",
+      "parentUuid": "cfc137b0_9fceee25",
       "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
@@ -291,6 +327,24 @@
     },
     {
       "key": {
+        "uuid": "71225897_e1a80367",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1344,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:37:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4561d688_db7ecdd4",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b483b004_7609555b",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 9
@@ -305,6 +359,24 @@
       "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82888d9a_6b22ab76",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1350,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:37:20Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b483b004_7609555b",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     },
     {
       "key": {
@@ -325,6 +397,24 @@
     },
     {
       "key": {
+        "uuid": "6af0b4f8_f4969e74",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1351,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:37:20Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "21d5d4bf_2755c45d",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "961ce470_2df5342a",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 9
@@ -342,6 +432,24 @@
     },
     {
       "key": {
+        "uuid": "8682df72_963357c8",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1353,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:37:20Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "961ce470_2df5342a",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ea4e4710_4d1df980",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 9
@@ -353,6 +461,24 @@
       "writtenOn": "2021-09-12T06:11:21Z",
       "side": 1,
       "message": "Don\u0027t set KF_FN here, use a new global variable instead to trigger the internal keymap shift",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "66a4dac9_5976e040",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1355,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:37:20Z",
+      "side": 1,
+      "message": "That was indeed an option though for now I decided against adding another state management variable. That may yet change.",
+      "parentUuid": "ea4e4710_4d1df980",
       "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
@@ -376,6 +502,24 @@
     },
     {
       "key": {
+        "uuid": "a4ea0d56_3d6459e3",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1359,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:37:20Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "3329b4fd_bb61ce50",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2134918b_03e3f11b",
         "filename": "drivers/input/keyboard/qx1000.c",
         "patchSetId": 9
@@ -387,6 +531,24 @@
       "writtenOn": "2021-09-12T06:11:21Z",
       "side": 1,
       "message": "Do you need another case for KF_SYM?",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c3f72ad_09794060",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1380,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:37:20Z",
+      "side": 1,
+      "message": "Yeah, I\u0027ll have to look into that. Sym as a KCM modifier is not working yet and will need device repository changes. It\u0027s still mapped to AltGr.",
+      "parentUuid": "2134918b_03e3f11b",
       "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true

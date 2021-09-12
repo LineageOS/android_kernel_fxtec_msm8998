@@ -16,6 +16,24 @@
       "revId": "b20211eec8b8463e24ede7206d60af6604c19df8",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11b8d78e_a3606de3",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1281,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-12T16:37:20Z",
+      "side": 0,
+      "message": "Ack",
+      "parentUuid": "1cec8bd5_90e5fa76",
+      "revId": "b20211eec8b8463e24ede7206d60af6604c19df8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
