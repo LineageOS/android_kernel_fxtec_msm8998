@@ -1,0 +1,395 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "45c1be99_738e4d4b",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Remove these extra blank lines",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27e7e31b_316ba105",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Changing the default keymap so that it doesn\u0027t match the printed keycaps is a bad idea. I realize F(x)tec made some poor choices here, but the default behavior should match the printing to avoid confusing the users.",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5ebb215f_4ad1ffc7",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "\u0027//\u0027 is C++, not C. Comments should use /* */",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf1bc306_1ced3db8",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 615,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Use /* */",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "105a4024_af6d1c49",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 622,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "I think you can eliminate this predicate if you don\u0027t use KF_FN to trigger the internal keymap shift. Just use a new global variable instead.",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bc7bd9e2_924a9dbe",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Use /* */",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2be1ae5c_ee0c6720",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 628,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Remove the extra blank lines",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "93d8d341_3cc73696",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 646,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Use /* */",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cfa3a78d_d7a7b377",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 692,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Do you need a new case to handle KF_SYM here? What about allowing KF_FN in force_flags?",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "513a2a66_e95e65d4",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 702,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Use /* */",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ff138354_da251a6f",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Use /* */",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a20bdc20_80461e6b",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 716,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Use /* */",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d567d2ed_dfdeb8ca",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 740,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "KF_SYM will need a new case here too? What about KF_FN?",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "779d9ce2_24cb9f44",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 751,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Do you really want this extra blank line?",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c3ce5e9a_15fc43f3",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1328,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Remove the stray tab at the end of the line",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cfc137b0_9fceee25",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1343,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Use /* */",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4561d688_db7ecdd4",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1344,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "button-\u003ecode is unsigned, so can\u0027t be \u003c 0",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b483b004_7609555b",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1350,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Remove the blank comment line",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "21d5d4bf_2755c45d",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1351,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Adding new variable declarations in the middle of the function is legal syntax, but doesn\u0027t match the coding style",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "961ce470_2df5342a",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1353,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Use /* */",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea4e4710_4d1df980",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1355,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Don\u0027t set KF_FN here, use a new global variable instead to trigger the internal keymap shift",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3329b4fd_bb61ce50",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1359,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Remove the blank comment line",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2134918b_03e3f11b",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1380,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 1,
+      "message": "Do you need another case for KF_SYM?",
+      "revId": "1822abb9071a088d0df3dbcf027a2981482796eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1cec8bd5_90e5fa76",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 9
+      },
+      "lineNbr": 1281,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-12T06:11:21Z",
+      "side": 0,
+      "message": "Keep the variable declaration here, even if the default value is never used",
+      "revId": "b20211eec8b8463e24ede7206d60af6604c19df8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
