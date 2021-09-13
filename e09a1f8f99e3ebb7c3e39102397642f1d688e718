@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "35f73d88_ffd0df2f",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-13T00:23:33Z",
+      "side": 1,
+      "message": "We often manage this kind of tweak in a second CR applied after this one, and marked [DNM] or [Do Not Merge] in the subject. See 293227 for an example. That lets the reviewers consider only the final code while you can pick the extra CR for testing,",
+      "revId": "e09a1f8f99e3ebb7c3e39102397642f1d688e718",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
