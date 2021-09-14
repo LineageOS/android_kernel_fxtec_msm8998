@@ -468,14 +468,14 @@ static int aw9523b_hw_reset(struct aw9523b_data *data)
 		dev_err(&data->client->dev,"set_direction for pdata->gpio_rst failed\n");
 		return -EINVAL;
 	}
-	udelay(50); 
+	udelay(50);
 
 	return 0;
 }
 
 
 static u8 aw9523b_chip_id(void)
-{ 
+{
 	u8 chip_id;
 
 	aw9523b_read_reg(REG_IC_ID, &chip_id);
@@ -484,7 +484,7 @@ static u8 aw9523b_chip_id(void)
 }
 
 static void aw9523b_config_P1_output(void)
-{    
+{
 	aw9523b_write_reg(REG_CONFIG_PORT1, 0x00);
 }
 
@@ -521,8 +521,8 @@ static u8 aw9523b_get_P0_value(void)
 }
 
 
-static u8 aw9523b_get_P1_value(void) 
-{    
+static u8 aw9523b_get_P1_value(void)
+{
 	u8 value = 0;
 	aw9523b_read_reg(REG_INPUT_PORT1, &value);
 	return value;
@@ -557,7 +557,6 @@ void aw9523b_irq_enable(struct aw9523b_data *data)
 	spin_unlock_irqrestore(&data->irq_lock, irqflags);
 }
 
-  
 static void aw9523b_read_keyboard_state(u8* keyboard_state)
 {
 	int port;
@@ -1151,7 +1150,7 @@ static int aw9523b_probe(struct i2c_client *client,
 		err = -ENOMEM;
 		goto exit;
 	}
-    
+
 	if (client->dev.of_node) {
 		err = aw9523b_parse_dt(&client->dev, pdata);
 		if (err) {
@@ -1161,7 +1160,7 @@ static int aw9523b_probe(struct i2c_client *client,
 		}
 	}
 
-	spin_lock_init(&pdata->irq_lock);   
+	spin_lock_init(&pdata->irq_lock);
 	g_client = client;
 	i2c_set_clientdata(client, pdata);
 	pdata->client = client;
@@ -1200,7 +1199,7 @@ static int aw9523b_probe(struct i2c_client *client,
 		err = -EINVAL;
 		goto deinit_power_exit;
 	}
-	
+
 	err = register_aw9523b_input_dev(&client->dev);
 	if (err) {
 		dev_err(&client->dev, "Failed to register aw9523b input device\n");
@@ -1251,7 +1250,7 @@ pdata_free_exit:
 	if (pdata && (client->dev.of_node))
 		devm_kfree(&client->dev, pdata);
 free_i2c_clientdata_exit:
-	i2c_set_clientdata(client, NULL);    
+	i2c_set_clientdata(client, NULL);
 	kfree(pdata);
 exit:
 	return err;
@@ -1261,7 +1260,7 @@ exit:
 static int aw9523b_remove(struct i2c_client *client)
 {
 	struct aw9523b_data *data = i2c_get_clientdata(client);
-    
+
 	cancel_delayed_work_sync(&data->poll_work);
 
 	aw9523b_power_deinit(data);
@@ -1350,7 +1349,7 @@ static irqreturn_t gpio_keys_gpio_isr(int irq, void *dev_id)
 	struct gpio_button_data *bdata = dev_id;
 
 	BUG_ON(irq != bdata->irq);
- 
+
 	if (bdata->button->wakeup)
 		pm_stay_awake(bdata->input->dev.parent);
 
@@ -1660,7 +1659,7 @@ static int gpio_keys_probe(struct platform_device *pdev)
 		return -ENOMEM;
 	}
 
-	input = aw9523b_input_dev;//devm_input_allocate_device(dev);
+	input = aw9523b_input_dev; /* devm_input_allocate_device(dev); */
 	if (!input) {
 		dev_err(dev, "failed to allocate input device\n");
 		return -ENOMEM;
@@ -1677,7 +1676,7 @@ static int gpio_keys_probe(struct platform_device *pdev)
 	input->open = gpio_keys_open;
 	input->close = gpio_keys_close;
 
-	//input->id.bustype = BUS_HOST;
+	/* input->id.bustype = BUS_HOST; */
 	input->id.vendor = 0x181d;
 	input->id.product = 0x5018;
 	input->id.version = 0x0002;
@@ -1858,7 +1857,7 @@ static int gpio_keys_resume(struct device *dev)
 	if (error)
 		return error;
 
-	//gpio_keys_report_state(ddata);
+	/* gpio_keys_report_state(ddata); */
 	return 0;
 }
 
