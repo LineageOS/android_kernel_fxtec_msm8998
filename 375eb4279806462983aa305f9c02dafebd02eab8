@@ -16,6 +16,24 @@
       "revId": "375eb4279806462983aa305f9c02dafebd02eab8",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "129d3ecc_18b8d9f6",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1345,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-09-18T15:23:21Z",
+      "side": 1,
+      "message": "Adding support for KF_FN in g_logical_modifiers will require more changes to the way the internal keymap shift works. I will push a new CR for these changes.",
+      "parentUuid": "3089bf24_1afcc88a",
+      "revId": "375eb4279806462983aa305f9c02dafebd02eab8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
