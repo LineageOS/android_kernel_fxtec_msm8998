@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3089bf24_1afcc88a",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 1345,
+      "author": {
+        "id": 28535
+      },
+      "writtenOn": "2021-09-18T13:27:40Z",
+      "side": 1,
+      "message": "Should you not support KEY_FN too?",
+      "revId": "375eb4279806462983aa305f9c02dafebd02eab8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
