@@ -161,7 +161,7 @@
 #define KF_ALT			0x2000
 #define KF_ALTGR		0x1000
 #define KF_UNUSED1		0x0800	/* For future use */
-#define KF_FN			0x0400	/* Not used in key array */
+#define KF_FN			0x0400
 
 #define KEY_FLAGS(key) ((key) & 0xf000)
 #define KEY_VALUE(key) ((key) & 0x0fff)
@@ -214,6 +214,7 @@ static struct i2c_client *g_client = NULL;
 
 static u16 g_physical_modifiers = 0;
 static u16 g_logical_modifiers = 0;
+static int g_shift = 0;
 
 static unsigned int g_poll_interval;
 
@@ -632,7 +633,7 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 				keycode = KEY_WAKEUP;
 				force_flags = 0;
 			}
-			else if (g_physical_modifiers & KF_FN) {
+			else if (g_shift) {
 				keycode = KEY_VALUE(key_fn_array[key_nr]);
 				force_flags = KEY_FLAGS(key_fn_array[key_nr]);
 			}
@@ -671,6 +672,12 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 				input_sync(aw9523b_input_dev);
 				g_logical_modifiers |= KF_ALTGR;
 			}
+			if ((force_flags & KF_FN) && !(g_logical_modifiers & KF_FN)) {
+				printk(KERN_INFO "aw9523b: press logical fn\n");
+				input_report_key(aw9523b_input_dev, KEY_FN, 1);
+				input_sync(aw9523b_input_dev);
+				g_logical_modifiers |= KF_FN;
+			}
 			input_report_key(aw9523b_input_dev, keycode, 1);
 			input_sync(aw9523b_input_dev);
 			if (keycode == KEY_CAPSLOCK) {
@@ -691,6 +698,12 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 			pressed[key_nr] = 0;
 			input_report_key(aw9523b_input_dev, keycode, 0);
 			input_sync(aw9523b_input_dev);
+			if ((g_logical_modifiers & KF_FN) && !(g_physical_modifiers & KF_FN)) {
+				printk(KERN_INFO "aw9523b: release logical fn\n");
+				input_report_key(aw9523b_input_dev, KEY_FN, 0);
+				input_sync(aw9523b_input_dev);
+				g_logical_modifiers &= ~KF_FN;
+			}
 			if ((g_logical_modifiers & KF_ALTGR) && !(g_physical_modifiers & KF_ALTGR)) {
 				printk(KERN_INFO "aw9523b: release logical altgr\n");
 				input_report_key(aw9523b_input_dev, KEY_RIGHTALT, 0);
@@ -1324,10 +1337,13 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 		dev_err(input->dev.parent, "unable to map idea key\n");
 		return;
 	}
-	keycode = (g_physical_modifiers & KF_FN ? mod_fn_array[key] : mod_array[key]);
+	keycode = (g_shift ? mod_fn_array[key] : mod_array[key]);
 	if (keycode == KEY_RESERVED) {
-		mask = KF_FN;
+		g_shift = state;
 		report = false;
+	}
+	if (keycode == KEY_FN) {
+		mask = KF_FN;
 	}
 	if (keycode == KEY_LEFTALT) {
 		mask = KF_ALT;
