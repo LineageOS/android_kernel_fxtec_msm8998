@@ -149,6 +149,9 @@
 
 #define OUT_LOW_VALUE		0
 
+/* Keyboard matrix 'hold down' interval to prevent duplicate key events */
+#define DEBOUNCE_TIME_MS	30
+
 /*
  * KEY_MAX is 0x2ff (see input-event-codes.h) so we can use 6 bits for
  * modifiers.  If more are needed, key valuess must switch to 32 bits.
@@ -600,6 +603,9 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 	static u8 prev_keyboard_state[AW9523_NR_PORTS] = { 0 };
 	static u16 pressed[AW9523_NR_KEYS] = { 0 }; /* Elements are keycodes */
 
+	static unsigned long debounce_timeout = 0;
+	static int last_released = -1;
+
 	int key_nr;
 	u16 keycode;
 
@@ -613,6 +619,14 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 		bool key_state = aw9523b_key_state(keyboard_state, key_nr);
 		if (key_state && !pressed[key_nr]) {
 			u16 force_flags;
+
+			/* Debounce check */
+			if (key_nr == last_released &&
+					time_before(jiffies, debounce_timeout)) {
+				printk(KERN_INFO "aw9523b: debounce: press ignored");
+				continue;
+			}
+
 			if (pdata->fb_blanked) {
 				printk(KERN_INFO "aw9523b: wakeup\n");
 				keycode = KEY_WAKEUP;
@@ -667,6 +681,12 @@ static void aw9523b_check_keys(struct aw9523b_data *pdata, u8* keyboard_state)
 			}
 		}
 		else if (!key_state && pressed[key_nr]) {
+
+			/* For debounce check */
+			debounce_timeout = jiffies +
+					msecs_to_jiffies(DEBOUNCE_TIME_MS);
+			last_released = key_nr;
+
 			keycode = pressed[key_nr];
 			printk(KERN_DEBUG "aw9523b: key release: key_nr=%d keycode=%04hx gpm=%04hx glm=%04hx\n",
 			    key_nr, keycode, g_physical_modifiers, g_logical_modifiers);
