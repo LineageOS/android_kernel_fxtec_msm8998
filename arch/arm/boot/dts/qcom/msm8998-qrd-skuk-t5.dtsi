@@ -442,7 +442,7 @@
 			gpios = <&tlmm 21 0x1>;
 			linux,input-type = <1>;
 			linux,code = <125>;
-			debounce-interval = <15>;
+			debounce-interval = <30>;
 		};
 
 		shift {
@@ -450,7 +450,7 @@
 			gpios = <&tlmm 114 0x1>;
 			linux,input-type = <1>;
 			linux,code = <54>;
-			debounce-interval = <15>;
+			debounce-interval = <30>;
 		};
 		
 		ctrl {
@@ -458,7 +458,7 @@
 			gpios = <&tlmm 128 0x1>;
 			linux,input-type = <1>;
 			linux,code = <29>;
-			debounce-interval = <15>;
+			debounce-interval = <30>;
 		};
 
 		alt {
@@ -466,7 +466,7 @@
 			gpios = <&tlmm 129 0x1>;
 			linux,input-type = <1>;
 			linux,code = <56>;
-			debounce-interval = <15>;
+			debounce-interval = <30>;
 		};
 
 		fn_l {
@@ -474,7 +474,7 @@
 			gpios = <&tlmm 33 0x1>;
 			linux,input-type = <1>;
 			linux,code = <464>;
-			debounce-interval = <15>;
+			debounce-interval = <30>;
 		};
 
 		fn_r {
@@ -482,7 +482,7 @@
 			gpios = <&tlmm 32 0x1>;
 			linux,input-type = <1>;
 			linux,code = <464>;
-			debounce-interval = <15>;
+			debounce-interval = <30>;
 		};
 	};
 
