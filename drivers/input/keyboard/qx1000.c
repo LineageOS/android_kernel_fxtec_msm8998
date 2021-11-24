@@ -1392,9 +1392,13 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 		keycode = KEY_FN;
 		report = false;
 	}
-	if (button->code == KEY_LEFTALT || button->code == KEY_RIGHTALT) {
+	if (button->code == KEY_LEFTALT) {
 		mask = KF_ALT;
 		keycode = KEY_LEFTALT;
+	}
+	if (button->code == KEY_RIGHTALT) {
+		mask = KF_ALTGR;
+		keycode = KEY_RIGHTALT;
 	}
 	if (button->code == KEY_LEFTCTRL || button->code == KEY_RIGHTCTRL) {
 		mask = KF_CTRL;
