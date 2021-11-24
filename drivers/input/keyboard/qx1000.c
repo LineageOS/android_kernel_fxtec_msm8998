@@ -163,8 +163,8 @@
 #define KF_UNUSED1		0x0800	/* For future use */
 #define KF_FN			0x0400	/* Not used in key array */
 
-#define KEY_FLAGS(key) ((key) & 0xf000)
-#define KEY_VALUE(key) ((key) & 0x0fff)
+#define KEY_FLAGS(key) ((key) & 0xfc00)
+#define KEY_VALUE(key) ((key) & 0x03ff)
 
 struct gpio_button_data {
 	const struct gpio_keys_button *button;
