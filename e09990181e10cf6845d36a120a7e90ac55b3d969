@@ -52,6 +52,24 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c41014a6_e3880bf1",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 11
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-11-25T01:15:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "45aa93d1_e9e533fc",
+      "revId": "e09990181e10cf6845d36a120a7e90ac55b3d969",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8f36d098_b975bff6",
@@ -69,6 +87,24 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "64841456_bcace676",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 11
+      },
+      "lineNbr": 1003,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-11-25T01:15:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8f36d098_b975bff6",
+      "revId": "e09990181e10cf6845d36a120a7e90ac55b3d969",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6f1da291_ab9509a2",
@@ -82,6 +118,24 @@
       "writtenOn": "2021-11-25T00:58:56Z",
       "side": 1,
       "message": "You can just set the function ptr to NULL here instead of defining a function for idea_store_keymap",
+      "revId": "e09990181e10cf6845d36a120a7e90ac55b3d969",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2983b486_5e6717a3",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 11
+      },
+      "lineNbr": 1050,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-11-25T01:15:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6f1da291_ab9509a2",
       "revId": "e09990181e10cf6845d36a120a7e90ac55b3d969",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
