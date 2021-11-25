@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d7af462_b77ffd4d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 13
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-11-25T17:00:56Z",
+      "side": 1,
+      "message": "Fixed bug: IDEA key mappings were not reset until after reboot",
+      "revId": "12cc172104d66c4864117ef9c4202eb6e4ac5e4e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
