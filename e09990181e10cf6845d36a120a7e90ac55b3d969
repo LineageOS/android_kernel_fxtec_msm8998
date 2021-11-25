@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8ec1ec25_0e37b11b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-11-25T00:35:15Z",
+      "side": 1,
+      "message": "This merges the implementation from tdm, using the in-memory device tree to store the modified key code settings instead of an extra layer of indirection. It avoids creating a new sysfs node to manage the IDEA keys and extends the existing keymap syntax to handle them, but without any static definitions that would interfere with future device tree changes. It also avoids string comparisons in the driver, esp. comparisons using data written to a sysfs node (reducing the associated security exposure).\n\nNote that I did create a new read-only sysfs node to list the number to description mapping for the IDEA keys. I don\u0027t think this should be needed, but it allows a user-space program to query the device tree key mapping.",
+      "revId": "e09990181e10cf6845d36a120a7e90ac55b3d969",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
