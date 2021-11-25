@@ -1,6 +1,7 @@
 {
   "comments": [
     {
+      "unresolved": true,
       "key": {
         "uuid": "56e4099c_8f1fca54",
         "filename": "drivers/input/keyboard/qx1000.c",
@@ -14,8 +15,25 @@
       "side": 1,
       "message": "This will prevent any IDEA key from generating KEY_RIGHTALT. Perhaps we don\u0027t need to \u0027canonize\u0027 all the modifiers as their left-hand variant at all.",
       "revId": "3465b6fb02c4ef87c9bd9a3ff081274760ab6e87",
-      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
-      "unresolved": true
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f8bd13e4_de973be0",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 1379,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-11-25T00:39:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "56e4099c_8f1fca54",
+      "revId": "3465b6fb02c4ef87c9bd9a3ff081274760ab6e87",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
