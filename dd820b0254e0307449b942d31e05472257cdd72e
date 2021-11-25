@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5461332d_5590e5b4",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 11
+      },
+      "lineNbr": 1304,
+      "author": {
+        "id": 11801
+      },
+      "writtenOn": "2021-11-25T00:58:56Z",
+      "side": 0,
+      "message": "This should probably be removed in a different patchset",
+      "revId": "dd820b0254e0307449b942d31e05472257cdd72e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}

@@ -16,6 +16,74 @@
       "message": "This merges the implementation from tdm, using the in-memory device tree to store the modified key code settings instead of an extra layer of indirection. It avoids creating a new sysfs node to manage the IDEA keys and extends the existing keymap syntax to handle them, but without any static definitions that would interfere with future device tree changes. It also avoids string comparisons in the driver, esp. comparisons using data written to a sysfs node (reducing the associated security exposure).\n\nNote that I did create a new read-only sysfs node to list the number to description mapping for the IDEA keys. I don\u0027t think this should be needed, but it allows a user-space program to query the device tree key mapping.",
       "revId": "e09990181e10cf6845d36a120a7e90ac55b3d969",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "99fb3c59_0182e81f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 11801
+      },
+      "writtenOn": "2021-11-25T00:58:56Z",
+      "side": 1,
+      "message": "I don\u0027t pretend to understand the keyboard driver, but just some minor comments atm.",
+      "revId": "e09990181e10cf6845d36a120a7e90ac55b3d969",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "45aa93d1_e9e533fc",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 11
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 11801
+      },
+      "writtenOn": "2021-11-25T00:58:56Z",
+      "side": 1,
+      "message": "I tend to prefer right aligned pointers, and that would match the style of the input_dev and i2c_client structs above",
+      "revId": "e09990181e10cf6845d36a120a7e90ac55b3d969",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8f36d098_b975bff6",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 11
+      },
+      "lineNbr": 1003,
+      "author": {
+        "id": 11801
+      },
+      "writtenOn": "2021-11-25T00:58:56Z",
+      "side": 1,
+      "message": "Kill this func",
+      "revId": "e09990181e10cf6845d36a120a7e90ac55b3d969",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6f1da291_ab9509a2",
+        "filename": "drivers/input/keyboard/qx1000.c",
+        "patchSetId": 11
+      },
+      "lineNbr": 1050,
+      "author": {
+        "id": 11801
+      },
+      "writtenOn": "2021-11-25T00:58:56Z",
+      "side": 1,
+      "message": "You can just set the function ptr to NULL here instead of defining a function for idea_store_keymap",
+      "revId": "e09990181e10cf6845d36a120a7e90ac55b3d969",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
