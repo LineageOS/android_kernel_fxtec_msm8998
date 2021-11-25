@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "162ffb81_4783c2fc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-11-25T21:23:22Z",
+      "side": 1,
+      "message": "Fixed the mask used by the KEY_FLAGS and KEY_VALUE macros",
+      "revId": "330f04f0f5a561e25be13786aeb25360cebadeaf",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
