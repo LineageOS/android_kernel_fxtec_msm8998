@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3184ad0_76917736",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 15
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2021-11-26T22:34:03Z",
+      "side": 1,
+      "message": "Clarified comment, changed name of \u0027idea_keys\u0027 sysfs node to reflect a more generic application (to be implemented in subsequent changes)",
+      "revId": "a340af4b4e360d11cd53d7ad199950faac344b78",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
