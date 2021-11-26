@@ -228,34 +228,12 @@ enum keylayout {
 	LAYOUT_QWERTZ,
 	LAYOUT_MAX
 };
-static const char *keylayout_name(enum keylayout layout)
-{
-	const char *name;
 
-	switch (layout) {
-	case LAYOUT_NONE:
-		name = "none";
-		break;
-	case LAYOUT_QWERTY:
-		name = "qwerty";
-		break;
-	case LAYOUT_QWERTZ:
-		name = "qwertz";
-		break;
-	default:
-		name = "error";
-	}
-
-	return name;
-}
-static enum keylayout keylayout_enum(const char *name)
-{
-	if (!strcmp(name, "qwerty"))
-		return LAYOUT_QWERTY;
-	if (!strcmp(name, "qwertz"))
-		return LAYOUT_QWERTZ;
-	return LAYOUT_NONE;
-}
+static const char *keylayout_name[] = {
+	"none",
+	"qwerty",
+	"qwertz",
+};
 
 static enum keylayout g_layout;
 static bool g_layout_modified = false;
@@ -871,13 +849,15 @@ static DEVICE_ATTR(keyboard_state, (S_IRUGO | S_IWUSR | S_IWGRP),
             NULL);
 #endif
 
-static ssize_t aw9523b_show_layout(struct device *dev,
+static ssize_t keymap_show_layout(struct device *dev,
 		struct device_attribute *attr,
 		char *buf)
 {
 	char *ptr = buf;
+	char *end = buf + PAGE_SIZE;
 
-	ptr += sprintf(ptr, "%s", keylayout_name(g_layout));
+	ptr += snprintf(ptr, (end - ptr), "%d:%s",
+			g_layout, keylayout_name[g_layout]);
 	if (g_layout_modified) {
 		ptr += sprintf(ptr, " (modified)");
 	}
@@ -886,25 +866,18 @@ static ssize_t aw9523b_show_layout(struct device *dev,
 	return (ptr - buf);
 }
 
-static ssize_t aw9523b_store_layout(struct device *dev,
+static ssize_t keymap_store_layout(struct device *dev,
 		struct device_attribute *attr,
 		const char *buf, size_t count)
 {
-	char namebuf[80];
-	const char *eol;
+	unsigned int val;
 
-	if (count >= sizeof(namebuf)) {
+	if (kstrtouint(buf, 0, &val) != 0)
 		return -EINVAL;
-	}
-	memset(namebuf, 0, sizeof(namebuf));
-	eol = memchr(buf, '\n', count);
-	if (eol) {
-		memcpy(namebuf, buf, eol - buf);
-	}
-	else {
-		memcpy(namebuf, buf, count);
-	}
-	g_layout = keylayout_enum(namebuf);
+	if (val <= LAYOUT_NONE || val >= LAYOUT_MAX)
+		return -EINVAL;
+
+	g_layout = val;
 	g_layout_modified = false;
 	switch (g_layout) {
 	case LAYOUT_QWERTY:
@@ -924,6 +897,22 @@ static ssize_t aw9523b_store_layout(struct device *dev,
 
 	return count;
 }
+
+static ssize_t keymap_list_layouts(struct device *dev,
+		struct device_attribute *attr,
+		char *buf)
+{
+	char *ptr = buf;
+	char *end = buf + PAGE_SIZE;
+
+	for (int n = 1; n < LAYOUT_MAX; ++n) {
+		ptr += snprintf(ptr, (end - ptr), "%d:%s\n",
+				n, keylayout_name[n]);
+	}
+
+	return (ptr - buf);
+}
+
 
 static ssize_t aw9523b_show_keymap(struct device *dev,
 		struct device_attribute *attr,
@@ -1032,8 +1021,12 @@ static ssize_t aw9523b_store_poll_interval(struct device *dev,
 }
 
 static DEVICE_ATTR(layout, (S_IRUGO | S_IWUSR | S_IWGRP),
-	aw9523b_show_layout,
-	aw9523b_store_layout);
+	keymap_show_layout,
+	keymap_store_layout);
+
+static DEVICE_ATTR(list_layouts, S_IRUGO,
+	keymap_list_layouts,
+	NULL);
 
 static DEVICE_ATTR(keymap, (S_IRUGO | S_IWUSR | S_IWGRP),
 	aw9523b_show_keymap,
@@ -1053,6 +1046,7 @@ static struct attribute *aw9523b_attrs[] = {
 	&dev_attr_keyboard_state.attr,
 #endif
 	&dev_attr_layout.attr,
+	&dev_attr_list_layouts.attr,
 	&dev_attr_keymap.attr,
 	&dev_attr_list_keys.attr,
 	&dev_attr_poll_interval.attr,
