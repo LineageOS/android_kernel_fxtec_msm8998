@@ -16,6 +16,23 @@
       "message": "Do not merge this",
       "revId": "d1c389fdfd0aff576c3d4b06e54b168332fd2193",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a17cff7_7b932bb6",
+        "filename": "drivers/usb/gadget/function/f_fs.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 1126,
+      "author": {
+        "id": 5911
+      },
+      "writtenOn": "2022-02-07T13:17:31Z",
+      "side": 1,
+      "message": "are you sure this is ok? the original commit only changed return 0 to return stream_open(), the other stuff was added (with ffs_log above) by CAF",
+      "revId": "d1c389fdfd0aff576c3d4b06e54b168332fd2193",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
