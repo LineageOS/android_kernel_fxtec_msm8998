@@ -50,6 +50,24 @@
       "message": "on dumpling and cheeseburger, we measured no impact on battery life at all. it\u0027s merged there for quite some time already.\ni only tried because of this: https://source.android.com/docs/core/tests/debug/jank_jitter?hl\u003den#long_threads\nwhere google states they even saw an IMPROVEMENT in battery life (i doubt that, but still)",
       "revId": "5bd9cd1287682df2eee4197cbda4d9f953be5297",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "517acd03_b13faa5c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2022-09-20T16:15:00Z",
+      "side": 1,
+      "message": "I suppose we could average it out at 300 hz to be safe? Every pixel since msm8996 and most lineage 8998 devices use either 300 or 1000",
+      "parentUuid": "5638e8bb_efb3e521",
+      "revId": "5bd9cd1287682df2eee4197cbda4d9f953be5297",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
