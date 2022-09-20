@@ -188,6 +188,24 @@
       "message": "ah, heard",
       "revId": "5bd9cd1287682df2eee4197cbda4d9f953be5297",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c46d9d87_aa324b9b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2022-09-20T16:29:18Z",
+      "side": 1,
+      "message": "To be completly fair, I would leave this change as-is.",
+      "parentUuid": "e5f67703_1a311b37",
+      "revId": "5bd9cd1287682df2eee4197cbda4d9f953be5297",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
