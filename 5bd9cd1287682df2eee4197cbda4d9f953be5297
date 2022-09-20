@@ -171,6 +171,23 @@
       "message": "for hz_1000: https://review.lineageos.org/c/LineageOS/android_kernel_oneplus_msm8998/+/310342",
       "revId": "5bd9cd1287682df2eee4197cbda4d9f953be5297",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "982cb533_fa24d69e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2022-09-20T16:25:22Z",
+      "side": 1,
+      "message": "ah, heard",
+      "revId": "5bd9cd1287682df2eee4197cbda4d9f953be5297",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
