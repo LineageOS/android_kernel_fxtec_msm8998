@@ -68,6 +68,23 @@
       "parentUuid": "5638e8bb_efb3e521",
       "revId": "5bd9cd1287682df2eee4197cbda4d9f953be5297",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0d5ed383_db854e6d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5911
+      },
+      "writtenOn": "2022-09-20T16:15:53Z",
+      "side": 1,
+      "message": "yeah, 300 is an absolute must imo. 1000 works really well for us on 8998, no idea about other platforms tho.",
+      "revId": "5bd9cd1287682df2eee4197cbda4d9f953be5297",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
