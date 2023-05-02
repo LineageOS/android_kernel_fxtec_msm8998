@@ -16,6 +16,23 @@
       "message": "Fixes it - my local builds had this, but didn\u0027t make it in the rebase - the short of it - I copied QX1000 defconfig instead of savedefconfig\u0027ing stock ifconfig - resulted in FTS config being present which broke touch.\n\nMy bad.",
       "revId": "4b60b629db0857dfefcbb6e8cdeef561758dba0e",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "507e900d_a45a7408",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16914
+      },
+      "writtenOn": "2023-05-02T01:50:53Z",
+      "side": 1,
+      "message": "Touchscreen works again 😊",
+      "revId": "4b60b629db0857dfefcbb6e8cdeef561758dba0e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
