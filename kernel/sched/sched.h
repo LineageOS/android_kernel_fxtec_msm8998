@@ -226,9 +226,8 @@ struct cfs_bandwidth {
 	ktime_t period;
 	u64 quota, runtime;
 	s64 hierarchical_quota;
-	u64 runtime_expires;
 
-	int idle, period_active;
+	short idle, period_active;
 	struct hrtimer period_timer, slack_timer;
 	struct list_head throttled_cfs_rq;
 
@@ -522,7 +521,6 @@ struct cfs_rq {
 #endif
 
 	int runtime_enabled;
-	u64 runtime_expires;
 	s64 runtime_remaining;
 
 	u64 throttled_clock, throttled_clock_task;
@@ -2032,6 +2030,7 @@ static const u32 prio_to_wmult[40] = {
 #define DEQUEUE_SLEEP		0x01
 #define DEQUEUE_SAVE		0x02 /* matches ENQUEUE_RESTORE */
 #define DEQUEUE_MOVE		0x04 /* matches ENQUEUE_MOVE */
+#define DEQUEUE_IDLE		0x80 /* The last dequeue before IDLE */
 
 #define ENQUEUE_WAKEUP		0x01
 #define ENQUEUE_RESTORE		0x02
@@ -2861,8 +2860,10 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags)
 #ifdef CONFIG_SCHED_HMP
 	/*
 	 * Skip if we've already reported, but not if this is an inter-cluster
-	 * migration
+	 * migration. Also only allow WALT update sites.
 	 */
+	if (!(flags & SCHED_CPUFREQ_WALT))
+		return;
 	if (!sched_disable_window_stats &&
 		(rq->load_reported_window == rq->window_start) &&
 		!(flags & SCHED_CPUFREQ_INTERCLUSTER_MIG))
@@ -2870,9 +2871,10 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags)
 	rq->load_reported_window = rq->window_start;
 #endif
 
-        data = rcu_dereference_sched(*this_cpu_ptr(&cpufreq_update_util_data));
+		data = rcu_dereference_sched(*per_cpu_ptr(&cpufreq_update_util_data,
+						cpu_of(rq)));
         if (data)
-                data->func(data, rq_clock(rq), flags);
+                data->func(data, sched_ktime_clock(), flags);
 }
 
 static inline void cpufreq_update_this_cpu(struct rq *rq, unsigned int flags)
