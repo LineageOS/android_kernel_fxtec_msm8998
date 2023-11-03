@@ -682,13 +682,13 @@ static int mas_fb_notifier_callback(struct notifier_block *self, unsigned long e
 static int init_notifier_call(void);
 static int deinit_notifier_call(void);
 
-static int init_notifier_call(){
+static int init_notifier_call(void) {
 	notifier.notifier_call = mas_fb_notifier_callback;
 	fb_register_client(&notifier);
 	is_screen_on = 1;
 	return 0;
 }
-static int deinit_notifier_call(){
+static int deinit_notifier_call(void) {
 	fb_unregister_client(&notifier);
 	return 0;
 }
