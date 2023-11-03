@@ -1529,7 +1529,7 @@ static struct platform_driver bf_plt_driver = {
 
 module_platform_driver(bf_plt_driver);
 
-void bf_unregister()
+void bf_unregister(void)
 {
     platform_driver_unregister(&bf_plt_driver);
 
